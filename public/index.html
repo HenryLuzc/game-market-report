@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>游戏市场报告管理</title>
+<style>
+  :root {
+    --bg: #f5f6fa; --card: #fff; --border: #e2e6ed;
+    --primary: #4361ee; --primary-hover: #3a56d4;
+    --success: #10b981; --danger: #ef4444;
+    --text: #1e293b; --text-secondary: #64748b;
+    --radius: 8px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .header { background: var(--card); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .header h1 { font-size: 20px; font-weight: 600; }
+  .header-actions { display: flex; gap: 8px; }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+  .filters { display: flex; gap: 12px; margin-bottom: 16px; align-items: center; }
+  .filters select, .filters button { height: 36px; padding: 0 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px; background: var(--card); }
+
+  .btn { cursor: pointer; border: none; border-radius: var(--radius); padding: 8px 16px; font-size: 14px; font-weight: 500; transition: all .15s; }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-hover); }
+  .btn-sm { padding: 4px 10px; font-size: 13px; }
+  .btn-success { background: var(--success); color: #fff; }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: var(--radius); overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  thead { background: #f8fafc; }
+  th, td { padding: 12px 16px; text-align: left; font-size: 14px; border-bottom: 1px solid var(--border); }
+  th { font-weight: 600; color: var(--text-secondary); font-size: 13px; text-transform: uppercase; letter-spacing: .5px; }
+  tr:hover td { background: #f8fafc; }
+
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+  .badge-tencent { background: #dbeafe; color: #1d4ed8; }
+  .badge-bytedance { background: #fce7f3; color: #be185d; }
+  .badge-tencent_app { background: #ccfbf1; color: #0f766e; }
+  .badge-bytedance_app { background: #ede9fe; color: #6d28d9; }
+  .badge-success { background: #d1fae5; color: #065f46; }
+  .badge-failure { background: #fee2e2; color: #991b1b; }
+
+  .pagination { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 16px; }
+  .pagination span { font-size: 14px; color: var(--text-secondary); }
+
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 100; justify-content: center; align-items: center; }
+  .modal-overlay.active { display: flex; }
+  .modal { background: var(--card); border-radius: 12px; width: 90%; max-width: 800px; max-height: 80vh; display: flex; flex-direction: column; }
+  .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .modal-header h3 { font-size: 16px; }
+  .modal-close { cursor: pointer; background: none; border: none; font-size: 20px; color: var(--text-secondary); }
+  .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+  .modal-tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+  .modal-tab { padding: 6px 14px; cursor: pointer; border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; background: var(--card); }
+  .modal-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+  pre.json-view { background: #1e293b; color: #e2e8f0; padding: 16px; border-radius: var(--radius); overflow-x: auto; font-size: 13px; line-height: 1.5; white-space: pre-wrap; word-break: break-all; max-height: 50vh; }
+
+  .toast { position: fixed; top: 20px; right: 20px; z-index: 200; padding: 12px 20px; border-radius: var(--radius); color: #fff; font-size: 14px; animation: slideIn .3s; }
+  .toast-success { background: var(--success); }
+  .toast-error { background: var(--danger); }
+  @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  .stats { display: flex; gap: 16px; margin-bottom: 20px; }
+  .stat-card { background: var(--card); border-radius: var(--radius); padding: 16px 20px; flex: 1; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .stat-card .label { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
+  .stat-card .value { font-size: 24px; font-weight: 700; }
+
+  .actions-cell { display: flex; gap: 6px; }
+  .empty-state { text-align: center; padding: 48px; color: var(--text-secondary); }
+
+  .section { background: var(--card); border-radius: var(--radius); box-shadow: 0 1px 3px rgba(0,0,0,.06); margin-bottom: 20px; overflow: hidden; }
+  .section-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--border); }
+  .section-header h2 { font-size: 16px; font-weight: 600; }
+  .section-header .toggle { font-size: 18px; color: var(--text-secondary); transition: transform .2s; }
+  .section-header .toggle.collapsed { transform: rotate(-90deg); }
+  .section-body { padding: 16px 20px; }
+  .section-body.hidden { display: none; }
+
+  .target-form { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; flex-wrap: wrap; }
+  .target-form select, .target-form input { height: 36px; padding: 0 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px; background: var(--card); }
+  .target-form input { flex: 1; min-width: 160px; }
+  .target-count { font-size: 13px; color: var(--text-secondary); margin-left: 8px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>游戏市场报告管理</h1>
+  <div class="header-actions">
+    <select id="triggerType">
+      <option value="all">全部报告</option>
+      <option value="tencent">腾讯小游戏</option>
+      <option value="bytedance">字节小游戏</option>
+      <option value="tencent_app">腾讯手游</option>
+      <option value="bytedance_app">字节手游</option>
+    </select>
+    <button class="btn btn-primary" id="triggerBtn" onclick="triggerPipeline()">立即触发</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="stats" id="statsContainer"></div>
+
+  <!-- 发送目标管理 -->
+  <div class="section">
+    <div class="section-header" onclick="toggleTargets()">
+      <h2>发送目标 <span class="target-count" id="targetCount"></span></h2>
+      <span class="toggle" id="targetToggle">&#9660;</span>
+    </div>
+    <div class="section-body" id="targetBody">
+      <div class="target-form">
+        <select id="targetType">
+          <option value="chat">群聊</option>
+          <option value="user">个人</option>
+        </select>
+        <input type="text" id="targetId" placeholder="目标 ID（chat_id 或 user_id）">
+        <input type="text" id="targetName" placeholder="名称（可选）" style="max-width:160px">
+        <button class="btn btn-sm btn-primary" onclick="addTarget()">添加</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>名称</th>
+            <th>类型</th>
+            <th>目标 ID</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="targetsBody">
+          <tr><td colspan="4" class="empty-state">加载中...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="filters">
+    <select id="filterType">
+      <option value="">全部类型</option>
+      <option value="tencent">腾讯小游戏</option>
+      <option value="bytedance">字节小游戏</option>
+      <option value="tencent_app">腾讯手游</option>
+      <option value="bytedance_app">字节手游</option>
+    </select>
+    <select id="filterStatus">
+      <option value="">全部状态</option>
+      <option value="success">成功</option>
+      <option value="failure">失败</option>
+    </select>
+    <button class="btn btn-sm" onclick="loadRecords(1)">筛选</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>时间</th>
+        <th>数据周期</th>
+        <th>类型</th>
+        <th>状态</th>
+        <th>目标类型</th>
+        <th>发送目标</th>
+        <th>错误信息</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody id="recordsBody"></tbody>
+  </table>
+
+  <div class="pagination" id="pagination"></div>
+</div>
+
+<div class="modal-overlay" id="detailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">记录详情</h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-tabs">
+        <div class="modal-tab active" onclick="switchTab('card')">卡片 JSON</div>
+        <div class="modal-tab" onclick="switchTab('input')">输入数据</div>
+      </div>
+      <pre class="json-view" id="jsonView"></pre>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentPage = 1;
+let currentRecord = null;
+let currentTab = 'card';
+
+async function api(path, options = {}) {
+  const res = await fetch('/api' + path, {
+    headers: { 'Content-Type': 'application/json' },
+    ...options,
+    body: options.body ? JSON.stringify(options.body) : undefined,
+  });
+  return res.json();
+}
+
+function showToast(msg, type = 'success') {
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+async function loadRecords(page = 1) {
+  currentPage = page;
+  const type = document.getElementById('filterType').value;
+  const status = document.getElementById('filterStatus').value;
+  const params = new URLSearchParams({ page, pageSize: 20 });
+  if (type) params.set('type', type);
+  if (status) params.set('status', status);
+
+  const data = await api(`/records?${params}`);
+  renderRecords(data);
+}
+
+function renderRecords({ total, page, pageSize, records }) {
+  const tbody = document.getElementById('recordsBody');
+
+  if (records.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" class="empty-state">暂无记录</td></tr>';
+  } else {
+    tbody.innerHTML = records.map(r => {
+      let targetType = '-';
+      let targetId = '-';
+      if (r.send_target) {
+        try {
+          const t = JSON.parse(r.send_target);
+          if (t.type) {
+            targetType = t.type === 'user' ? '个人' : '群聊';
+            targetId = t.target || '-';
+          } else if (t.userId) {
+            targetType = '个人';
+            targetId = t.userId;
+          } else if (t.chatId) {
+            targetType = '群聊';
+            targetId = t.chatId;
+          }
+        } catch {}
+      }
+      return `
+      <tr>
+        <td>#${r.id}</td>
+        <td>${r.created_at}</td>
+        <td>${r.date_range}</td>
+        <td><span class="badge badge-${r.report_type}">${{'tencent':'腾讯小游戏','bytedance':'字节小游戏','tencent_app':'腾讯手游','bytedance_app':'字节手游'}[r.report_type] || r.report_type}</span></td>
+        <td><span class="badge badge-${r.status}">${r.status === 'success' ? '成功' : '失败'}</span></td>
+        <td>${targetType}</td>
+        <td style="font-family:monospace;font-size:13px;word-break:break-all">${targetId}</td>
+        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.error_msg ? '<a href="#" style="color:var(--danger);text-decoration:underline;cursor:pointer" onclick="showError(event,'+r.id+')">查看错误</a>' : '-'}</td>
+        <td class="actions-cell">
+          <button class="btn btn-sm btn-primary" onclick="viewRecord(${r.id})">详情</button>
+          <button class="btn btn-sm btn-success" onclick="resendRecord(${r.id})">重发</button>
+        </td>
+      </tr>
+    `}).join('');
+  }
+
+  const totalPages = Math.ceil(total / pageSize);
+  const pag = document.getElementById('pagination');
+  pag.innerHTML = `
+    <button class="btn btn-sm" ${page <= 1 ? 'disabled' : ''} onclick="loadRecords(${page - 1})">上一页</button>
+    <span>第 ${page} / ${totalPages || 1} 页（共 ${total} 条）</span>
+    <button class="btn btn-sm" ${page >= totalPages ? 'disabled' : ''} onclick="loadRecords(${page + 1})">下一页</button>
+  `;
+
+  // Update stats
+  updateStats(total);
+}
+
+async function updateStats(total) {
+  const container = document.getElementById('statsContainer');
+  const [s, f] = await Promise.all([
+    api('/records?status=success&pageSize=1'),
+    api('/records?status=failure&pageSize=1'),
+  ]);
+  container.innerHTML = `
+    <div class="stat-card"><div class="label">总记录</div><div class="value">${total}</div></div>
+    <div class="stat-card"><div class="label">成功</div><div class="value" style="color:var(--success)">${s.total}</div></div>
+    <div class="stat-card"><div class="label">失败</div><div class="value" style="color:var(--danger)">${f.total}</div></div>
+  `;
+}
+
+async function viewRecord(id) {
+  const r = await api(`/records/${id}`);
+  currentRecord = r;
+  currentTab = 'card';
+  const typeLabel = {'tencent':'腾讯小游戏','bytedance':'字节小游戏','tencent_app':'腾讯手游','bytedance_app':'字节手游'}[r.report_type] || r.report_type;
+  document.getElementById('modalTitle').textContent = `记录 #${r.id} - ${typeLabel} (${r.date_range})`;
+  document.querySelector('.modal-tabs').style.display = '';
+  renderJsonTab();
+  document.getElementById('detailModal').classList.add('active');
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.modal-tab').forEach(t => t.classList.toggle('active', t.textContent.toLowerCase().includes(tab)));
+  renderJsonTab();
+}
+
+function renderJsonTab() {
+  const raw = currentTab === 'card' ? currentRecord.card_json : currentRecord.input_json;
+  let formatted;
+  try { formatted = JSON.stringify(JSON.parse(raw), null, 2); } catch { formatted = raw || '无数据'; }
+  document.getElementById('jsonView').textContent = formatted;
+}
+
+function closeModal() {
+  document.getElementById('detailModal').classList.remove('active');
+}
+
+async function resendRecord(id) {
+  if (!confirm('确认重发这条卡片？')) return;
+  const result = await api(`/records/${id}/resend`, { method: 'POST' });
+  if (result.success) {
+    showToast(`重发成功（记录 #${result.record_id}）`);
+  } else {
+    showToast(`重发失败: ${result.error}`, 'error');
+  }
+  loadRecords(currentPage);
+}
+
+async function triggerPipeline() {
+  const sel = document.getElementById('triggerType').value;
+  const types = sel === 'all' ? ['tencent', 'bytedance', 'tencent_app', 'bytedance_app'] : [sel];
+  const btn = document.getElementById('triggerBtn');
+  btn.disabled = true;
+  btn.textContent = '执行中...';
+
+  try {
+    const data = await api('/trigger', { method: 'POST', body: { types } });
+    const ok = data.results?.filter(r => r.status === 'success').length || 0;
+    const fail = data.results?.filter(r => r.status === 'failure').length || 0;
+    if (fail === 0) {
+      showToast(`${ok} 份报告发送成功`);
+    } else {
+      showToast(`${ok} 成功, ${fail} 失败`, fail > 0 ? 'error' : 'success');
+    }
+    loadRecords(1);
+  } catch (err) {
+    showToast('触发失败: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '立即触发';
+  }
+}
+
+// Close modal on overlay click
+document.getElementById('detailModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+async function showError(e, id) {
+  e.preventDefault();
+  const r = await api('/records/' + id);
+  document.getElementById('modalTitle').textContent = `记录 #${id} 错误信息`;
+  document.querySelector('.modal-tabs').style.display = 'none';
+  document.getElementById('jsonView').textContent = r.error_msg || '无错误信息';
+  document.getElementById('detailModal').classList.add('active');
+}
+
+// ---- 发送目标管理 ----
+let targetsVisible = true;
+
+function toggleTargets() {
+  targetsVisible = !targetsVisible;
+  document.getElementById('targetBody').classList.toggle('hidden', !targetsVisible);
+  document.getElementById('targetToggle').classList.toggle('collapsed', !targetsVisible);
+}
+
+async function loadTargets() {
+  const targets = await api('/targets');
+  document.getElementById('targetCount').textContent = `(${targets.length} 个)`;
+  const tbody = document.getElementById('targetsBody');
+  if (targets.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">暂无发送目标，请添加</td></tr>';
+    return;
+  }
+  tbody.innerHTML = targets.map(t => `
+    <tr id="target-row-${t.id}">
+      <td>${t.name || '-'}</td>
+      <td><span class="badge ${t.type === 'chat' ? 'badge-tencent' : 'badge-bytedance'}">${t.type === 'chat' ? '群聊' : '个人'}</span></td>
+      <td style="font-family:monospace;font-size:13px;word-break:break-all">${t.target}</td>
+      <td class="actions-cell">
+        <button class="btn btn-sm btn-primary" onclick="editTarget('${t.id}','${t.type}','${t.target}',\`${(t.name||'').replace(/`/g,'')}\`)">编辑</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteTarget('${t.id}')">删除</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function addTarget() {
+  const type = document.getElementById('targetType').value;
+  const target = document.getElementById('targetId').value.trim();
+  const name = document.getElementById('targetName').value.trim();
+  if (!target) { showToast('请输入目标 ID', 'error'); return; }
+  try {
+    await api('/targets', { method: 'POST', body: { type, target, name } });
+    document.getElementById('targetId').value = '';
+    document.getElementById('targetName').value = '';
+    showToast('添加成功');
+    loadTargets();
+  } catch (err) {
+    showToast('添加失败: ' + err.message, 'error');
+  }
+}
+
+function editTarget(id, type, target, name) {
+  const row = document.getElementById('target-row-' + id);
+  row.innerHTML = `
+    <td><input type="text" id="edit-name-${id}" value="${name}" style="height:30px;padding:0 8px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;width:100%"></td>
+    <td><select id="edit-type-${id}" style="height:30px;padding:0 8px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px">
+      <option value="chat" ${type==='chat'?'selected':''}>群聊</option>
+      <option value="user" ${type==='user'?'selected':''}>个人</option>
+    </select></td>
+    <td><input type="text" id="edit-target-${id}" value="${target}" style="height:30px;padding:0 8px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:monospace;width:100%"></td>
+    <td class="actions-cell">
+      <button class="btn btn-sm btn-success" onclick="saveTarget('${id}')">保存</button>
+      <button class="btn btn-sm" onclick="loadTargets()">取消</button>
+    </td>
+  `;
+}
+
+async function saveTarget(id) {
+  const type = document.getElementById('edit-type-' + id).value;
+  const target = document.getElementById('edit-target-' + id).value.trim();
+  const name = document.getElementById('edit-name-' + id).value.trim();
+  if (!target) { showToast('目标 ID 不能为空', 'error'); return; }
+  try {
+    await api('/targets/' + id, { method: 'PUT', body: { type, target, name } });
+    showToast('已保存');
+    loadTargets();
+  } catch (err) {
+    showToast('保存失败: ' + err.message, 'error');
+  }
+}
+
+async function deleteTarget(id) {
+  if (!confirm('确认删除该发送目标？')) return;
+  try {
+    await api('/targets/' + id, { method: 'DELETE' });
+    showToast('已删除');
+    loadTargets();
+  } catch (err) {
+    showToast('删除失败: ' + err.message, 'error');
+  }
+}
+
+// Initial load
+loadTargets();
+loadRecords(1);
+</script>
+</body>
+</html>

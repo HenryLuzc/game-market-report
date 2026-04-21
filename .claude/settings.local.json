@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where lark-cli *)",
+      "Bash(lark-cli --version)",
+      "Bash(npm --version)",
+      "Bash(npm install *)",
+      "Bash(node cli.js --init-cache)",
+      "Bash(node -e ' *)",
+      "Bash(node cli.js --type tencent)",
+      "Bash(lark-cli wiki *)",
+      "Bash(lark-cli auth *)",
+      "Bash(lark-cli sheets *)",
+      "Bash(node cli.js --type bytedance)",
+      "Bash(lark-cli schema *)",
+      "Bash(node cli.js)",
+      "Skill(claude-api)",
+      "Bash(node cli.js --type tencent --user-id ou_9f0277291f9b1f432e67f2d28240d662)",
+      "Bash(node cli.js --type bytedance --user-id ou_9f0277291f9b1f432e67f2d28240d662)",
+      "WebFetch(domain:sj.qq.com)",
+      "Bash(node *)",
+      "Bash(lark-cli im *)",
+      "Bash(lark-cli --help)",
+      "Bash(lark-cli api *)",
+      "Bash(MSYS_NO_PATHCONV=1 lark-cli api *)",
+      "Read(//c/Users/luzc/.lark-cli/**)",
+      "Read(//c/Users/luzc/AppData/Local/**)",
+      "Read(//c/Users/luzc/AppData/Roaming/**)",
+      "Bash(ls *)"
+    ]
+  }
+}
