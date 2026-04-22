@@ -17,8 +17,8 @@
 - 原始标签记录到数据库（game_tags 表），供模型学习优化
 - 搜索时自动去标点匹配 + 用官方名称展示（如"次神光之觉醒"→"次神：光之觉醒"）
 - 生成包含饼图、分页表格、总结分析的飞书卡片消息
-- 定时任务（默认每周三 10:00）+ 手动触发 + HTTP API 触发
-- Web Dashboard 查看发送记录、重发卡片
+- 定时任务（默认每周五 10:00）+ 手动触发 + HTTP API 触发
+- Web Dashboard 查看发送记录、管理发送目标、多维度筛选、重发卡片
 - SQLite 持久化所有发送记录和游戏标签历史
 
 ## 项目结构
@@ -38,6 +38,11 @@
 ├── scheduler.js        # node-cron 定时任务
 ├── server.js           # Express API + 静态页面
 ├── db.js               # SQLite 数据库（sql.js）— 发送记录 + 游戏标签历史
+├── scripts/
+│   ├── generate_tencent_card.js      # 腾讯小游戏卡片生成
+│   ├── generate_bytedance_card.js    # 字节小游戏卡片生成
+│   ├── generate_tencent_app_card.js  # 腾讯手游卡片生成
+│   └── generate_bytedance_app_card.js # 字节手游卡片生成
 ├── .env                # 飞书应用凭证（不提交）
 └── game-cache.json     # 游戏链接/类型缓存（按 _minigame/_app 分类）
 ```
@@ -74,7 +79,7 @@ npm start
 启动后：
 - 管理页面：http://localhost:3456
 - API 基地址：http://localhost:3456/api
-- 定时任务：每周三 10:00 自动执行（可在 `.env` 中通过 `CRON_SCHEDULE` 修改）
+- 定时任务：每周五 10:00 自动执行（可在 `.env` 中通过 `CRON_SCHEDULE` 修改）
 
 ## CLI 手动触发
 
@@ -82,7 +87,7 @@ npm start
 # 全部报告（4 类）
 node cli.js --type all
 
-# 默认（腾讯+字节小游戏）
+# 默认（全部 4 类报告）
 npm run trigger
 
 # 单个报告类型
@@ -111,12 +116,16 @@ npm run init-cache
 
 | 方法 | 路径 | 说明 |
 |------|------|------|
-| GET | `/api/records` | 发送记录列表（支持 type/status/page 筛选） |
+| GET | `/api/records` | 发送记录列表（支持 type/status/dateFrom/dateTo/dateRange/targetType/target/page 筛选） |
 | GET | `/api/records/:id` | 记录详情 |
 | POST | `/api/records/:id/resend` | 重发卡片 |
 | POST | `/api/trigger` | 触发 pipeline（body: `{types, userId, chatId}`） |
 | GET | `/api/cache` | 游戏缓存列表 |
-| PUT | `/api/cache/:name` | 更新缓存条目 |
+| PUT | `/api/cache/:name` | 更新缓存条目（body: `{link, type, category}`） |
+| GET | `/api/targets` | 发送目标列表 |
+| POST | `/api/targets` | 添加发送目标（body: `{type, target, name}`） |
+| PUT | `/api/targets/:id` | 更新发送目标 |
+| DELETE | `/api/targets/:id` | 删除发送目标 |
 
 ## 数据库
 
