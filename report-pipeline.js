@@ -112,7 +112,7 @@ async function runSingleReport(type, rows, dateRange, cache, targets) {
   }
 }
 
-async function runPipeline({ types = ['tencent', 'bytedance'], userId, chatId, sheetName } = {}) {
+async function runPipeline({ types = ['tencent', 'bytedance', 'tencent_app', 'bytedance_app'], userId, chatId, sheetName } = {}) {
   console.log(`[Pipeline] 开始执行 (${types.join(', ')}) - ${new Date().toLocaleString('zh-CN')}`);
 
   let rows, dateRange;

@@ -436,5 +436,23 @@
     "link": "https://sj.qq.com/appdetail/wx78f8b0361411b4ea",
     "type": "角色扮演、MMORPG",
     "category": "minigame"
+  },
+  "掌上谈兵_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx550fc2daf37d731b",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "掌上谈兵"
+  },
+  "六六英雄_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxc1319785e3676547",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "六六英雄"
+  },
+  "聊斋搜神记_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx73e100a1d27fe6d9",
+    "type": "角色扮演、回合制",
+    "category": "minigame",
+    "officialName": "聊斋搜神记"
   }
 }

@@ -70,6 +70,7 @@ async function searchGameFromYYB(gameName) {
       }
     } catch {}
 
+    db.insertGameTag({ game_name: gameName, category: 'minigame', source: 'yyb', link, raw_type: type, norm_type: null }).catch(() => {});
     return { link, type, officialName };
   } catch {
     return null;

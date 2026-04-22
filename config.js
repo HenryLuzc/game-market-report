@@ -10,8 +10,8 @@ module.exports = Object.freeze({
   FEISHU_APP_SECRET: process.env.FEISHU_APP_SECRET || '',
   FEISHU_BASE_URL: process.env.FEISHU_BASE_URL || 'https://open.feishu.cn',
 
-  BYTEDANCE_CARD_SCRIPT: 'C:/Users/luzc/.claude/skills/ads-bytedance-smallgame-market-report/scripts/generate_card.js',
-  TENCENT_CARD_SCRIPT: 'C:/Users/luzc/.claude/skills/ads-tencent-wx-market-report/scripts/generate_card.js',
+  BYTEDANCE_CARD_SCRIPT: path.join(__dirname, 'scripts', 'generate_bytedance_card.js'),
+  TENCENT_CARD_SCRIPT: path.join(__dirname, 'scripts', 'generate_tencent_card.js'),
   TENCENT_APP_CARD_SCRIPT: path.join(__dirname, 'scripts', 'generate_tencent_app_card.js'),
   BYTEDANCE_APP_CARD_SCRIPT: path.join(__dirname, 'scripts', 'generate_bytedance_app_card.js'),
 
@@ -21,7 +21,7 @@ module.exports = Object.freeze({
   DATA_DIR: path.join(__dirname, 'data'),
 
   PORT: parseInt(process.env.PORT, 10) || 3456,
-  CRON_SCHEDULE: process.env.CRON_SCHEDULE || '0 10 * * 0',
+  CRON_SCHEDULE: process.env.CRON_SCHEDULE || '0 10 * * 5',
   TIMEZONE: 'Asia/Shanghai',
 
   DATA_SOURCE: '飞书文档《2026媒体广告消耗》',

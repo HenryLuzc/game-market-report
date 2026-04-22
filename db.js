@@ -16,9 +16,7 @@ function getFileMtime() {
 async function getDb() {
   const fileMtime = getFileMtime();
   if (db && fileMtime > dbMtime) {
-    // 磁盘文件被外部进程更新，重新加载
     db = null;
-    dbPromise = null;
   }
   if (db) return db;
   if (dbPromise) return dbPromise;
@@ -121,12 +119,17 @@ async function getRecordById(id) {
   return queryOne('SELECT * FROM send_records WHERE id = ?', [id]);
 }
 
-async function getRecords({ report_type, status, page = 1, pageSize = 20 } = {}) {
+async function getRecords({ report_type, status, dateFrom, dateTo, dateRange, targetType, target, page = 1, pageSize = 20 } = {}) {
   await getDb();
   let where = [];
   let params = [];
   if (report_type) { where.push('report_type = ?'); params.push(report_type); }
   if (status) { where.push('status = ?'); params.push(status); }
+  if (dateFrom) { where.push('created_at >= ?'); params.push(dateFrom); }
+  if (dateTo) { where.push('created_at < ?'); params.push(dateTo + ' 24'); }
+  if (dateRange) { where.push('date_range LIKE ?'); params.push(`%${dateRange}%`); }
+  if (targetType) { where.push('send_target LIKE ?'); params.push(`%"type":"${targetType}"%`); }
+  if (target) { where.push('send_target LIKE ?'); params.push(`%${target}%`); }
 
   const whereClause = where.length > 0 ? 'WHERE ' + where.join(' AND ') : '';
   const offset = (page - 1) * pageSize;

@@ -4,94 +4,265 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>游戏市场报告管理</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f5f6fa; --card: #fff; --border: #e2e6ed;
-    --primary: #4361ee; --primary-hover: #3a56d4;
-    --success: #10b981; --danger: #ef4444;
-    --text: #1e293b; --text-secondary: #64748b;
-    --radius: 8px;
+    --bg: #f4f6f9; --bg-white: #ffffff; --bg-hover: #f0f2f5;
+    --border: #e3e7ee; --border-focus: #4f6ef7;
+    --accent: #4f6ef7; --accent-hover: #3b5beb; --accent-light: #eef1fe;
+    --success: #16a34a; --success-bg: #ecfdf5; --success-border: #bbf7d0;
+    --danger: #dc2626; --danger-bg: #fef2f2; --danger-border: #fecaca;
+    --text: #1a2332; --text-secondary: #5a6578; --text-muted: #94a0b4;
+    --tencent: #2563eb; --tencent-bg: #eff6ff;
+    --bytedance: #db2777; --bytedance-bg: #fdf2f8;
+    --tencent-app: #0d9488; --tencent-app-bg: #f0fdfa;
+    --bytedance-app: #7c3aed; --bytedance-app-bg: #f5f3ff;
+    --radius: 10px; --radius-sm: 6px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.04), 0 1px 4px rgba(0,0,0,.03);
+    --shadow: 0 2px 8px rgba(0,0,0,.05), 0 1px 2px rgba(0,0,0,.04);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,.08), 0 2px 8px rgba(0,0,0,.04);
+    --font: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --mono: 'JetBrains Mono', Consolas, monospace;
   }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font); background: var(--bg); color: var(--text);
+    min-height: 100vh; line-height: 1.6; font-size: 14px;
+  }
 
-  .header { background: var(--card); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
-  .header h1 { font-size: 20px; font-weight: 600; }
-  .header-actions { display: flex; gap: 8px; }
+  /* ---- Header ---- */
+  .header {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--bg-white); border-bottom: 1px solid var(--border);
+    padding: 0 32px; height: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: var(--shadow-sm);
+  }
+  .header-brand { display: flex; align-items: center; gap: 12px; }
+  .header-brand .icon {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 900; letter-spacing: -1px;
+  }
+  .header h1 { font-size: 17px; font-weight: 700; color: var(--text); }
+  .header-actions { display: flex; gap: 8px; align-items: center; }
 
-  .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+  /* ---- Layout ---- */
+  .container { max-width: 1300px; margin: 0 auto; padding: 24px 32px 60px; }
 
-  .filters { display: flex; gap: 12px; margin-bottom: 16px; align-items: center; }
-  .filters select, .filters button { height: 36px; padding: 0 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px; background: var(--card); }
+  /* ---- Buttons ---- */
+  .btn {
+    cursor: pointer; border: none; border-radius: var(--radius-sm);
+    padding: 8px 16px; font-size: 13px; font-weight: 600; font-family: var(--font);
+    transition: all .15s ease; display: inline-flex; align-items: center; justify-content: center;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-hover); box-shadow: 0 2px 12px rgba(79,110,247,.3); }
+  .btn-sm { padding: 5px 12px; font-size: 12px; font-weight: 500; }
+  .btn-outline { background: var(--bg-white); color: var(--text-secondary); border: 1px solid var(--border); }
+  .btn-outline:hover { background: var(--bg-hover); color: var(--text); border-color: #cdd3de; }
+  .btn-success { background: var(--success-bg); color: var(--success); border: 1px solid var(--success-border); }
+  .btn-success:hover { background: #dcfce7; }
+  .btn-danger { background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger-border); }
+  .btn-danger:hover { background: #fee2e2; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none !important; }
 
-  .btn { cursor: pointer; border: none; border-radius: var(--radius); padding: 8px 16px; font-size: 14px; font-weight: 500; transition: all .15s; }
-  .btn-primary { background: var(--primary); color: #fff; }
-  .btn-primary:hover { background: var(--primary-hover); }
-  .btn-sm { padding: 4px 10px; font-size: 13px; }
-  .btn-success { background: var(--success); color: #fff; }
-  .btn-danger { background: var(--danger); color: #fff; }
-  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  /* ---- Form controls ---- */
+  select, input[type="text"], input[type="date"] {
+    height: 36px; padding: 0 12px; font-size: 13px; font-family: var(--font);
+    background: var(--bg-white); color: var(--text); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); outline: none; transition: all .15s;
+  }
+  select:focus, input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(79,110,247,.12); }
+  select {
+    cursor: pointer; appearance: none; padding-right: 30px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%235a6578'%3E%3Cpath d='M1 3l4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+  }
 
-  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: var(--radius); overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
-  thead { background: #f8fafc; }
-  th, td { padding: 12px 16px; text-align: left; font-size: 14px; border-bottom: 1px solid var(--border); }
-  th { font-weight: 600; color: var(--text-secondary); font-size: 13px; text-transform: uppercase; letter-spacing: .5px; }
-  tr:hover td { background: #f8fafc; }
+  /* ---- Stats ---- */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .stat-card {
+    background: var(--bg-white); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px 24px; box-shadow: var(--shadow-sm);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .stat-card .label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 6px; }
+  .stat-card .value { font-size: 30px; font-weight: 900; font-family: var(--mono); letter-spacing: -1px; color: var(--text); }
 
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; }
-  .badge-tencent { background: #dbeafe; color: #1d4ed8; }
-  .badge-bytedance { background: #fce7f3; color: #be185d; }
-  .badge-tencent_app { background: #ccfbf1; color: #0f766e; }
-  .badge-bytedance_app { background: #ede9fe; color: #6d28d9; }
-  .badge-success { background: #d1fae5; color: #065f46; }
-  .badge-failure { background: #fee2e2; color: #991b1b; }
+  /* ---- Section panels ---- */
+  .section {
+    background: var(--bg-white); border: 1px solid var(--border); border-radius: var(--radius);
+    margin-bottom: 24px; box-shadow: var(--shadow-sm); overflow: hidden;
+  }
+  .section-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 24px; cursor: pointer; user-select: none;
+    background: #fafbfc; border-bottom: 1px solid var(--border);
+    transition: background .15s;
+  }
+  .section-header:hover { background: var(--bg-hover); }
+  .section-header h2 { font-size: 14px; font-weight: 700; color: var(--text); }
+  .section-header .toggle { font-size: 12px; color: var(--text-muted); transition: transform .25s ease; }
+  .section-header .toggle.collapsed { transform: rotate(-90deg); }
+  .section-body { padding: 20px 24px; }
+  .section-body.hidden { display: none; }
+  .target-count { font-size: 12px; color: var(--text-muted); font-weight: 400; margin-left: 6px; }
 
-  .pagination { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 16px; }
-  .pagination span { font-size: 14px; color: var(--text-secondary); }
+  /* ---- Filters ---- */
+  .filters-panel {
+    background: var(--bg-white); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px 24px; margin-bottom: 20px; box-shadow: var(--shadow-sm);
+  }
+  .filters-panel .filters-title {
+    font-size: 12px; font-weight: 700; color: var(--text-muted);
+    margin-bottom: 14px; letter-spacing: .5px;
+  }
+  .filters-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px 14px; align-items: end;
+  }
+  .filter-group { display: flex; flex-direction: column; gap: 5px; }
+  .filter-group label { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+  .filter-group select, .filter-group input[type="text"], .filter-group input[type="date"] { width: 100%; }
+  .filter-group.filter-action { justify-content: flex-end; }
+  .filter-group.filter-action .btn { width: 100%; height: 36px; }
 
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 100; justify-content: center; align-items: center; }
-  .modal-overlay.active { display: flex; }
-  .modal { background: var(--card); border-radius: 12px; width: 90%; max-width: 800px; max-height: 80vh; display: flex; flex-direction: column; }
-  .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-  .modal-header h3 { font-size: 16px; }
-  .modal-close { cursor: pointer; background: none; border: none; font-size: 20px; color: var(--text-secondary); }
-  .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
-  .modal-tabs { display: flex; gap: 4px; margin-bottom: 12px; }
-  .modal-tab { padding: 6px 14px; cursor: pointer; border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; background: var(--card); }
-  .modal-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-  pre.json-view { background: #1e293b; color: #e2e8f0; padding: 16px; border-radius: var(--radius); overflow-x: auto; font-size: 13px; line-height: 1.5; white-space: pre-wrap; word-break: break-all; max-height: 50vh; }
+  /* ---- Tables ---- */
+  .table-wrap {
+    background: var(--bg-white); border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; box-shadow: var(--shadow-sm);
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead { background: #fafbfc; }
+  th {
+    padding: 11px 16px; text-align: left; font-size: 12px; font-weight: 700;
+    color: var(--text-muted); border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 12px 16px; font-size: 13px; color: var(--text);
+    border-bottom: 1px solid #f0f2f5; vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tbody tr { transition: background .1s; }
+  tbody tr:hover td { background: #f8f9fc; }
 
-  .toast { position: fixed; top: 20px; right: 20px; z-index: 200; padding: 12px 20px; border-radius: var(--radius); color: #fff; font-size: 14px; animation: slideIn .3s; }
-  .toast-success { background: var(--success); }
-  .toast-error { background: var(--danger); }
-  @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: none; opacity: 1; } }
+  /* ---- Badges ---- */
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;
+  }
+  .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .badge-tencent { background: var(--tencent-bg); color: var(--tencent); }
+  .badge-tencent::before { background: var(--tencent); }
+  .badge-bytedance { background: var(--bytedance-bg); color: var(--bytedance); }
+  .badge-bytedance::before { background: var(--bytedance); }
+  .badge-tencent_app { background: var(--tencent-app-bg); color: var(--tencent-app); }
+  .badge-tencent_app::before { background: var(--tencent-app); }
+  .badge-bytedance_app { background: var(--bytedance-app-bg); color: var(--bytedance-app); }
+  .badge-bytedance_app::before { background: var(--bytedance-app); }
+  .badge-success { background: var(--success-bg); color: var(--success); }
+  .badge-success::before { background: var(--success); }
+  .badge-failure { background: var(--danger-bg); color: var(--danger); }
+  .badge-failure::before { background: var(--danger); }
 
-  .stats { display: flex; gap: 16px; margin-bottom: 20px; }
-  .stat-card { background: var(--card); border-radius: var(--radius); padding: 16px 20px; flex: 1; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
-  .stat-card .label { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
-  .stat-card .value { font-size: 24px; font-weight: 700; }
+  /* ---- Pagination ---- */
+  .pagination { display: flex; justify-content: center; align-items: center; gap: 14px; margin-top: 18px; }
+  .pagination span { font-size: 13px; color: var(--text-secondary); }
+
+  /* ---- Modal ---- */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(26,35,50,.35); backdrop-filter: blur(4px);
+    z-index: 100; justify-content: center; align-items: center;
+  }
+  .modal-overlay.active { display: flex; animation: fadeIn .15s; }
+  .modal {
+    background: var(--bg-white); border: 1px solid var(--border); border-radius: 14px;
+    width: 90%; max-width: 860px; max-height: 82vh;
+    display: flex; flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0,0,0,.12), 0 4px 16px rgba(0,0,0,.06);
+  }
+  .modal-header {
+    padding: 18px 24px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .modal-header h3 { font-size: 15px; font-weight: 700; color: var(--text); }
+  .modal-close {
+    cursor: pointer; background: var(--bg-hover); border: 1px solid var(--border);
+    width: 30px; height: 30px; border-radius: 8px; font-size: 18px;
+    color: var(--text-muted); display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .modal-close:hover { color: var(--text); background: #e8ebf0; }
+  .modal-body { padding: 24px; overflow-y: auto; flex: 1; }
+  .modal-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+  .modal-tab {
+    padding: 7px 16px; cursor: pointer; border: 1px solid var(--border);
+    border-radius: var(--radius-sm); font-size: 12px; font-weight: 600;
+    background: var(--bg-white); color: var(--text-secondary); font-family: var(--font);
+    transition: all .15s;
+  }
+  .modal-tab:hover { background: var(--bg-hover); color: var(--text); }
+  .modal-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  pre.json-view {
+    background: #1e293b; color: #cbd5e1; border: none;
+    padding: 20px; border-radius: var(--radius); overflow-x: auto;
+    font-size: 12px; font-family: var(--mono); line-height: 1.7;
+    white-space: pre-wrap; word-break: break-all; max-height: 50vh;
+  }
+
+  /* ---- Toast ---- */
+  .toast {
+    position: fixed; top: 20px; right: 20px; z-index: 200;
+    padding: 12px 20px; border-radius: var(--radius); font-size: 13px; font-weight: 600;
+    border: 1px solid; box-shadow: var(--shadow-lg);
+    animation: toastIn .35s cubic-bezier(.16,1,.3,1);
+  }
+  .toast-success { background: var(--success-bg); color: var(--success); border-color: var(--success-border); }
+  .toast-error { background: var(--danger-bg); color: var(--danger); border-color: var(--danger-border); }
+  @keyframes toastIn { from { transform: translateY(-16px); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* ---- Target form ---- */
+  .target-form {
+    display: grid; grid-template-columns: auto 1fr auto auto;
+    gap: 12px 14px; margin-bottom: 16px; align-items: end;
+  }
 
   .actions-cell { display: flex; gap: 6px; }
-  .empty-state { text-align: center; padding: 48px; color: var(--text-secondary); }
+  .empty-state { text-align: center; padding: 40px; color: var(--text-muted); font-size: 13px; }
+  .mono { font-family: var(--mono); font-size: 12px; word-break: break-all; color: var(--text-secondary); }
+  .link-error { color: var(--danger); text-decoration: none; border-bottom: 1px dashed var(--danger); cursor: pointer; font-size: 12px; font-weight: 500; }
+  .link-error:hover { border-bottom-style: solid; }
 
-  .section { background: var(--card); border-radius: var(--radius); box-shadow: 0 1px 3px rgba(0,0,0,.06); margin-bottom: 20px; overflow: hidden; }
-  .section-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--border); }
-  .section-header h2 { font-size: 16px; font-weight: 600; }
-  .section-header .toggle { font-size: 18px; color: var(--text-secondary); transition: transform .2s; }
-  .section-header .toggle.collapsed { transform: rotate(-90deg); }
-  .section-body { padding: 16px 20px; }
-  .section-body.hidden { display: none; }
+  @keyframes riseIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  .anim-rise { animation: riseIn .4s cubic-bezier(.16,1,.3,1) both; }
 
-  .target-form { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; flex-wrap: wrap; }
-  .target-form select, .target-form input { height: 36px; padding: 0 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px; background: var(--card); }
-  .target-form input { flex: 1; min-width: 160px; }
-  .target-count { font-size: 13px; color: var(--text-secondary); margin-left: 8px; }
+  @media (max-width: 768px) {
+    .header { padding: 0 16px; }
+    .container { padding: 16px; }
+    .stats { grid-template-columns: 1fr; }
+    .filters-row { flex-direction: column; align-items: stretch; }
+    .filter-sep { display: none; }
+    .table-wrap { overflow-x: auto; }
+    table { min-width: 800px; }
+  }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>游戏市场报告管理</h1>
+  <div class="header-brand">
+    <div class="icon">G</div>
+    <h1>游戏市场报告管理</h1>
+  </div>
   <div class="header-actions">
     <select id="triggerType">
       <option value="all">全部报告</option>
@@ -105,72 +276,109 @@
 </div>
 
 <div class="container">
-  <div class="stats" id="statsContainer"></div>
+  <div class="stats" id="statsContainer">
+    <div class="stat-card anim-rise" style="animation-delay:.05s"><div class="label">总记录</div><div class="value">--</div></div>
+    <div class="stat-card anim-rise" style="animation-delay:.1s"><div class="label">成功</div><div class="value" style="color:var(--success)">--</div></div>
+    <div class="stat-card anim-rise" style="animation-delay:.15s"><div class="label">失败</div><div class="value" style="color:var(--danger)">--</div></div>
+  </div>
 
-  <!-- 发送目标管理 -->
-  <div class="section">
+  <div class="section anim-rise" style="animation-delay:.2s">
     <div class="section-header" onclick="toggleTargets()">
       <h2>发送目标 <span class="target-count" id="targetCount"></span></h2>
       <span class="toggle" id="targetToggle">&#9660;</span>
     </div>
     <div class="section-body" id="targetBody">
       <div class="target-form">
-        <select id="targetType">
-          <option value="chat">群聊</option>
-          <option value="user">个人</option>
-        </select>
-        <input type="text" id="targetId" placeholder="目标 ID（chat_id 或 user_id）">
-        <input type="text" id="targetName" placeholder="名称（可选）" style="max-width:160px">
-        <button class="btn btn-sm btn-primary" onclick="addTarget()">添加</button>
+        <div class="filter-group">
+          <label>类型</label>
+          <select id="targetType">
+            <option value="chat">群聊</option>
+            <option value="user">个人</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>目标 ID</label>
+          <input type="text" id="targetId" placeholder="chat_id 或 open_id">
+        </div>
+        <div class="filter-group">
+          <label>名称</label>
+          <input type="text" id="targetName" placeholder="可选" style="width:140px">
+        </div>
+        <div class="filter-group filter-action">
+          <button class="btn btn-sm btn-primary" onclick="addTarget()" style="height:36px">添加</button>
+        </div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>名称</th>
-            <th>类型</th>
-            <th>目标 ID</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody id="targetsBody">
-          <tr><td colspan="4" class="empty-state">加载中...</td></tr>
-        </tbody>
-      </table>
+      <div class="table-wrap" style="box-shadow:none;border:1px solid var(--border)">
+        <table>
+          <thead><tr><th>名称</th><th>类型</th><th>目标 ID</th><th>操作</th></tr></thead>
+          <tbody id="targetsBody"><tr><td colspan="4" class="empty-state">加载中...</td></tr></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
-  <div class="filters">
-    <select id="filterType">
-      <option value="">全部类型</option>
-      <option value="tencent">腾讯小游戏</option>
-      <option value="bytedance">字节小游戏</option>
-      <option value="tencent_app">腾讯手游</option>
-      <option value="bytedance_app">字节手游</option>
-    </select>
-    <select id="filterStatus">
-      <option value="">全部状态</option>
-      <option value="success">成功</option>
-      <option value="failure">失败</option>
-    </select>
-    <button class="btn btn-sm" onclick="loadRecords(1)">筛选</button>
+  <div class="filters-panel anim-rise" style="animation-delay:.25s">
+    <div class="filters-title">筛选条件</div>
+    <div class="filters-row">
+      <div class="filter-group">
+        <label>报告类型</label>
+        <select id="filterType">
+          <option value="">全部类型</option>
+          <option value="tencent">腾讯小游戏</option>
+          <option value="bytedance">字节小游戏</option>
+          <option value="tencent_app">腾讯手游</option>
+          <option value="bytedance_app">字节手游</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>状态</label>
+        <select id="filterStatus">
+          <option value="">全部状态</option>
+          <option value="success">成功</option>
+          <option value="failure">失败</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>发送开始</label>
+        <input type="date" id="filterDateFrom">
+      </div>
+      <div class="filter-group">
+        <label>发送结束</label>
+        <input type="date" id="filterDateTo">
+      </div>
+      <div class="filter-group">
+        <label>数据周期</label>
+        <input type="text" id="filterDateRange" placeholder="如 4.13-4.19">
+      </div>
+      <div class="filter-group">
+        <label>目标类型</label>
+        <select id="filterTargetType">
+          <option value="">全部目标</option>
+          <option value="user">个人</option>
+          <option value="chat">群聊</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>目标 ID</label>
+        <input type="text" id="filterTarget" placeholder="模糊搜索">
+      </div>
+      <div class="filter-group filter-action">
+        <button class="btn btn-primary btn-sm" onclick="loadRecords(1)">筛选</button>
+      </div>
+    </div>
   </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>时间</th>
-        <th>数据周期</th>
-        <th>类型</th>
-        <th>状态</th>
-        <th>目标类型</th>
-        <th>发送目标</th>
-        <th>错误信息</th>
-        <th>操作</th>
-      </tr>
-    </thead>
-    <tbody id="recordsBody"></tbody>
-  </table>
+  <div class="table-wrap anim-rise" style="animation-delay:.3s">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>时间</th><th>数据周期</th><th>类型</th>
+          <th>状态</th><th>目标类型</th><th>发送目标</th><th>错误</th><th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="recordsBody"></tbody>
+    </table>
+  </div>
 
   <div class="pagination" id="pagination"></div>
 </div>
@@ -217,75 +425,72 @@ async function loadRecords(page = 1) {
   currentPage = page;
   const type = document.getElementById('filterType').value;
   const status = document.getElementById('filterStatus').value;
+  const dateFrom = document.getElementById('filterDateFrom').value;
+  const dateTo = document.getElementById('filterDateTo').value;
+  const dateRange = document.getElementById('filterDateRange').value.trim();
+  const targetType = document.getElementById('filterTargetType').value;
+  const target = document.getElementById('filterTarget').value.trim();
   const params = new URLSearchParams({ page, pageSize: 20 });
   if (type) params.set('type', type);
   if (status) params.set('status', status);
-
+  if (dateFrom) params.set('dateFrom', dateFrom);
+  if (dateTo) params.set('dateTo', dateTo);
+  if (dateRange) params.set('dateRange', dateRange);
+  if (targetType) params.set('targetType', targetType);
+  if (target) params.set('target', target);
   const data = await api(`/records?${params}`);
   renderRecords(data);
 }
 
+const TYPE_LABELS = { tencent:'腾讯小游戏', bytedance:'字节小游戏', tencent_app:'腾讯手游', bytedance_app:'字节手游' };
+
 function renderRecords({ total, page, pageSize, records }) {
   const tbody = document.getElementById('recordsBody');
-
   if (records.length === 0) {
     tbody.innerHTML = '<tr><td colspan="9" class="empty-state">暂无记录</td></tr>';
   } else {
     tbody.innerHTML = records.map(r => {
-      let targetType = '-';
-      let targetId = '-';
+      let tType = '-', tId = '-';
       if (r.send_target) {
         try {
           const t = JSON.parse(r.send_target);
-          if (t.type) {
-            targetType = t.type === 'user' ? '个人' : '群聊';
-            targetId = t.target || '-';
-          } else if (t.userId) {
-            targetType = '个人';
-            targetId = t.userId;
-          } else if (t.chatId) {
-            targetType = '群聊';
-            targetId = t.chatId;
-          }
+          if (t.type) { tType = t.type === 'user' ? '个人' : '群聊'; tId = t.target || '-'; }
+          else if (t.userId) { tType = '个人'; tId = t.userId; }
+          else if (t.chatId) { tType = '群聊'; tId = t.chatId; }
         } catch {}
       }
       return `
       <tr>
-        <td>#${r.id}</td>
-        <td>${r.created_at}</td>
-        <td>${r.date_range}</td>
-        <td><span class="badge badge-${r.report_type}">${{'tencent':'腾讯小游戏','bytedance':'字节小游戏','tencent_app':'腾讯手游','bytedance_app':'字节手游'}[r.report_type] || r.report_type}</span></td>
+        <td class="mono">#${r.id}</td>
+        <td style="font-size:12px;white-space:nowrap;color:var(--text-secondary)">${r.created_at}</td>
+        <td><strong>${r.date_range}</strong></td>
+        <td><span class="badge badge-${r.report_type}">${TYPE_LABELS[r.report_type] || r.report_type}</span></td>
         <td><span class="badge badge-${r.status}">${r.status === 'success' ? '成功' : '失败'}</span></td>
-        <td>${targetType}</td>
-        <td style="font-family:monospace;font-size:13px;word-break:break-all">${targetId}</td>
-        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.error_msg ? '<a href="#" style="color:var(--danger);text-decoration:underline;cursor:pointer" onclick="showError(event,'+r.id+')">查看错误</a>' : '-'}</td>
+        <td style="font-size:12px;color:var(--text-secondary)">${tType}</td>
+        <td class="mono">${tId}</td>
+        <td>${r.error_msg ? `<a class="link-error" onclick="showError(event,${r.id})">查看</a>` : '<span style="color:var(--text-muted)">-</span>'}</td>
         <td class="actions-cell">
-          <button class="btn btn-sm btn-primary" onclick="viewRecord(${r.id})">详情</button>
+          <button class="btn btn-sm btn-outline" onclick="viewRecord(${r.id})">详情</button>
           <button class="btn btn-sm btn-success" onclick="resendRecord(${r.id})">重发</button>
         </td>
-      </tr>
-    `}).join('');
+      </tr>`;
+    }).join('');
   }
-
   const totalPages = Math.ceil(total / pageSize);
-  const pag = document.getElementById('pagination');
-  pag.innerHTML = `
-    <button class="btn btn-sm" ${page <= 1 ? 'disabled' : ''} onclick="loadRecords(${page - 1})">上一页</button>
-    <span>第 ${page} / ${totalPages || 1} 页（共 ${total} 条）</span>
-    <button class="btn btn-sm" ${page >= totalPages ? 'disabled' : ''} onclick="loadRecords(${page + 1})">下一页</button>
+  document.getElementById('pagination').innerHTML = `
+    <button class="btn btn-sm btn-outline" ${page <= 1 ? 'disabled' : ''} onclick="loadRecords(${page - 1})">上一页</button>
+    <span>${page} / ${totalPages || 1}（共 ${total} 条）</span>
+    <button class="btn btn-sm btn-outline" ${page >= totalPages ? 'disabled' : ''} onclick="loadRecords(${page + 1})">下一页</button>
   `;
-
-  // Update stats
   updateStats(total);
 }
 
 async function updateStats(total) {
-  const container = document.getElementById('statsContainer');
   const [s, f] = await Promise.all([
     api('/records?status=success&pageSize=1'),
     api('/records?status=failure&pageSize=1'),
   ]);
-  container.innerHTML = `
+  document.getElementById('statsContainer').innerHTML = `
     <div class="stat-card"><div class="label">总记录</div><div class="value">${total}</div></div>
     <div class="stat-card"><div class="label">成功</div><div class="value" style="color:var(--success)">${s.total}</div></div>
     <div class="stat-card"><div class="label">失败</div><div class="value" style="color:var(--danger)">${f.total}</div></div>
@@ -294,10 +499,8 @@ async function updateStats(total) {
 
 async function viewRecord(id) {
   const r = await api(`/records/${id}`);
-  currentRecord = r;
-  currentTab = 'card';
-  const typeLabel = {'tencent':'腾讯小游戏','bytedance':'字节小游戏','tencent_app':'腾讯手游','bytedance_app':'字节手游'}[r.report_type] || r.report_type;
-  document.getElementById('modalTitle').textContent = `记录 #${r.id} - ${typeLabel} (${r.date_range})`;
+  currentRecord = r; currentTab = 'card';
+  document.getElementById('modalTitle').textContent = `#${r.id} ${TYPE_LABELS[r.report_type] || r.report_type} (${r.date_range})`;
   document.querySelector('.modal-tabs').style.display = '';
   renderJsonTab();
   document.getElementById('detailModal').classList.add('active');
@@ -316,18 +519,13 @@ function renderJsonTab() {
   document.getElementById('jsonView').textContent = formatted;
 }
 
-function closeModal() {
-  document.getElementById('detailModal').classList.remove('active');
-}
+function closeModal() { document.getElementById('detailModal').classList.remove('active'); }
 
 async function resendRecord(id) {
   if (!confirm('确认重发这条卡片？')) return;
   const result = await api(`/records/${id}/resend`, { method: 'POST' });
-  if (result.success) {
-    showToast(`重发成功（记录 #${result.record_id}）`);
-  } else {
-    showToast(`重发失败: ${result.error}`, 'error');
-  }
+  if (result.success) showToast(`重发成功（#${result.record_id}）`);
+  else showToast(`重发失败: ${result.error}`, 'error');
   loadRecords(currentPage);
 }
 
@@ -335,44 +533,29 @@ async function triggerPipeline() {
   const sel = document.getElementById('triggerType').value;
   const types = sel === 'all' ? ['tencent', 'bytedance', 'tencent_app', 'bytedance_app'] : [sel];
   const btn = document.getElementById('triggerBtn');
-  btn.disabled = true;
-  btn.textContent = '执行中...';
-
+  btn.disabled = true; btn.textContent = '执行中...';
   try {
     const data = await api('/trigger', { method: 'POST', body: { types } });
     const ok = data.results?.filter(r => r.status === 'success').length || 0;
     const fail = data.results?.filter(r => r.status === 'failure').length || 0;
-    if (fail === 0) {
-      showToast(`${ok} 份报告发送成功`);
-    } else {
-      showToast(`${ok} 成功, ${fail} 失败`, fail > 0 ? 'error' : 'success');
-    }
+    showToast(fail === 0 ? `${ok} 份报告发送成功` : `${ok} 成功, ${fail} 失败`, fail > 0 ? 'error' : 'success');
     loadRecords(1);
-  } catch (err) {
-    showToast('触发失败: ' + err.message, 'error');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '立即触发';
-  }
+  } catch (err) { showToast('触发失败: ' + err.message, 'error'); }
+  finally { btn.disabled = false; btn.textContent = '立即触发'; }
 }
 
-// Close modal on overlay click
-document.getElementById('detailModal').addEventListener('click', e => {
-  if (e.target === e.currentTarget) closeModal();
-});
+document.getElementById('detailModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
 
 async function showError(e, id) {
   e.preventDefault();
   const r = await api('/records/' + id);
-  document.getElementById('modalTitle').textContent = `记录 #${id} 错误信息`;
+  document.getElementById('modalTitle').textContent = `#${id} 错误信息`;
   document.querySelector('.modal-tabs').style.display = 'none';
   document.getElementById('jsonView').textContent = r.error_msg || '无错误信息';
   document.getElementById('detailModal').classList.add('active');
 }
 
-// ---- 发送目标管理 ----
 let targetsVisible = true;
-
 function toggleTargets() {
   targetsVisible = !targetsVisible;
   document.getElementById('targetBody').classList.toggle('hidden', !targetsVisible);
@@ -381,19 +564,16 @@ function toggleTargets() {
 
 async function loadTargets() {
   const targets = await api('/targets');
-  document.getElementById('targetCount').textContent = `(${targets.length} 个)`;
+  document.getElementById('targetCount').textContent = `(${targets.length})`;
   const tbody = document.getElementById('targetsBody');
-  if (targets.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">暂无发送目标，请添加</td></tr>';
-    return;
-  }
+  if (targets.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="empty-state">暂无发送目标</td></tr>'; return; }
   tbody.innerHTML = targets.map(t => `
     <tr id="target-row-${t.id}">
-      <td>${t.name || '-'}</td>
-      <td><span class="badge ${t.type === 'chat' ? 'badge-tencent' : 'badge-bytedance'}">${t.type === 'chat' ? '群聊' : '个人'}</span></td>
-      <td style="font-family:monospace;font-size:13px;word-break:break-all">${t.target}</td>
+      <td>${t.name || '<span style="color:var(--text-muted)">-</span>'}</td>
+      <td><span class="badge ${t.type === 'chat' ? 'badge-tencent' : 'badge-bytedance_app'}">${t.type === 'chat' ? '群聊' : '个人'}</span></td>
+      <td class="mono">${t.target}</td>
       <td class="actions-cell">
-        <button class="btn btn-sm btn-primary" onclick="editTarget('${t.id}','${t.type}','${t.target}',\`${(t.name||'').replace(/`/g,'')}\`)">编辑</button>
+        <button class="btn btn-sm btn-outline" onclick="editTarget('${t.id}','${t.type}','${t.target}',\`${(t.name||'').replace(/`/g,'')}\`)">编辑</button>
         <button class="btn btn-sm btn-danger" onclick="deleteTarget('${t.id}')">删除</button>
       </td>
     </tr>
@@ -409,25 +589,23 @@ async function addTarget() {
     await api('/targets', { method: 'POST', body: { type, target, name } });
     document.getElementById('targetId').value = '';
     document.getElementById('targetName').value = '';
-    showToast('添加成功');
-    loadTargets();
-  } catch (err) {
-    showToast('添加失败: ' + err.message, 'error');
-  }
+    showToast('添加成功'); loadTargets();
+  } catch (err) { showToast('添加失败: ' + err.message, 'error'); }
 }
 
 function editTarget(id, type, target, name) {
   const row = document.getElementById('target-row-' + id);
+  const s = 'height:34px;padding:0 10px;background:var(--bg-white);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:var(--font);width:100%';
   row.innerHTML = `
-    <td><input type="text" id="edit-name-${id}" value="${name}" style="height:30px;padding:0 8px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;width:100%"></td>
-    <td><select id="edit-type-${id}" style="height:30px;padding:0 8px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px">
+    <td><input type="text" id="edit-name-${id}" value="${name}" style="${s}"></td>
+    <td><select id="edit-type-${id}" style="${s};cursor:pointer">
       <option value="chat" ${type==='chat'?'selected':''}>群聊</option>
       <option value="user" ${type==='user'?'selected':''}>个人</option>
     </select></td>
-    <td><input type="text" id="edit-target-${id}" value="${target}" style="height:30px;padding:0 8px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:monospace;width:100%"></td>
+    <td><input type="text" id="edit-target-${id}" value="${target}" style="${s};font-family:var(--mono)"></td>
     <td class="actions-cell">
       <button class="btn btn-sm btn-success" onclick="saveTarget('${id}')">保存</button>
-      <button class="btn btn-sm" onclick="loadTargets()">取消</button>
+      <button class="btn btn-sm btn-outline" onclick="loadTargets()">取消</button>
     </td>
   `;
 }
@@ -439,25 +617,18 @@ async function saveTarget(id) {
   if (!target) { showToast('目标 ID 不能为空', 'error'); return; }
   try {
     await api('/targets/' + id, { method: 'PUT', body: { type, target, name } });
-    showToast('已保存');
-    loadTargets();
-  } catch (err) {
-    showToast('保存失败: ' + err.message, 'error');
-  }
+    showToast('已保存'); loadTargets();
+  } catch (err) { showToast('保存失败: ' + err.message, 'error'); }
 }
 
 async function deleteTarget(id) {
   if (!confirm('确认删除该发送目标？')) return;
   try {
     await api('/targets/' + id, { method: 'DELETE' });
-    showToast('已删除');
-    loadTargets();
-  } catch (err) {
-    showToast('删除失败: ' + err.message, 'error');
-  }
+    showToast('已删除'); loadTargets();
+  } catch (err) { showToast('删除失败: ' + err.message, 'error'); }
 }
 
-// Initial load
 loadTargets();
 loadRecords(1);
 </script>

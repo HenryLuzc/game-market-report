@@ -26,7 +26,6 @@ function startScheduler() {
   });
 
   console.log(`[Scheduler] 已启动定时任务: ${config.CRON_SCHEDULE} (${config.TIMEZONE})`);
-  console.log('[Scheduler] 下次执行: 每周三 10:00');
   return job;
 }
 

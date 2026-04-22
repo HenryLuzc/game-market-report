@@ -13,10 +13,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 // 获取记录列表
 app.get('/api/records', async (req, res) => {
   try {
-    const { type, status, page = 1, pageSize = 20 } = req.query;
+    const { type, status, dateFrom, dateTo, dateRange, targetType, target, page = 1, pageSize = 20 } = req.query;
     const result = await db.getRecords({
       report_type: type || undefined,
       status: status || undefined,
+      dateFrom: dateFrom || undefined,
+      dateTo: dateTo || undefined,
+      dateRange: dateRange || undefined,
+      targetType: targetType || undefined,
+      target: target || undefined,
       page: Math.max(1, parseInt(page, 10) || 1),
       pageSize: Math.min(100, Math.max(1, parseInt(pageSize, 10) || 20)),
     });
@@ -114,8 +119,8 @@ app.get('/api/cache', (req, res) => {
 });
 
 app.put('/api/cache/:name', (req, res) => {
-  const { link, type } = req.body;
-  gameCache.updateCacheEntry(req.params.name, link, type);
+  const { link, type, category } = req.body;
+  gameCache.updateCacheEntry(req.params.name, link, type, category);
   res.json({ success: true });
 });
 
