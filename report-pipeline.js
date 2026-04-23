@@ -6,6 +6,8 @@ const cardGenerator = require('./card-generator');
 const cardSender = require('./card-sender');
 const sendTargets = require('./send-targets');
 const db = require('./db');
+const trendAnalysis = require('./trend-analysis');
+const anomalyDetection = require('./anomaly-detection');
 
 function today() {
   const d = new Date();
@@ -27,7 +29,6 @@ async function runSingleReport(type, rows, dateRange, cache, targets) {
         games: enriched,
         total_daily_cost: total_cost,
       };
-      cardJson = cardGenerator.generateTencentCard(inputData);
     } else if (type === 'bytedance') {
       const { wx_games, dy_games, wx_total_cost, dy_total_cost } = await llmParser.parseByteDanceData(rows);
       const wxEnriched = await gameCache.enrichGames(wx_games, cache);
@@ -42,7 +43,6 @@ async function runSingleReport(type, rows, dateRange, cache, targets) {
         wx_total_daily_cost: wx_total_cost,
         dy_total_daily_cost: dy_total_cost,
       };
-      cardJson = cardGenerator.generateByteDanceCard(inputData);
     } else if (type === 'tencent_app') {
       const { games, total_cost } = await llmParser.parseTencentAppData(rows);
       const enriched = await gameCache.enrichGames(games, cache, 'app');
@@ -54,7 +54,6 @@ async function runSingleReport(type, rows, dateRange, cache, targets) {
         games: enriched,
         total_daily_cost: total_cost,
       };
-      cardJson = cardGenerator.generateTencentAppCard(inputData);
     } else if (type === 'bytedance_app') {
       const { games, total_cost } = await llmParser.parseByteDanceAppData(rows);
       const enriched = await gameCache.enrichGames(games, cache, 'app');
@@ -66,6 +65,72 @@ async function runSingleReport(type, rows, dateRange, cache, targets) {
         games: enriched,
         total_daily_cost: total_cost,
       };
+    }
+
+    // Enrich with trends and anomaly detection — store in DB, not in card
+    let trends = null, anomalies = [];
+    try {
+      [trends, anomalies] = await Promise.all([
+        trendAnalysis.getTrendsForReport(inputData, type, dateRange),
+        anomalyDetection.detectAnomalies(inputData, type),
+      ]);
+      if (trends) {
+        await db.insertInsight({
+          date_range: dateRange, report_type: type, insight_type: 'trend',
+          content: trends.insight || trends.markdown,
+          data_json: JSON.stringify(trends),
+        });
+      }
+      if (anomalies && anomalies.length) {
+        await db.insertInsight({
+          date_range: dateRange, report_type: type, insight_type: 'anomaly',
+          content: anomalyDetection.formatAnomaliesMarkdown(anomalies),
+          data_json: JSON.stringify(anomalies),
+        });
+      }
+    } catch (err) {
+      console.error(`[Pipeline] ${type} 趋势/异常分析失败(不影响发送):`, err.message);
+    }
+
+    // Generate smart analysis with LLM (using trends, anomalies, and history)
+    try {
+      const historyInsights = await db.getInsights(type, 'summary', 3);
+      const smartAnalysis = await trendAnalysis.generateSmartAnalysis(inputData, type, trends, anomalies, historyInsights);
+      if (smartAnalysis) {
+        inputData.smart_analysis = smartAnalysis;
+        await db.insertInsight({
+          date_range: dateRange, report_type: type, insight_type: 'summary',
+          content: smartAnalysis,
+        });
+      }
+    } catch (err) {
+      console.error(`[Pipeline] ${type} 智能分析生成失败(使用模板fallback):`, err.message);
+    }
+
+    // Long-term analysis (trigger when 4+ weeks of summaries exist)
+    try {
+      const summaryCount = (await db.getInsights(type, 'summary', 10)).length;
+      if (summaryCount >= 4) {
+        const longTerm = await trendAnalysis.generateLongTermInsight(type);
+        if (longTerm) {
+          await db.insertInsight({
+            date_range: dateRange, report_type: type, insight_type: 'long_term',
+            content: longTerm,
+          });
+        }
+      }
+    } catch (err) {
+      console.error(`[Pipeline] ${type} 长周期分析失败:`, err.message);
+    }
+
+    // Generate card
+    if (type === 'tencent') {
+      cardJson = cardGenerator.generateTencentCard(inputData);
+    } else if (type === 'bytedance') {
+      cardJson = cardGenerator.generateByteDanceCard(inputData);
+    } else if (type === 'tencent_app') {
+      cardJson = cardGenerator.generateTencentAppCard(inputData);
+    } else if (type === 'bytedance_app') {
       cardJson = cardGenerator.generateByteDanceAppCard(inputData);
     }
 

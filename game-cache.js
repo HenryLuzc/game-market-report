@@ -6,6 +6,37 @@ const Anthropic = require('@anthropic-ai/sdk').default;
 
 const llmClient = new Anthropic();
 
+let tagDict = null;
+let tagDictPromise = null;
+
+async function loadTagDictionary() {
+  if (tagDict) return tagDict;
+  if (tagDictPromise) return tagDictPromise;
+  tagDictPromise = (async () => {
+    try {
+      const mappings = await db.getTagMappings();
+      tagDict = new Map();
+      for (const { raw_type, norm_type } of mappings) {
+        if (!tagDict.has(raw_type)) tagDict.set(raw_type, norm_type);
+      }
+      console.log(`[GameCache] 标签字典已加载: ${tagDict.size} 条映射`);
+    } catch {
+      tagDict = new Map();
+    }
+    return tagDict;
+  })().finally(() => { tagDictPromise = null; });
+  return tagDictPromise;
+}
+
+function buildFewShotExamples(dict, maxExamples = 10) {
+  const examples = [];
+  for (const [raw, norm] of dict) {
+    if (examples.length >= maxExamples) break;
+    examples.push(`原始标签：${raw} → 归一化：${norm}`);
+  }
+  return examples.length ? `\n\n以下是历史归一化示例：\n${examples.join('\n')}` : '';
+}
+
 function loadCache() {
   try {
     const raw = fs.readFileSync(config.GAME_CACHE_PATH, 'utf-8');
@@ -95,14 +126,21 @@ const NORMALIZE_PROMPT = `你是一个资深游戏运营专家。请将以下游
 
 async function normalizeGameType(gameName, rawType) {
   if (!rawType || rawType === '-') return '-';
+  const dict = await loadTagDictionary();
+  const cached = dict.get(rawType);
+  if (cached) return cached;
   try {
+    const fewShot = buildFewShotExamples(dict);
     const resp = await llmClient.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 100,
-      messages: [{ role: 'user', content: `${NORMALIZE_PROMPT}\n\n游戏名：${gameName}\n原始标签：${rawType}` }],
+      messages: [{ role: 'user', content: `${NORMALIZE_PROMPT}${fewShot}\n\n游戏名：${gameName}\n原始标签：${rawType}` }],
     });
     const text = resp.content[0].text.trim();
-    if (text && text !== '-' && text.length < 30) return text;
+    if (text && text !== '-' && text.length < 30) {
+      dict.set(rawType, text);
+      return text;
+    }
   } catch {}
   return rawType;
 }
@@ -355,9 +393,13 @@ function initCacheFromExistingData() {
           ...(data.dy_games || []),
         ];
         for (const g of allGames) {
-          if (g.name && g.link && !cache[g.name]) {
-            cache[g.name] = { link: g.link, type: g.type || '-' };
-            added++;
+          if (g.name && g.link) {
+            const cat = g.link.includes('/appdetail/wx') ? 'minigame' : 'app';
+            const key = cacheKey(g.name, cat);
+            if (!cache[key]) {
+              cache[key] = { link: g.link, type: g.type || '-', category: cat };
+              added++;
+            }
           }
         }
       } catch {}

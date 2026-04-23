@@ -8,6 +8,7 @@ fs.mkdirSync(path.dirname(config.DB_PATH), { recursive: true });
 let db = null;
 let dbPromise = null;
 let dbMtime = 0;
+let saving = false;
 
 function getFileMtime() {
   try { return fs.statSync(config.DB_PATH).mtimeMs; } catch { return 0; }
@@ -16,7 +17,9 @@ function getFileMtime() {
 async function getDb() {
   const fileMtime = getFileMtime();
   if (db && fileMtime > dbMtime) {
+    try { db.close(); } catch {}
     db = null;
+    dbPromise = null;
   }
   if (db) return db;
   if (dbPromise) return dbPromise;
@@ -44,7 +47,6 @@ async function getDb() {
     `);
     db.run('CREATE INDEX IF NOT EXISTS idx_records_type ON send_records(report_type)');
     db.run('CREATE INDEX IF NOT EXISTS idx_records_status ON send_records(status)');
-    // Game tags table for raw tag history
     db.run(`
       CREATE TABLE IF NOT EXISTS game_tags (
         id          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -59,19 +61,42 @@ async function getDb() {
     `);
     db.run('CREATE INDEX IF NOT EXISTS idx_game_tags_name ON game_tags(game_name)');
     db.run('CREATE INDEX IF NOT EXISTS idx_game_tags_category ON game_tags(category)');
-    // Migrate: add send_target column if missing (for existing DBs)
+    db.run(`
+      CREATE TABLE IF NOT EXISTS analysis_insights (
+        id           INTEGER PRIMARY KEY AUTOINCREMENT,
+        created_at   TEXT NOT NULL,
+        date_range   TEXT NOT NULL,
+        report_type  TEXT NOT NULL,
+        insight_type TEXT NOT NULL,
+        content      TEXT NOT NULL,
+        data_json    TEXT
+      )
+    `);
+    db.run('CREATE INDEX IF NOT EXISTS idx_insights_type ON analysis_insights(report_type, insight_type)');
+    db.run('CREATE INDEX IF NOT EXISTS idx_insights_date ON analysis_insights(date_range)');
     try { db.run('ALTER TABLE send_records ADD COLUMN send_target TEXT'); } catch {}
     dbMtime = getFileMtime();
     return db;
-  })();
+  })().catch(err => {
+    db = null;
+    dbPromise = null;
+    throw err;
+  });
   return dbPromise;
 }
 
 function saveDb() {
-  if (!db) return;
-  const data = db.export();
-  fs.writeFileSync(config.DB_PATH, Buffer.from(data));
-  dbMtime = getFileMtime();
+  if (!db || saving) return;
+  saving = true;
+  try {
+    const data = db.export();
+    const tmpPath = config.DB_PATH + '.tmp';
+    fs.writeFileSync(tmpPath, Buffer.from(data));
+    fs.renameSync(tmpPath, config.DB_PATH);
+    dbMtime = getFileMtime();
+  } finally {
+    saving = false;
+  }
 }
 
 function localNow() {
@@ -88,13 +113,16 @@ function rowToObj(columns, values) {
 
 function queryAll(sql, params = []) {
   const stmt = db.prepare(sql);
-  if (params.length) stmt.bind(params);
-  const results = [];
-  while (stmt.step()) {
-    results.push(rowToObj(stmt.getColumnNames(), stmt.get()));
+  try {
+    if (params.length) stmt.bind(params);
+    const results = [];
+    while (stmt.step()) {
+      results.push(rowToObj(stmt.getColumnNames(), stmt.get()));
+    }
+    return results;
+  } finally {
+    stmt.free();
   }
-  stmt.free();
-  return results;
 }
 
 function queryOne(sql, params = []) {
@@ -126,7 +154,7 @@ async function getRecords({ report_type, status, dateFrom, dateTo, dateRange, ta
   if (report_type) { where.push('report_type = ?'); params.push(report_type); }
   if (status) { where.push('status = ?'); params.push(status); }
   if (dateFrom) { where.push('created_at >= ?'); params.push(dateFrom); }
-  if (dateTo) { where.push('created_at < ?'); params.push(dateTo + ' 24'); }
+  if (dateTo) { where.push('created_at <= ?'); params.push(dateTo + ' 23:59:59'); }
   if (dateRange) { where.push('date_range LIKE ?'); params.push(`%${dateRange}%`); }
   if (targetType) { where.push('send_target LIKE ?'); params.push(`%"type":"${targetType}"%`); }
   if (target) { where.push('send_target LIKE ?'); params.push(`%${target}%`); }
@@ -172,4 +200,90 @@ async function getGameTags({ game_name, category, page = 1, pageSize = 50 } = {}
   return { total: countRow.total, page, pageSize, records: rows };
 }
 
-module.exports = { getDb, insertRecord, getRecordById, getRecords, insertGameTag, getGameTags };
+async function getTagMappings() {
+  await getDb();
+  return queryAll(
+    `SELECT raw_type, norm_type, COUNT(*) as cnt
+     FROM game_tags
+     WHERE raw_type IS NOT NULL AND norm_type IS NOT NULL AND norm_type != '-' AND raw_type != '-'
+     GROUP BY raw_type, norm_type
+     ORDER BY cnt DESC`
+  );
+}
+
+async function getLastSuccessRecord(reportType, excludeDateRange) {
+  await getDb();
+  return queryOne(
+    `SELECT input_json, date_range FROM send_records
+     WHERE report_type = ? AND status = 'success' AND date_range != ? AND input_json IS NOT NULL
+     ORDER BY id DESC LIMIT 1`,
+    [reportType, excludeDateRange]
+  );
+}
+
+async function getRecentRecords(reportType, limit = 4) {
+  await getDb();
+  return queryAll(
+    `SELECT input_json, date_range FROM send_records
+     WHERE report_type = ? AND status = 'success' AND input_json IS NOT NULL
+     ORDER BY id DESC LIMIT ?`,
+    [reportType, limit]
+  );
+}
+
+async function insertInsight({ date_range, report_type, insight_type, content, data_json = null }) {
+  await getDb();
+  db.run(
+    `INSERT INTO analysis_insights (created_at, date_range, report_type, insight_type, content, data_json)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [localNow(), date_range, report_type, insight_type, content, data_json]
+  );
+  saveDb();
+}
+
+async function getInsights(reportType, insightType, limit = 5) {
+  await getDb();
+  return queryAll(
+    `SELECT * FROM analysis_insights
+     WHERE report_type = ? AND insight_type = ?
+     ORDER BY id DESC LIMIT ?`,
+    [reportType, insightType, limit]
+  );
+}
+
+async function getInsightsByDateRange(reportType, dateRange) {
+  await getDb();
+  return queryAll(
+    `SELECT * FROM analysis_insights
+     WHERE report_type = ? AND date_range = ?
+     ORDER BY id DESC`,
+    [reportType, dateRange]
+  );
+}
+
+async function getInsightById(id) {
+  await getDb();
+  const rows = queryAll('SELECT * FROM analysis_insights WHERE id = ?', [id]);
+  return rows[0] || null;
+}
+
+async function getInsightsFiltered({ report_type, insight_type, dateRange, page = 1, pageSize = 20 } = {}) {
+  await getDb();
+  let where = '1=1';
+  const params = [];
+  if (report_type) { where += ' AND report_type = ?'; params.push(report_type); }
+  if (insight_type) { where += ' AND insight_type = ?'; params.push(insight_type); }
+  if (dateRange) { where += ' AND date_range LIKE ?'; params.push(`%${dateRange}%`); }
+
+  const countRows = queryAll(`SELECT COUNT(*) as cnt FROM analysis_insights WHERE ${where}`, params);
+  const total = countRows.length ? countRows[0].cnt : 0;
+
+  const offset = (page - 1) * pageSize;
+  const rows = queryAll(
+    `SELECT * FROM analysis_insights WHERE ${where} ORDER BY id DESC LIMIT ? OFFSET ?`,
+    [...params, pageSize, offset]
+  );
+  return { total, page, pageSize, records: rows };
+}
+
+module.exports = { getDb, insertRecord, getRecordById, getRecords, insertGameTag, getGameTags, getTagMappings, getLastSuccessRecord, getRecentRecords, insertInsight, getInsights, getInsightsByDateRange, getInsightById, getInsightsFiltered };

@@ -2,11 +2,11 @@ require('dotenv').config();
 const path = require('path');
 
 module.exports = Object.freeze({
-  WIKI_TOKEN: 'UYBewkucaiGG5gk6O0Qccx3Snmh',
+  WIKI_TOKEN: process.env.WIKI_TOKEN || '',
   SEND_TARGETS_PATH: path.join(__dirname, 'data', 'send-targets.json'),
-  NOTIFY_USER_ID: 'ou_9f0277291f9b1f432e67f2d28240d662',
+  NOTIFY_USER_ID: process.env.NOTIFY_USER_ID || '',
 
-  FEISHU_APP_ID: process.env.FEISHU_APP_ID || 'cli_a03a400e83f95013',
+  FEISHU_APP_ID: process.env.FEISHU_APP_ID || '',
   FEISHU_APP_SECRET: process.env.FEISHU_APP_SECRET || '',
   FEISHU_BASE_URL: process.env.FEISHU_BASE_URL || 'https://open.feishu.cn',
 

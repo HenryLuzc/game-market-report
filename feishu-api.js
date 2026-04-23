@@ -31,7 +31,7 @@ async function getTenantToken() {
     }
     tokenCache = {
       token: data.tenant_access_token,
-      expiresAt: now + data.expire * 1000,
+      expiresAt: Date.now() + data.expire * 1000,
     };
     return tokenCache.token;
   })().finally(() => { tokenPromise = null; });
@@ -77,6 +77,7 @@ async function feishuRequest(method, path, { body, params, retries = 2 } = {}) {
     }
     return data;
   }
+  throw new Error(`飞书 API 重试耗尽 [${method} ${path}]: token 持续过期`);
 }
 
 async function getWikiNode(wikiToken) {

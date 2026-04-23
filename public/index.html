@@ -317,6 +317,51 @@
     </div>
   </div>
 
+  <div class="section anim-rise" style="animation-delay:.22s">
+    <div class="section-header" onclick="toggleInsights()">
+      <h2>分析洞察 <span class="target-count" id="insightCount"></span></h2>
+      <span class="toggle collapsed" id="insightToggle">&#9660;</span>
+    </div>
+    <div class="section-body hidden" id="insightBody">
+      <div class="filters-row" style="margin-bottom:16px">
+        <div class="filter-group">
+          <label>报告类型</label>
+          <select id="insightFilterType">
+            <option value="">全部</option>
+            <option value="tencent">腾讯小游戏</option>
+            <option value="bytedance">字节小游戏</option>
+            <option value="tencent_app">腾讯手游</option>
+            <option value="bytedance_app">字节手游</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>洞察类型</label>
+          <select id="insightFilterInsightType">
+            <option value="">全部</option>
+            <option value="summary">总结分析</option>
+            <option value="trend">趋势洞察</option>
+            <option value="anomaly">异常检测</option>
+            <option value="long_term">长周期分析</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>数据周期</label>
+          <input type="text" id="insightFilterDateRange" placeholder="如 4.13-4.19">
+        </div>
+        <div class="filter-group filter-action">
+          <button class="btn btn-primary btn-sm" onclick="loadInsights(1)">筛选</button>
+        </div>
+      </div>
+      <div class="table-wrap" style="box-shadow:none;border:1px solid var(--border)">
+        <table>
+          <thead><tr><th style="width:50px">ID</th><th style="width:140px">时间</th><th>数据周期</th><th>报告类型</th><th>洞察类型</th><th>内容摘要</th><th style="width:60px">操作</th></tr></thead>
+          <tbody id="insightsBody"><tr><td colspan="7" class="empty-state">点击筛选加载数据</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="insightPagination"></div>
+    </div>
+  </div>
+
   <div class="filters-panel anim-rise" style="animation-delay:.25s">
     <div class="filters-title">筛选条件</div>
     <div class="filters-row">
@@ -404,6 +449,11 @@ let currentPage = 1;
 let currentRecord = null;
 let currentTab = 'card';
 
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 async function api(path, options = {}) {
   const res = await fetch('/api' + path, {
     headers: { 'Content-Type': 'application/json' },
@@ -462,12 +512,12 @@ function renderRecords({ total, page, pageSize, records }) {
       return `
       <tr>
         <td class="mono">#${r.id}</td>
-        <td style="font-size:12px;white-space:nowrap;color:var(--text-secondary)">${r.created_at}</td>
-        <td><strong>${r.date_range}</strong></td>
-        <td><span class="badge badge-${r.report_type}">${TYPE_LABELS[r.report_type] || r.report_type}</span></td>
-        <td><span class="badge badge-${r.status}">${r.status === 'success' ? '成功' : '失败'}</span></td>
-        <td style="font-size:12px;color:var(--text-secondary)">${tType}</td>
-        <td class="mono">${tId}</td>
+        <td style="font-size:12px;white-space:nowrap;color:var(--text-secondary)">${esc(r.created_at)}</td>
+        <td><strong>${esc(r.date_range)}</strong></td>
+        <td><span class="badge badge-${esc(r.report_type)}">${TYPE_LABELS[r.report_type] || esc(r.report_type)}</span></td>
+        <td><span class="badge badge-${r.status === 'success' ? 'success' : 'failure'}">${r.status === 'success' ? '成功' : '失败'}</span></td>
+        <td style="font-size:12px;color:var(--text-secondary)">${esc(tType)}</td>
+        <td class="mono">${esc(tId)}</td>
         <td>${r.error_msg ? `<a class="link-error" onclick="showError(event,${r.id})">查看</a>` : '<span style="color:var(--text-muted)">-</span>'}</td>
         <td class="actions-cell">
           <button class="btn btn-sm btn-outline" onclick="viewRecord(${r.id})">详情</button>
@@ -482,16 +532,17 @@ function renderRecords({ total, page, pageSize, records }) {
     <span>${page} / ${totalPages || 1}（共 ${total} 条）</span>
     <button class="btn btn-sm btn-outline" ${page >= totalPages ? 'disabled' : ''} onclick="loadRecords(${page + 1})">下一页</button>
   `;
-  updateStats(total);
+  updateStats();
 }
 
-async function updateStats(total) {
-  const [s, f] = await Promise.all([
+async function updateStats() {
+  const [all, s, f] = await Promise.all([
+    api('/records?pageSize=1'),
     api('/records?status=success&pageSize=1'),
     api('/records?status=failure&pageSize=1'),
   ]);
   document.getElementById('statsContainer').innerHTML = `
-    <div class="stat-card"><div class="label">总记录</div><div class="value">${total}</div></div>
+    <div class="stat-card"><div class="label">总记录</div><div class="value">${all.total}</div></div>
     <div class="stat-card"><div class="label">成功</div><div class="value" style="color:var(--success)">${s.total}</div></div>
     <div class="stat-card"><div class="label">失败</div><div class="value" style="color:var(--danger)">${f.total}</div></div>
   `;
@@ -508,7 +559,10 @@ async function viewRecord(id) {
 
 function switchTab(tab) {
   currentTab = tab;
-  document.querySelectorAll('.modal-tab').forEach(t => t.classList.toggle('active', t.textContent.toLowerCase().includes(tab)));
+  document.querySelectorAll('.modal-tab').forEach(t => {
+    const isCard = t.textContent.includes('卡片');
+    t.classList.toggle('active', tab === 'card' ? isCard : !isCard);
+  });
   renderJsonTab();
 }
 
@@ -568,13 +622,13 @@ async function loadTargets() {
   const tbody = document.getElementById('targetsBody');
   if (targets.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="empty-state">暂无发送目标</td></tr>'; return; }
   tbody.innerHTML = targets.map(t => `
-    <tr id="target-row-${t.id}">
-      <td>${t.name || '<span style="color:var(--text-muted)">-</span>'}</td>
+    <tr id="target-row-${esc(t.id)}">
+      <td>${t.name ? esc(t.name) : '<span style="color:var(--text-muted)">-</span>'}</td>
       <td><span class="badge ${t.type === 'chat' ? 'badge-tencent' : 'badge-bytedance_app'}">${t.type === 'chat' ? '群聊' : '个人'}</span></td>
-      <td class="mono">${t.target}</td>
+      <td class="mono">${esc(t.target)}</td>
       <td class="actions-cell">
-        <button class="btn btn-sm btn-outline" onclick="editTarget('${t.id}','${t.type}','${t.target}',\`${(t.name||'').replace(/`/g,'')}\`)">编辑</button>
-        <button class="btn btn-sm btn-danger" onclick="deleteTarget('${t.id}')">删除</button>
+        <button class="btn btn-sm btn-outline" onclick="editTarget('${esc(t.id)}','${esc(t.type)}','${esc(t.target)}','${esc(t.name||'')}')">编辑</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteTarget('${esc(t.id)}')">删除</button>
       </td>
     </tr>
   `).join('');
@@ -597,14 +651,14 @@ function editTarget(id, type, target, name) {
   const row = document.getElementById('target-row-' + id);
   const s = 'height:34px;padding:0 10px;background:var(--bg-white);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:var(--font);width:100%';
   row.innerHTML = `
-    <td><input type="text" id="edit-name-${id}" value="${name}" style="${s}"></td>
-    <td><select id="edit-type-${id}" style="${s};cursor:pointer">
+    <td><input type="text" id="edit-name-${esc(id)}" value="${esc(name)}" style="${s}"></td>
+    <td><select id="edit-type-${esc(id)}" style="${s};cursor:pointer">
       <option value="chat" ${type==='chat'?'selected':''}>群聊</option>
       <option value="user" ${type==='user'?'selected':''}>个人</option>
     </select></td>
-    <td><input type="text" id="edit-target-${id}" value="${target}" style="${s};font-family:var(--mono)"></td>
+    <td><input type="text" id="edit-target-${esc(id)}" value="${esc(target)}" style="${s};font-family:var(--mono)"></td>
     <td class="actions-cell">
-      <button class="btn btn-sm btn-success" onclick="saveTarget('${id}')">保存</button>
+      <button class="btn btn-sm btn-success" onclick="saveTarget('${esc(id)}')">保存</button>
       <button class="btn btn-sm btn-outline" onclick="loadTargets()">取消</button>
     </td>
   `;
@@ -627,6 +681,78 @@ async function deleteTarget(id) {
     await api('/targets/' + id, { method: 'DELETE' });
     showToast('已删除'); loadTargets();
   } catch (err) { showToast('删除失败: ' + err.message, 'error'); }
+}
+
+const INSIGHT_TYPE_LABELS = { summary:'总结分析', trend:'趋势洞察', anomaly:'异常检测', long_term:'长周期分析' };
+const INSIGHT_TYPE_COLORS = { summary:'accent', trend:'tencent', anomaly:'danger', long_term:'bytedance_app' };
+
+let insightsVisible = false;
+function toggleInsights() {
+  insightsVisible = !insightsVisible;
+  document.getElementById('insightBody').classList.toggle('hidden', !insightsVisible);
+  document.getElementById('insightToggle').classList.toggle('collapsed', !insightsVisible);
+  if (insightsVisible && document.getElementById('insightsBody').querySelector('.empty-state')) loadInsights(1);
+}
+
+let insightPage = 1;
+async function loadInsights(page = 1) {
+  insightPage = page;
+  const type = document.getElementById('insightFilterType').value;
+  const insightType = document.getElementById('insightFilterInsightType').value;
+  const dateRange = document.getElementById('insightFilterDateRange').value.trim();
+  const params = new URLSearchParams({ page, pageSize: 15 });
+  if (type) params.set('type', type);
+  if (insightType) params.set('insightType', insightType);
+  if (dateRange) params.set('dateRange', dateRange);
+  const data = await api(`/insights?${params}`);
+  renderInsights(data);
+}
+
+function renderInsights({ total, page, pageSize, records }) {
+  document.getElementById('insightCount').textContent = `(${total})`;
+  const tbody = document.getElementById('insightsBody');
+  if (!records || records.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">暂无洞察数据</td></tr>';
+  } else {
+    tbody.innerHTML = records.map(r => {
+      const preview = esc((r.content || '').slice(0, 80) + (r.content && r.content.length > 80 ? '...' : ''));
+      const badgeColor = INSIGHT_TYPE_COLORS[r.insight_type] || 'tencent';
+      return `<tr>
+        <td class="mono">#${r.id}</td>
+        <td style="font-size:12px;white-space:nowrap;color:var(--text-secondary)">${esc(r.created_at)}</td>
+        <td><strong>${esc(r.date_range)}</strong></td>
+        <td><span class="badge badge-${esc(r.report_type)}">${TYPE_LABELS[r.report_type] || esc(r.report_type)}</span></td>
+        <td><span class="badge" style="background:var(--${badgeColor}-bg,var(--accent-light));color:var(--${badgeColor},var(--accent))">${INSIGHT_TYPE_LABELS[r.insight_type] || esc(r.insight_type)}</span></td>
+        <td style="font-size:12px;color:var(--text-secondary);max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.content||'')}">${preview}</td>
+        <td><button class="btn btn-sm btn-outline" onclick="viewInsight(${r.id})">查看</button></td>
+      </tr>`;
+    }).join('');
+  }
+  const totalPages = Math.ceil(total / pageSize);
+  document.getElementById('insightPagination').innerHTML = `
+    <button class="btn btn-sm btn-outline" ${page <= 1 ? 'disabled' : ''} onclick="loadInsights(${page - 1})">上一页</button>
+    <span>${page} / ${totalPages || 1}（共 ${total} 条）</span>
+    <button class="btn btn-sm btn-outline" ${page >= totalPages ? 'disabled' : ''} onclick="loadInsights(${page + 1})">下一页</button>
+  `;
+}
+
+async function viewInsight(id) {
+  const r = await api(`/insights/${id}`);
+  if (!r || r.error) { showToast('未找到洞察记录', 'error'); return; }
+  currentRecord = null;
+  document.getElementById('modalTitle').textContent = `#${r.id} ${TYPE_LABELS[r.report_type] || r.report_type} ${INSIGHT_TYPE_LABELS[r.insight_type] || r.insight_type} (${r.date_range})`;
+  document.querySelector('.modal-tabs').style.display = r.data_json ? '' : 'none';
+  if (r.data_json) {
+    currentRecord = { card_json: r.data_json, input_json: JSON.stringify({ content: r.content }, null, 2) };
+    currentTab = 'input';
+    document.querySelectorAll('.modal-tab').forEach(t => {
+      const isData = t.textContent.includes('卡片') || t.textContent.includes('数据');
+      t.classList.toggle('active', t.textContent.includes('输入') || t.textContent.includes('数据'));
+    });
+  }
+  document.getElementById('jsonView').textContent = r.content || '无内容';
+  document.getElementById('jsonView').style.whiteSpace = 'pre-wrap';
+  document.getElementById('detailModal').classList.add('active');
 }
 
 loadTargets();

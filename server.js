@@ -34,7 +34,9 @@ app.get('/api/records', async (req, res) => {
 // 获取单条记录详情
 app.get('/api/records/:id', async (req, res) => {
   try {
-    const record = await db.getRecordById(parseInt(req.params.id, 10));
+    const id = parseInt(req.params.id, 10);
+    if (isNaN(id)) return res.status(400).json({ error: '无效的 ID' });
+    const record = await db.getRecordById(id);
     if (!record) return res.status(404).json({ error: '记录不存在' });
     res.json(record);
   } catch (err) {
@@ -45,7 +47,9 @@ app.get('/api/records/:id', async (req, res) => {
 // 重发卡片
 app.post('/api/records/:id/resend', async (req, res) => {
   try {
-    const record = await db.getRecordById(parseInt(req.params.id, 10));
+    const id = parseInt(req.params.id, 10);
+    if (isNaN(id)) return res.status(400).json({ error: '无效的 ID' });
+    const record = await db.getRecordById(id);
     if (!record) return res.status(404).json({ error: '记录不存在' });
     if (!record.card_json) return res.status(400).json({ error: '该记录没有卡片数据' });
 
@@ -89,14 +93,22 @@ app.post('/api/records/:id/resend', async (req, res) => {
 
 // 手动触发 pipeline（后台执行，立即返回）
 let pipelineRunning = false;
+let pipelineTimer = null;
+const PIPELINE_TIMEOUT_MS = 10 * 60 * 1000;
 
 app.post('/api/trigger', (req, res) => {
   const { types = ['tencent', 'bytedance'], userId, chatId } = req.body || {};
+  if (!Array.isArray(types)) return res.status(400).json({ error: 'types 必须为数组' });
   const valid = types.every(t => ['tencent', 'bytedance', 'tencent_app', 'bytedance_app'].includes(t));
   if (!valid) return res.status(400).json({ error: '无效的报告类型' });
   if (pipelineRunning) return res.status(409).json({ error: '已有 pipeline 正在执行' });
 
   pipelineRunning = true;
+  pipelineTimer = setTimeout(() => {
+    console.error('[Trigger] Pipeline 超时，解除锁定');
+    pipelineRunning = false;
+    pipelineTimer = null;
+  }, PIPELINE_TIMEOUT_MS);
   res.json({ status: 'started', types });
 
   runPipeline({ types, userId, chatId })
@@ -108,6 +120,7 @@ app.post('/api/trigger', (req, res) => {
     })
     .finally(() => {
       pipelineRunning = false;
+      if (pipelineTimer) { clearTimeout(pipelineTimer); pipelineTimer = null; }
     });
 });
 
@@ -148,6 +161,35 @@ app.delete('/api/targets/:id', (req, res) => {
   const removed = sendTargets.removeTarget(req.params.id);
   if (!removed) return res.status(404).json({ error: '目标不存在' });
   res.json({ success: true });
+});
+
+// 分析洞察 API
+app.get('/api/insights', async (req, res) => {
+  try {
+    const { type, insightType, dateRange, page = 1, pageSize = 20 } = req.query;
+    const result = await db.getInsightsFiltered({
+      report_type: type || undefined,
+      insight_type: insightType || undefined,
+      dateRange: dateRange || undefined,
+      page: Math.max(1, parseInt(page, 10) || 1),
+      pageSize: Math.min(100, Math.max(1, parseInt(pageSize, 10) || 20)),
+    });
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/insights/:id', async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (isNaN(id)) return res.status(400).json({ error: '无效的 ID' });
+    const record = await db.getInsightById(id);
+    if (!record) return res.status(404).json({ error: '洞察不存在' });
+    res.json(record);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = app;

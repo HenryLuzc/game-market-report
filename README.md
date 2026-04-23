@@ -18,8 +18,15 @@
 - 搜索时自动去标点匹配 + 用官方名称展示（如"次神光之觉醒"→"次神：光之觉醒"）
 - 生成包含饼图、分页表格、总结分析的飞书卡片消息
 - 定时任务（默认每周五 10:00）+ 手动触发 + HTTP API 触发
-- Web Dashboard 查看发送记录、管理发送目标、多维度筛选、重发卡片
-- SQLite 持久化所有发送记录和游戏标签历史
+- Web Dashboard 查看发送记录、管理发送目标、浏览分析洞察、多维度筛选、重发卡片
+- SQLite 持久化所有发送记录、游戏标签历史和分析洞察
+- **LLM 深度学习能力**：
+  - 标签归一化自学习 — 复用历史 raw_type→norm_type 映射，新标签走 few-shot LLM
+  - 周环比趋势分析 — 自动对比上周数据，计算消耗变化、新上榜/跌出、排名变动、品类迁移
+  - 异常检测 — 消耗激增(>80%)/骤降(>50%)、新进 TOP5、跌出榜单、大盘异常
+  - LLM 智能总结 — 结合当前数据+趋势+异常+历史洞察记忆生成分析（存 DB，不上卡片）
+  - 洞察记忆 — 历史分析存入 DB，后续分析时注入 prompt 实现连续性判断
+  - 长周期分析 — 积累 4+ 周数据后自动生成月度趋势和季节性规律洞察
 
 ## 项目结构
 
@@ -37,7 +44,9 @@
 ├── report-pipeline.js  # 完整 pipeline 编排
 ├── scheduler.js        # node-cron 定时任务
 ├── server.js           # Express API + 静态页面
-├── db.js               # SQLite 数据库（sql.js）— 发送记录 + 游戏标签历史
+├── db.js               # SQLite 数据库（sql.js）— 发送记录 + 游戏标签 + 分析洞察
+├── trend-analysis.js   # 趋势计算 + LLM 智能分析 + 长周期洞察
+├── anomaly-detection.js # 异常检测（消耗激增/骤降、排名异动、大盘异常）
 ├── scripts/
 │   ├── generate_tencent_card.js      # 腾讯小游戏卡片生成
 │   ├── generate_bytedance_card.js    # 字节小游戏卡片生成
@@ -120,6 +129,8 @@ npm run init-cache
 | GET | `/api/records/:id` | 记录详情 |
 | POST | `/api/records/:id/resend` | 重发卡片 |
 | POST | `/api/trigger` | 触发 pipeline（body: `{types, userId, chatId}`） |
+| GET | `/api/insights` | 分析洞察列表（支持 type/insightType/dateRange/page 筛选） |
+| GET | `/api/insights/:id` | 洞察详情 |
 | GET | `/api/cache` | 游戏缓存列表 |
 | PUT | `/api/cache/:name` | 更新缓存条目（body: `{link, type, category}`） |
 | GET | `/api/targets` | 发送目标列表 |
@@ -161,11 +172,25 @@ npm run init-cache
 | raw_type | TEXT | 原始类型标签 |
 | norm_type | TEXT | 归一化后的标签 |
 
+### analysis_insights — 分析洞察
+
+存储 LLM 生成的趋势洞察、异常检测、智能总结和长周期分析，作为"洞察记忆"供后续分析参考。
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | INTEGER | 自增主键 |
+| created_at | TEXT | 创建时间 |
+| date_range | TEXT | 数据日期范围 |
+| report_type | TEXT | 报告类型 |
+| insight_type | TEXT | 洞察类型（trend/anomaly/summary/long_term） |
+| content | TEXT | LLM 生成的分析文本 |
+| data_json | TEXT | 结构化数据（趋势指标、异常列表等） |
+
 ## 技术栈
 
 - Node.js + Express
-- Claude API (`claude-sonnet-4-6`) — 表格数据解析 + 游戏类型标签归一化
+- Claude API (`claude-sonnet-4-6`) — 表格数据解析 + 游戏类型标签归一化 + 趋势洞察 + 智能分析
 - 飞书 Open API — 读表格、发卡片
-- sql.js (WASM SQLite) — 发送记录 + 游戏标签历史持久化
+- sql.js (WASM SQLite) — 发送记录 + 游戏标签 + 分析洞察持久化
 - node-cron — 定时调度
 - 应用宝 / TapTap / AppStore iTunes API — 游戏链接和类型搜索
