@@ -1,11 +1,14 @@
 const app = require('./server');
 const { startScheduler } = require('./scheduler');
-const { getDb } = require('./db');
+const { getDb, cleanupPendingRecords } = require('./db');
 const config = require('./config');
 
 async function main() {
   await getDb();
   console.log('[DB] 数据库已初始化');
+
+  const cleaned = await cleanupPendingRecords();
+  if (cleaned > 0) console.log(`[DB] 已清理 ${cleaned} 条残留 pending 记录`);
 
   startScheduler();
 

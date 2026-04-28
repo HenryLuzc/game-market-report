@@ -127,14 +127,18 @@ app.post('/api/trigger', async (req, res) => {
       }
     }
   } catch (err) {
+    const insertedIds = recordIds.map(r => r.id);
+    if (insertedIds.length) await db.markPendingAsFailed(insertedIds, '创建记录时部分失败: ' + err.message);
     return res.status(500).json({ error: '创建记录失败: ' + err.message });
   }
 
+  const allRecordIds = recordIds.map(r => r.id);
   pipelineRunning = true;
-  pipelineTimer = setTimeout(() => {
+  pipelineTimer = setTimeout(async () => {
     console.error('[Trigger] Pipeline 超时，解除锁定');
     pipelineRunning = false;
     pipelineTimer = null;
+    await db.markPendingAsFailed(allRecordIds, 'Pipeline 执行超时');
   }, PIPELINE_TIMEOUT_MS);
 
   res.json({ status: 'started', types, recordIds: recordIds.map(r => r.id) });

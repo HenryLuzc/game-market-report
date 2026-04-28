@@ -456,7 +456,7 @@ let currentTab = 'card';
 
 function esc(s) {
   if (s == null) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
 async function api(path, options = {}) {
@@ -590,10 +590,16 @@ async function resendRecord(id) {
   loadRecords(currentPage);
 }
 
+let activePoll = null;
+function stopPoll() {
+  if (activePoll) { clearInterval(activePoll); activePoll = null; }
+}
+
 async function triggerPipeline() {
   const sel = document.getElementById('triggerType').value;
   const types = sel === 'all' ? ['tencent', 'bytedance', 'tencent_app', 'bytedance_app'] : [sel];
   const btn = document.getElementById('triggerBtn');
+  stopPoll();
   btn.disabled = true; btn.textContent = '执行中...';
   try {
     const data = await api('/trigger', { method: 'POST', body: { types } });
@@ -605,21 +611,32 @@ async function triggerPipeline() {
     showToast('已触发，正在生成报告...', 'success');
     loadRecords(1);
     const ids = data.recordIds;
-    const poll = setInterval(async () => {
+    let pollErrors = 0;
+    activePoll = setInterval(async () => {
       try {
         const st = await api(`/pipeline-status?ids=${ids.join(',')}`);
-        const allDone = st.records.every(r => r.status !== 'pending');
+        pollErrors = 0;
+        const records = st.records || [];
+        const allDone = records.length > 0 && records.every(r => r.status !== 'pending');
         if (allDone) {
-          clearInterval(poll);
-          const ok = st.records.filter(r => r.status === 'success').length;
-          const fail = st.records.filter(r => r.status === 'failure').length;
+          stopPoll();
+          const ok = records.filter(r => r.status === 'success').length;
+          const fail = records.filter(r => r.status === 'failure').length;
           showToast(fail === 0 ? `${ok} 份报告发送成功` : `${ok} 成功, ${fail} 失败`, fail > 0 ? 'error' : 'success');
           btn.disabled = false; btn.textContent = '立即触发';
           loadRecords(1);
         } else {
           loadRecords(1);
         }
-      } catch { /* ignore poll errors */ }
+      } catch {
+        pollErrors++;
+        if (pollErrors >= 5) {
+          stopPoll();
+          showToast('轮询状态失败，请手动刷新查看结果', 'error');
+          btn.disabled = false; btn.textContent = '立即触发';
+          loadRecords(1);
+        }
+      }
     }, 3000);
   } catch (err) {
     showToast('触发失败: ' + err.message, 'error');

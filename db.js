@@ -7,20 +7,9 @@ fs.mkdirSync(path.dirname(config.DB_PATH), { recursive: true });
 
 let db = null;
 let dbPromise = null;
-let dbMtime = 0;
 let saving = false;
 
-function getFileMtime() {
-  try { return fs.statSync(config.DB_PATH).mtimeMs; } catch { return 0; }
-}
-
 async function getDb() {
-  const fileMtime = getFileMtime();
-  if (db && fileMtime > dbMtime) {
-    try { db.close(); } catch {}
-    db = null;
-    dbPromise = null;
-  }
   if (db) return db;
   if (dbPromise) return dbPromise;
   dbPromise = (async () => {
@@ -75,7 +64,6 @@ async function getDb() {
     db.run('CREATE INDEX IF NOT EXISTS idx_insights_type ON analysis_insights(report_type, insight_type)');
     db.run('CREATE INDEX IF NOT EXISTS idx_insights_date ON analysis_insights(date_range)');
     try { db.run('ALTER TABLE send_records ADD COLUMN send_target TEXT'); } catch {}
-    dbMtime = getFileMtime();
     return db;
   })().catch(err => {
     db = null;
@@ -93,7 +81,6 @@ function saveDb() {
     const tmpPath = config.DB_PATH + '.tmp';
     fs.writeFileSync(tmpPath, Buffer.from(data));
     fs.renameSync(tmpPath, config.DB_PATH);
-    dbMtime = getFileMtime();
   } finally {
     saving = false;
   }
@@ -153,6 +140,22 @@ async function updateRecord(id, fields) {
   if (sets.length === 0) return;
   params.push(id);
   db.run(`UPDATE send_records SET ${sets.join(', ')} WHERE id = ?`, params);
+  saveDb();
+}
+
+async function cleanupPendingRecords() {
+  await getDb();
+  db.run(`UPDATE send_records SET status = 'failure', error_msg = '服务重启，未完成的任务已标记失败' WHERE status = 'pending'`);
+  saveDb();
+  const row = queryOne(`SELECT changes() as cnt`);
+  return row ? row.cnt : 0;
+}
+
+async function markPendingAsFailed(ids, errorMsg) {
+  await getDb();
+  if (!ids || !ids.length) return;
+  const placeholders = ids.map(() => '?').join(',');
+  db.run(`UPDATE send_records SET status = 'failure', error_msg = ? WHERE id IN (${placeholders}) AND status = 'pending'`, [errorMsg, ...ids]);
   saveDb();
 }
 
@@ -307,4 +310,4 @@ async function getInsightsFiltered({ report_type, insight_type, dateRange, page 
   return { total, page, pageSize, records: rows };
 }
 
-module.exports = { getDb, insertRecord, updateRecord, getRecordById, getRecordsByIds, getRecords, insertGameTag, getGameTags, getTagMappings, getLastSuccessRecord, getRecentRecords, insertInsight, getInsights, getInsightsByDateRange, getInsightById, getInsightsFiltered };
+module.exports = { getDb, insertRecord, updateRecord, cleanupPendingRecords, markPendingAsFailed, getRecordById, getRecordsByIds, getRecords, insertGameTag, getGameTags, getTagMappings, getLastSuccessRecord, getRecentRecords, insertInsight, getInsights, getInsightsByDateRange, getInsightById, getInsightsFiltered };
