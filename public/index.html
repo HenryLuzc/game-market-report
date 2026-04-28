@@ -171,6 +171,10 @@
   .badge-success::before { background: var(--success); }
   .badge-failure { background: var(--danger-bg); color: var(--danger); }
   .badge-failure::before { background: var(--danger); }
+  .badge-pending { background: #fff3e0; color: #e65100; }
+  .badge-pending::before { background: #e65100; }
+  @keyframes pulse-pending { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .badge-pending { animation: pulse-pending 1.5s ease-in-out infinite; }
 
   /* ---- Pagination ---- */
   .pagination { display: flex; justify-content: center; align-items: center; gap: 14px; margin-top: 18px; }
@@ -354,7 +358,7 @@
       </div>
       <div class="table-wrap" style="box-shadow:none;border:1px solid var(--border)">
         <table>
-          <thead><tr><th style="width:50px">ID</th><th style="width:140px">时间</th><th>数据周期</th><th>报告类型</th><th>洞察类型</th><th>内容摘要</th><th style="width:60px">操作</th></tr></thead>
+          <thead><tr><th style="width:60px;white-space:nowrap">ID</th><th style="width:140px">时间</th><th>数据周期</th><th>报告类型</th><th>洞察类型</th><th>内容摘要</th><th style="width:70px;white-space:nowrap">操作</th></tr></thead>
           <tbody id="insightsBody"><tr><td colspan="7" class="empty-state">点击筛选加载数据</td></tr></tbody>
         </table>
       </div>
@@ -381,6 +385,7 @@
           <option value="">全部状态</option>
           <option value="success">成功</option>
           <option value="failure">失败</option>
+          <option value="pending">发送中</option>
         </select>
       </div>
       <div class="filter-group">
@@ -460,7 +465,9 @@ async function api(path, options = {}) {
     ...options,
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
-  return res.json();
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  return data;
 }
 
 function showToast(msg, type = 'success') {
@@ -515,7 +522,7 @@ function renderRecords({ total, page, pageSize, records }) {
         <td style="font-size:12px;white-space:nowrap;color:var(--text-secondary)">${esc(r.created_at)}</td>
         <td><strong>${esc(r.date_range)}</strong></td>
         <td><span class="badge badge-${esc(r.report_type)}">${TYPE_LABELS[r.report_type] || esc(r.report_type)}</span></td>
-        <td><span class="badge badge-${r.status === 'success' ? 'success' : 'failure'}">${r.status === 'success' ? '成功' : '失败'}</span></td>
+        <td><span class="badge badge-${r.status === 'success' ? 'success' : r.status === 'pending' ? 'pending' : 'failure'}">${r.status === 'success' ? '成功' : r.status === 'pending' ? '发送中' : '失败'}</span></td>
         <td style="font-size:12px;color:var(--text-secondary)">${esc(tType)}</td>
         <td class="mono">${esc(tId)}</td>
         <td>${r.error_msg ? `<a class="link-error" onclick="showError(event,${r.id})">查看</a>` : '<span style="color:var(--text-muted)">-</span>'}</td>
@@ -590,12 +597,34 @@ async function triggerPipeline() {
   btn.disabled = true; btn.textContent = '执行中...';
   try {
     const data = await api('/trigger', { method: 'POST', body: { types } });
-    const ok = data.results?.filter(r => r.status === 'success').length || 0;
-    const fail = data.results?.filter(r => r.status === 'failure').length || 0;
-    showToast(fail === 0 ? `${ok} 份报告发送成功` : `${ok} 成功, ${fail} 失败`, fail > 0 ? 'error' : 'success');
+    if (!data.recordIds || !data.recordIds.length) {
+      showToast('触发失败: 未创建记录', 'error');
+      btn.disabled = false; btn.textContent = '立即触发';
+      return;
+    }
+    showToast('已触发，正在生成报告...', 'success');
     loadRecords(1);
-  } catch (err) { showToast('触发失败: ' + err.message, 'error'); }
-  finally { btn.disabled = false; btn.textContent = '立即触发'; }
+    const ids = data.recordIds;
+    const poll = setInterval(async () => {
+      try {
+        const st = await api(`/pipeline-status?ids=${ids.join(',')}`);
+        const allDone = st.records.every(r => r.status !== 'pending');
+        if (allDone) {
+          clearInterval(poll);
+          const ok = st.records.filter(r => r.status === 'success').length;
+          const fail = st.records.filter(r => r.status === 'failure').length;
+          showToast(fail === 0 ? `${ok} 份报告发送成功` : `${ok} 成功, ${fail} 失败`, fail > 0 ? 'error' : 'success');
+          btn.disabled = false; btn.textContent = '立即触发';
+          loadRecords(1);
+        } else {
+          loadRecords(1);
+        }
+      } catch { /* ignore poll errors */ }
+    }, 3000);
+  } catch (err) {
+    showToast('触发失败: ' + err.message, 'error');
+    btn.disabled = false; btn.textContent = '立即触发';
+  }
 }
 
 document.getElementById('detailModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
@@ -718,13 +747,13 @@ function renderInsights({ total, page, pageSize, records }) {
       const preview = esc((r.content || '').slice(0, 80) + (r.content && r.content.length > 80 ? '...' : ''));
       const badgeColor = INSIGHT_TYPE_COLORS[r.insight_type] || 'tencent';
       return `<tr>
-        <td class="mono">#${r.id}</td>
+        <td class="mono" style="white-space:nowrap">#${r.id}</td>
         <td style="font-size:12px;white-space:nowrap;color:var(--text-secondary)">${esc(r.created_at)}</td>
         <td><strong>${esc(r.date_range)}</strong></td>
         <td><span class="badge badge-${esc(r.report_type)}">${TYPE_LABELS[r.report_type] || esc(r.report_type)}</span></td>
         <td><span class="badge" style="background:var(--${badgeColor}-bg,var(--accent-light));color:var(--${badgeColor},var(--accent))">${INSIGHT_TYPE_LABELS[r.insight_type] || esc(r.insight_type)}</span></td>
         <td style="font-size:12px;color:var(--text-secondary);max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.content||'')}">${preview}</td>
-        <td><button class="btn btn-sm btn-outline" onclick="viewInsight(${r.id})">查看</button></td>
+        <td style="white-space:nowrap"><button class="btn btn-sm btn-outline" onclick="viewInsight(${r.id})">查看</button></td>
       </tr>`;
     }).join('');
   }

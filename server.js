@@ -91,17 +91,44 @@ app.post('/api/records/:id/resend', async (req, res) => {
   }
 });
 
-// 手动触发 pipeline（后台执行，立即返回）
+// 手动触发 pipeline（先插 pending 记录，后台执行）
 let pipelineRunning = false;
 let pipelineTimer = null;
 const PIPELINE_TIMEOUT_MS = 10 * 60 * 1000;
 
-app.post('/api/trigger', (req, res) => {
+app.post('/api/trigger', async (req, res) => {
   const { types = ['tencent', 'bytedance'], userId, chatId } = req.body || {};
   if (!Array.isArray(types)) return res.status(400).json({ error: 'types 必须为数组' });
   const valid = types.every(t => ['tencent', 'bytedance', 'tencent_app', 'bytedance_app'].includes(t));
   if (!valid) return res.status(400).json({ error: '无效的报告类型' });
   if (pipelineRunning) return res.status(409).json({ error: '已有 pipeline 正在执行' });
+
+  let targets;
+  if (userId) {
+    targets = [{ type: 'user', target: userId, name: 'CLI 指定用户' }];
+  } else if (chatId) {
+    targets = [{ type: 'chat', target: chatId, name: 'CLI 指定群聊' }];
+  } else {
+    targets = sendTargets.loadTargets();
+    if (targets.length === 0) {
+      return res.status(400).json({ error: '未配置发送目标' });
+    }
+  }
+
+  const recordIds = [];
+  try {
+    for (const type of types) {
+      for (const t of targets) {
+        const id = await db.insertRecord({
+          date_range: '-', report_type: type, status: 'pending',
+          send_target: JSON.stringify(t),
+        });
+        recordIds.push({ id, type, target: t });
+      }
+    }
+  } catch (err) {
+    return res.status(500).json({ error: '创建记录失败: ' + err.message });
+  }
 
   pipelineRunning = true;
   pipelineTimer = setTimeout(() => {
@@ -109,9 +136,16 @@ app.post('/api/trigger', (req, res) => {
     pipelineRunning = false;
     pipelineTimer = null;
   }, PIPELINE_TIMEOUT_MS);
-  res.json({ status: 'started', types });
 
-  runPipeline({ types, userId, chatId })
+  res.json({ status: 'started', types, recordIds: recordIds.map(r => r.id) });
+
+  const recordMap = {};
+  for (const r of recordIds) {
+    if (!recordMap[r.type]) recordMap[r.type] = [];
+    recordMap[r.type].push({ id: r.id, target: r.target });
+  }
+
+  runPipeline({ types, userId, chatId, recordMap })
     .then(results => {
       console.log('[Trigger] Pipeline 完成:', results.map(r => `${r.report_type}:${r.status}`).join(', '));
     })
@@ -122,6 +156,17 @@ app.post('/api/trigger', (req, res) => {
       pipelineRunning = false;
       if (pipelineTimer) { clearTimeout(pipelineTimer); pipelineTimer = null; }
     });
+});
+
+app.get('/api/pipeline-status', async (req, res) => {
+  try {
+    const ids = (req.query.ids || '').split(',').map(Number).filter(n => n > 0);
+    if (!ids.length) return res.json({ records: [] });
+    const records = await db.getRecordsByIds(ids);
+    res.json({ records });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // 游戏缓存 API

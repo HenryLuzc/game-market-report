@@ -142,6 +142,27 @@ async function insertRecord({ date_range, report_type, status, error_msg = null,
   return row ? row.id : null;
 }
 
+async function updateRecord(id, fields) {
+  await getDb();
+  const allowed = ['status', 'error_msg', 'card_json', 'input_json', 'message_id', 'send_target', 'date_range'];
+  const sets = [];
+  const params = [];
+  for (const key of allowed) {
+    if (key in fields) { sets.push(`${key} = ?`); params.push(fields[key]); }
+  }
+  if (sets.length === 0) return;
+  params.push(id);
+  db.run(`UPDATE send_records SET ${sets.join(', ')} WHERE id = ?`, params);
+  saveDb();
+}
+
+async function getRecordsByIds(ids) {
+  await getDb();
+  if (!ids.length) return [];
+  const placeholders = ids.map(() => '?').join(',');
+  return queryAll(`SELECT id, status, report_type, error_msg FROM send_records WHERE id IN (${placeholders})`, ids);
+}
+
 async function getRecordById(id) {
   await getDb();
   return queryOne('SELECT * FROM send_records WHERE id = ?', [id]);
@@ -286,4 +307,4 @@ async function getInsightsFiltered({ report_type, insight_type, dateRange, page 
   return { total, page, pageSize, records: rows };
 }
 
-module.exports = { getDb, insertRecord, getRecordById, getRecords, insertGameTag, getGameTags, getTagMappings, getLastSuccessRecord, getRecentRecords, insertInsight, getInsights, getInsightsByDateRange, getInsightById, getInsightsFiltered };
+module.exports = { getDb, insertRecord, updateRecord, getRecordById, getRecordsByIds, getRecords, insertGameTag, getGameTags, getTagMappings, getLastSuccessRecord, getRecentRecords, insertInsight, getInsights, getInsightsByDateRange, getInsightById, getInsightsFiltered };

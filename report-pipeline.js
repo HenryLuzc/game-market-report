@@ -14,170 +14,170 @@ function today() {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-async function runSingleReport(type, rows, dateRange, cache, targets) {
-  let inputData, cardJson, cardJsonStr;
+async function generateReport(type, rows, dateRange, cache) {
+  let inputData, cardJson;
 
+  if (type === 'tencent') {
+    const { games, total_cost } = await llmParser.parseTencentData(rows);
+    const enriched = await gameCache.enrichGames(games, cache);
+    inputData = {
+      title: `${dateRange} 腾讯小游戏消耗排名分析`,
+      date_range: dateRange,
+      analysis_date: today(),
+      data_source: config.DATA_SOURCE,
+      games: enriched,
+      total_daily_cost: total_cost,
+    };
+  } else if (type === 'bytedance') {
+    const { wx_games, dy_games, wx_total_cost, dy_total_cost } = await llmParser.parseByteDanceData(rows);
+    const wxEnriched = await gameCache.enrichGames(wx_games, cache);
+    const dyEnriched = await gameCache.enrichGames(dy_games, cache);
+    inputData = {
+      title: `${dateRange} 字节小游戏消耗排名分析`,
+      date_range: dateRange,
+      analysis_date: today(),
+      data_source: config.DATA_SOURCE,
+      wx_games: wxEnriched,
+      dy_games: dyEnriched,
+      wx_total_daily_cost: wx_total_cost,
+      dy_total_daily_cost: dy_total_cost,
+    };
+  } else if (type === 'tencent_app') {
+    const { games, total_cost } = await llmParser.parseTencentAppData(rows);
+    const enriched = await gameCache.enrichGames(games, cache, 'app');
+    inputData = {
+      title: `${dateRange} 腾讯手游消耗排名分析`,
+      date_range: dateRange,
+      analysis_date: today(),
+      data_source: config.DATA_SOURCE,
+      games: enriched,
+      total_daily_cost: total_cost,
+    };
+  } else if (type === 'bytedance_app') {
+    const { games, total_cost } = await llmParser.parseByteDanceAppData(rows);
+    const enriched = await gameCache.enrichGames(games, cache, 'app');
+    inputData = {
+      title: `${dateRange} 字节手游消耗排名分析`,
+      date_range: dateRange,
+      analysis_date: today(),
+      data_source: config.DATA_SOURCE,
+      games: enriched,
+      total_daily_cost: total_cost,
+    };
+  }
+
+  // Enrich with trends and anomaly detection — store in DB, not in card
+  let trends = null, anomalies = [];
   try {
-    if (type === 'tencent') {
-      const { games, total_cost } = await llmParser.parseTencentData(rows);
-      const enriched = await gameCache.enrichGames(games, cache);
-      inputData = {
-        title: `${dateRange} 腾讯小游戏消耗排名分析`,
-        date_range: dateRange,
-        analysis_date: today(),
-        data_source: config.DATA_SOURCE,
-        games: enriched,
-        total_daily_cost: total_cost,
-      };
-    } else if (type === 'bytedance') {
-      const { wx_games, dy_games, wx_total_cost, dy_total_cost } = await llmParser.parseByteDanceData(rows);
-      const wxEnriched = await gameCache.enrichGames(wx_games, cache);
-      const dyEnriched = await gameCache.enrichGames(dy_games, cache);
-      inputData = {
-        title: `${dateRange} 字节小游戏消耗排名分析`,
-        date_range: dateRange,
-        analysis_date: today(),
-        data_source: config.DATA_SOURCE,
-        wx_games: wxEnriched,
-        dy_games: dyEnriched,
-        wx_total_daily_cost: wx_total_cost,
-        dy_total_daily_cost: dy_total_cost,
-      };
-    } else if (type === 'tencent_app') {
-      const { games, total_cost } = await llmParser.parseTencentAppData(rows);
-      const enriched = await gameCache.enrichGames(games, cache, 'app');
-      inputData = {
-        title: `${dateRange} 腾讯手游消耗排名分析`,
-        date_range: dateRange,
-        analysis_date: today(),
-        data_source: config.DATA_SOURCE,
-        games: enriched,
-        total_daily_cost: total_cost,
-      };
-    } else if (type === 'bytedance_app') {
-      const { games, total_cost } = await llmParser.parseByteDanceAppData(rows);
-      const enriched = await gameCache.enrichGames(games, cache, 'app');
-      inputData = {
-        title: `${dateRange} 字节手游消耗排名分析`,
-        date_range: dateRange,
-        analysis_date: today(),
-        data_source: config.DATA_SOURCE,
-        games: enriched,
-        total_daily_cost: total_cost,
-      };
+    [trends, anomalies] = await Promise.all([
+      trendAnalysis.getTrendsForReport(inputData, type, dateRange),
+      anomalyDetection.detectAnomalies(inputData, type),
+    ]);
+    if (trends) {
+      await db.insertInsight({
+        date_range: dateRange, report_type: type, insight_type: 'trend',
+        content: trends.insight || trends.markdown,
+        data_json: JSON.stringify(trends),
+      });
     }
+    if (anomalies && anomalies.length) {
+      await db.insertInsight({
+        date_range: dateRange, report_type: type, insight_type: 'anomaly',
+        content: anomalyDetection.formatAnomaliesMarkdown(anomalies),
+        data_json: JSON.stringify(anomalies),
+      });
+    }
+  } catch (err) {
+    console.error(`[Pipeline] ${type} 趋势/异常分析失败(不影响发送):`, err.message);
+  }
 
-    // Enrich with trends and anomaly detection — store in DB, not in card
-    let trends = null, anomalies = [];
-    try {
-      [trends, anomalies] = await Promise.all([
-        trendAnalysis.getTrendsForReport(inputData, type, dateRange),
-        anomalyDetection.detectAnomalies(inputData, type),
-      ]);
-      if (trends) {
+  // Generate smart analysis with LLM (using trends, anomalies, and history)
+  try {
+    const historyInsights = await db.getInsights(type, 'summary', 3);
+    const smartAnalysis = await trendAnalysis.generateSmartAnalysis(inputData, type, trends, anomalies, historyInsights);
+    if (smartAnalysis) {
+      inputData.smart_analysis = smartAnalysis;
+      await db.insertInsight({
+        date_range: dateRange, report_type: type, insight_type: 'summary',
+        content: smartAnalysis,
+      });
+    }
+  } catch (err) {
+    console.error(`[Pipeline] ${type} 智能分析生成失败(使用模板fallback):`, err.message);
+  }
+
+  // Long-term analysis (trigger when 4+ weeks of summaries exist)
+  try {
+    const summaryCount = (await db.getInsights(type, 'summary', 10)).length;
+    if (summaryCount >= 4) {
+      const longTerm = await trendAnalysis.generateLongTermInsight(type);
+      if (longTerm) {
         await db.insertInsight({
-          date_range: dateRange, report_type: type, insight_type: 'trend',
-          content: trends.insight || trends.markdown,
-          data_json: JSON.stringify(trends),
+          date_range: dateRange, report_type: type, insight_type: 'long_term',
+          content: longTerm,
         });
       }
-      if (anomalies && anomalies.length) {
-        await db.insertInsight({
-          date_range: dateRange, report_type: type, insight_type: 'anomaly',
-          content: anomalyDetection.formatAnomaliesMarkdown(anomalies),
-          data_json: JSON.stringify(anomalies),
-        });
-      }
-    } catch (err) {
-      console.error(`[Pipeline] ${type} 趋势/异常分析失败(不影响发送):`, err.message);
     }
+  } catch (err) {
+    console.error(`[Pipeline] ${type} 长周期分析失败:`, err.message);
+  }
 
-    // Generate smart analysis with LLM (using trends, anomalies, and history)
+  // Generate card
+  if (type === 'tencent') {
+    cardJson = cardGenerator.generateTencentCard(inputData);
+  } else if (type === 'bytedance') {
+    cardJson = cardGenerator.generateByteDanceCard(inputData);
+  } else if (type === 'tencent_app') {
+    cardJson = cardGenerator.generateTencentAppCard(inputData);
+  } else if (type === 'bytedance_app') {
+    cardJson = cardGenerator.generateByteDanceAppCard(inputData);
+  }
+
+  return { type, cardJson, inputData };
+}
+
+async function sendAndRecord(type, cardJson, inputData, dateRange, targets, preRecords) {
+  const cardJsonStr = JSON.stringify(cardJson);
+  const inputJsonStr = JSON.stringify(inputData);
+  const sendResults = await cardSender.sendCardToAll(cardJson, targets);
+
+  const records = [];
+  for (let i = 0; i < sendResults.length; i++) {
+    const sr = sendResults[i];
+    const preId = preRecords && preRecords[i] ? preRecords[i].id : null;
+    const status = sr.success ? 'success' : 'failure';
     try {
-      const historyInsights = await db.getInsights(type, 'summary', 3);
-      const smartAnalysis = await trendAnalysis.generateSmartAnalysis(inputData, type, trends, anomalies, historyInsights);
-      if (smartAnalysis) {
-        inputData.smart_analysis = smartAnalysis;
-        await db.insertInsight({
-          date_range: dateRange, report_type: type, insight_type: 'summary',
-          content: smartAnalysis,
-        });
-      }
-    } catch (err) {
-      console.error(`[Pipeline] ${type} 智能分析生成失败(使用模板fallback):`, err.message);
-    }
-
-    // Long-term analysis (trigger when 4+ weeks of summaries exist)
-    try {
-      const summaryCount = (await db.getInsights(type, 'summary', 10)).length;
-      if (summaryCount >= 4) {
-        const longTerm = await trendAnalysis.generateLongTermInsight(type);
-        if (longTerm) {
-          await db.insertInsight({
-            date_range: dateRange, report_type: type, insight_type: 'long_term',
-            content: longTerm,
-          });
-        }
-      }
-    } catch (err) {
-      console.error(`[Pipeline] ${type} 长周期分析失败:`, err.message);
-    }
-
-    // Generate card
-    if (type === 'tencent') {
-      cardJson = cardGenerator.generateTencentCard(inputData);
-    } else if (type === 'bytedance') {
-      cardJson = cardGenerator.generateByteDanceCard(inputData);
-    } else if (type === 'tencent_app') {
-      cardJson = cardGenerator.generateTencentAppCard(inputData);
-    } else if (type === 'bytedance_app') {
-      cardJson = cardGenerator.generateByteDanceAppCard(inputData);
-    }
-
-    cardJsonStr = JSON.stringify(cardJson);
-    const inputJsonStr = JSON.stringify(inputData);
-    const sendResults = await cardSender.sendCardToAll(cardJson, targets);
-
-    const records = [];
-    for (const sr of sendResults) {
-      const targetStr = JSON.stringify(sr.target);
-      try {
-        const id = await db.insertRecord({
-          date_range: dateRange,
-          report_type: type,
-          status: sr.success ? 'success' : 'failure',
+      if (preId) {
+        await db.updateRecord(preId, {
+          status,
           error_msg: sr.error || null,
           card_json: cardJsonStr,
           input_json: inputJsonStr,
           message_id: sr.message_id || null,
-          send_target: targetStr,
         });
-        records.push({ report_type: type, status: sr.success ? 'success' : 'failure', record_id: id, target: sr.target, message_id: sr.message_id, error: sr.error });
-      } catch (dbErr) {
-        console.error(`[Pipeline] ${type} DB 写入失败:`, dbErr.message);
-        records.push({ report_type: type, status: 'failure', record_id: null, target: sr.target, error: sr.error || dbErr.message });
+        records.push({ report_type: type, status, record_id: preId, target: sr.target, message_id: sr.message_id, error: sr.error });
+      } else {
+        const id = await db.insertRecord({
+          date_range: dateRange,
+          report_type: type,
+          status,
+          error_msg: sr.error || null,
+          card_json: cardJsonStr,
+          input_json: inputJsonStr,
+          message_id: sr.message_id || null,
+          send_target: JSON.stringify(sr.target),
+        });
+        records.push({ report_type: type, status, record_id: id, target: sr.target, message_id: sr.message_id, error: sr.error });
       }
-    }
-    return records;
-  } catch (err) {
-    try {
-      const id = await db.insertRecord({
-        date_range: dateRange,
-        report_type: type,
-        status: 'failure',
-        error_msg: err.message,
-        card_json: cardJsonStr || null,
-        input_json: inputData ? JSON.stringify(inputData) : null,
-      });
-      return [{ report_type: type, status: 'failure', record_id: id, error: err.message }];
     } catch (dbErr) {
-      console.error(`[Pipeline] ${type} DB 写入也失败:`, dbErr.message);
-      return [{ report_type: type, status: 'failure', record_id: null, error: err.message }];
+      console.error(`[Pipeline] ${type} DB 写入失败:`, dbErr.message);
+      records.push({ report_type: type, status: 'failure', record_id: preId, target: sr.target, error: sr.error || dbErr.message });
     }
   }
+  return records;
 }
 
-async function runPipeline({ types = ['tencent', 'bytedance', 'tencent_app', 'bytedance_app'], userId, chatId, sheetName } = {}) {
+async function runPipeline({ types = ['tencent', 'bytedance', 'tencent_app', 'bytedance_app'], userId, chatId, sheetName, recordMap } = {}) {
   console.log(`[Pipeline] 开始执行 (${types.join(', ')}) - ${new Date().toLocaleString('zh-CN')}`);
 
   let rows, dateRange;
@@ -202,22 +202,39 @@ async function runPipeline({ types = ['tencent', 'bytedance', 'tencent_app', 'by
     console.error(`[Pipeline] 数据读取失败: ${err.message}`);
     const results = [];
     for (const type of types) {
-      try {
-        const id = await db.insertRecord({
-          date_range: '-',
-          report_type: type,
-          status: 'failure',
-          error_msg: `数据读取失败: ${err.message}`,
-        });
-        results.push({ report_type: type, status: 'failure', record_id: id, error: err.message });
-      } catch {
-        results.push({ report_type: type, status: 'failure', record_id: null, error: err.message });
+      const preRecords = recordMap && recordMap[type];
+      if (preRecords) {
+        for (const pr of preRecords) {
+          await db.updateRecord(pr.id, { status: 'failure', error_msg: `数据读取失败: ${err.message}` });
+          results.push({ report_type: type, status: 'failure', record_id: pr.id, error: err.message });
+        }
+      } else {
+        try {
+          const id = await db.insertRecord({
+            date_range: '-', report_type: type, status: 'failure',
+            error_msg: `数据读取失败: ${err.message}`,
+          });
+          results.push({ report_type: type, status: 'failure', record_id: id, error: err.message });
+        } catch {
+          results.push({ report_type: type, status: 'failure', record_id: null, error: err.message });
+        }
       }
     }
     return results;
   }
 
   const cache = gameCache.loadCache();
+
+  if (recordMap) {
+    for (const type of types) {
+      const preRecords = recordMap[type];
+      if (preRecords) {
+        for (const pr of preRecords) {
+          await db.updateRecord(pr.id, { date_range: dateRange });
+        }
+      }
+    }
+  }
 
   // CLI override: single target
   let targets;
@@ -234,9 +251,50 @@ async function runPipeline({ types = ['tencent', 'bytedance', 'tencent_app', 'by
   }
   console.log(`[Pipeline] 发送目标: ${targets.length} 个`);
 
+  // Phase 1: generate all reports in parallel
+  const SEND_ORDER = ['tencent', 'bytedance', 'tencent_app', 'bytedance_app'];
+  const orderedTypes = [...types].sort((a, b) => SEND_ORDER.indexOf(a) - SEND_ORDER.indexOf(b));
+
+  console.log(`[Pipeline] 并行生成 ${types.length} 份报告...`);
+  const genResults = await Promise.allSettled(
+    types.map(type => generateReport(type, rows, dateRange, cache))
+  );
+
+  const generated = new Map();
   const allResults = [];
-  for (const type of types) {
-    const records = await runSingleReport(type, rows, dateRange, cache, targets);
+  for (let i = 0; i < types.length; i++) {
+    const type = types[i];
+    const result = genResults[i];
+    if (result.status === 'fulfilled') {
+      generated.set(type, result.value);
+    } else {
+      console.error(`[Pipeline] ${type} 生成失败:`, result.reason?.message);
+      const preRecords = recordMap && recordMap[type];
+      if (preRecords) {
+        for (const pr of preRecords) {
+          await db.updateRecord(pr.id, { status: 'failure', error_msg: result.reason?.message, date_range: dateRange });
+          allResults.push({ report_type: type, status: 'failure', record_id: pr.id, error: result.reason?.message });
+        }
+      } else {
+        try {
+          const id = await db.insertRecord({
+            date_range: dateRange, report_type: type, status: 'failure',
+            error_msg: result.reason?.message,
+          });
+          allResults.push({ report_type: type, status: 'failure', record_id: id, error: result.reason?.message });
+        } catch (dbErr) {
+          allResults.push({ report_type: type, status: 'failure', record_id: null, error: result.reason?.message });
+        }
+      }
+    }
+  }
+
+  // Phase 2: send in fixed order
+  for (const type of orderedTypes) {
+    const gen = generated.get(type);
+    if (!gen) continue;
+    const preRecords = recordMap && recordMap[type];
+    const records = await sendAndRecord(type, gen.cardJson, gen.inputData, dateRange, targets, preRecords);
     allResults.push(...records);
   }
 
