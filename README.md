@@ -16,7 +16,7 @@
 - 手游类型标签通过 LLM 归一化为标准分类（角色扮演、策略、休闲等 16 类）
 - 原始标签记录到数据库（game_tags 表），供模型学习优化
 - 搜索时自动去标点匹配 + 用官方名称展示（如"次神光之觉醒"→"次神：光之觉醒"）
-- 生成包含饼图、分页表格、总结分析的飞书卡片消息
+- 生成包含饼图、分页表格、总结分析的飞书卡片消息（4 类报告并行生成）
 - 定时任务（默认每周五 10:00）+ 手动触发 + HTTP API 触发
 - Web Dashboard 查看发送记录、管理发送目标、浏览分析洞察、多维度筛选、重发卡片
 - SQLite 持久化所有发送记录、游戏标签历史和分析洞察
@@ -128,7 +128,8 @@ npm run init-cache
 | GET | `/api/records` | 发送记录列表（支持 type/status/dateFrom/dateTo/dateRange/targetType/target/page 筛选） |
 | GET | `/api/records/:id` | 记录详情 |
 | POST | `/api/records/:id/resend` | 重发卡片 |
-| POST | `/api/trigger` | 触发 pipeline（body: `{types, userId, chatId}`） |
+| POST | `/api/trigger` | 触发 pipeline（body: `{types, userId, chatId}`），返回 `{recordIds}` |
+| GET | `/api/pipeline-status` | 轮询 pipeline 状态（query: `ids=1,2,3`） |
 | GET | `/api/insights` | 分析洞察列表（支持 type/insightType/dateRange/page 筛选） |
 | GET | `/api/insights/:id` | 洞察详情 |
 | GET | `/api/cache` | 游戏缓存列表 |
@@ -150,7 +151,7 @@ npm run init-cache
 | created_at | TEXT | 创建时间 |
 | date_range | TEXT | 数据日期范围 |
 | report_type | TEXT | 报告类型（tencent/bytedance/tencent_app/bytedance_app） |
-| status | TEXT | 发送状态（success/failure） |
+| status | TEXT | 发送状态（pending/success/failure） |
 | error_msg | TEXT | 错误信息 |
 | card_json | TEXT | 卡片 JSON |
 | input_json | TEXT | 输入数据 JSON |
