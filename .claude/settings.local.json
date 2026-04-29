@@ -26,7 +26,10 @@
       "Read(//c/Users/luzc/.lark-cli/**)",
       "Read(//c/Users/luzc/AppData/Local/**)",
       "Read(//c/Users/luzc/AppData/Roaming/**)",
-      "Bash(ls *)"
+      "Bash(ls *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
     ]
   }
 }
