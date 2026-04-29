@@ -8,12 +8,24 @@ fs.mkdirSync(path.dirname(config.DB_PATH), { recursive: true });
 let db = null;
 let dbPromise = null;
 let saving = false;
+let lastSaveMtime = 0;
+let SQL = null;
 
 async function getDb() {
-  if (db) return db;
+  if (db) {
+    try {
+      const fileMtime = fs.statSync(config.DB_PATH).mtimeMs;
+      if (fileMtime > lastSaveMtime && lastSaveMtime > 0) {
+        const buffer = fs.readFileSync(config.DB_PATH);
+        db = new SQL.Database(buffer);
+        lastSaveMtime = fileMtime;
+      }
+    } catch {}
+    return db;
+  }
   if (dbPromise) return dbPromise;
   dbPromise = (async () => {
-    const SQL = await initSqlJs();
+    SQL = await initSqlJs();
     try {
       const buffer = fs.readFileSync(config.DB_PATH);
       db = new SQL.Database(buffer);
@@ -64,6 +76,7 @@ async function getDb() {
     db.run('CREATE INDEX IF NOT EXISTS idx_insights_type ON analysis_insights(report_type, insight_type)');
     db.run('CREATE INDEX IF NOT EXISTS idx_insights_date ON analysis_insights(date_range)');
     try { db.run('ALTER TABLE send_records ADD COLUMN send_target TEXT'); } catch {}
+    try { lastSaveMtime = fs.statSync(config.DB_PATH).mtimeMs; } catch {}
     return db;
   })().catch(err => {
     db = null;
@@ -81,6 +94,7 @@ function saveDb() {
     const tmpPath = config.DB_PATH + '.tmp';
     fs.writeFileSync(tmpPath, Buffer.from(data));
     fs.renameSync(tmpPath, config.DB_PATH);
+    try { lastSaveMtime = fs.statSync(config.DB_PATH).mtimeMs; } catch {}
   } finally {
     saving = false;
   }
