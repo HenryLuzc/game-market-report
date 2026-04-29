@@ -454,5 +454,74 @@
     "type": "角色扮演、回合制",
     "category": "minigame",
     "officialName": "聊斋搜神记"
+  },
+  "捞个菜_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx6081576e21a2baca",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "捞个菜"
+  },
+  "爪爪大乱斗_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxdbb88ff471c49192",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "爪爪大乱斗"
+  },
+  "四季合合_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx693b4a44e1d81197",
+    "type": "休闲益智、消除",
+    "category": "minigame",
+    "officialName": "四季合合"
+  },
+  "原始征途_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxfd8da8f8efcda4a7",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "原始征途"
+  },
+  "烟雨剑影_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx6a0215c14d31ad73",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "烟雨剑影"
+  },
+  "出征吧！勇士_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx7a29f6886060d703",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "出征吧！勇士"
+  },
+  "占城大师_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx43d056857654e8eb",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "占城大师领地"
+  },
+  "炽烈战歌_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx2de97f2fc09fe24f",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "炽烈战歌"
+  },
+  "问道_app": {
+    "link": "https://sj.qq.com/appdetail/com.tencent.tmgp.gbits.atm",
+    "type": "MMORPG、角色扮演",
+    "category": "app",
+    "raw_type": "角色扮演、MMORPG、神话、端游移植、角色扮演、MMORPG、神话、端游移植、角色扮演、卡牌、地牢、暗黑、角色扮演、养成、仙侠、文字游戏、休闲益智、Roguelike、冒险、动漫、休闲益智、经营、童年、萌系、角色扮演、回合制、武侠、中国风、角色扮演、MMORPG、仙侠、山海经、角色扮演、回合制、冒险、崩坏、角色扮演、MMORPG、仙侠、端游移植、角色扮演、卡牌、地牢、暗黑、角色扮演、养成、仙侠、文字游戏、休闲益智、Roguelike、冒险、动漫、休闲益智、经营、童年、萌系",
+    "officialName": "问道"
+  },
+  "三国大冒险_app": {
+    "link": "https://apps.apple.com/cn/app/%E4%B8%89%E5%9B%BD%E5%A4%A7%E5%86%92%E9%99%A9/id6749241301",
+    "type": "卡牌",
+    "category": "app",
+    "raw_type": "卡牌",
+    "officialName": "三国大冒险"
+  },
+  "疯狂水世界_app": {
+    "link": "https://www.taptap.cn/app/790816",
+    "type": "模拟经营、其他",
+    "category": "app",
+    "raw_type": "模拟、生存、末日",
+    "officialName": "疯狂水世界"
   }
 }
