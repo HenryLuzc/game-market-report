@@ -6,7 +6,7 @@ function cleanGameName(name) {
   if (!name) return '';
   let s = String(name).trim();
   s = s.replace(/\s+(wx|WX)\s*$/i, '');
-  s = s.replace(/\s+\d\s*$/, '');
+  s = s.replace(/\s*\d\s*$/, '');
   s = s.replace(/小游戏$/, '');
   s = s.replace(/\s+/g, '');
   return s;
@@ -66,7 +66,9 @@ async function callClaude(prompt, rowsText) {
     max_tokens: 4096,
     messages: [{ role: 'user', content: `${prompt}\n\n--- 表格数据 ---\n${rowsText}` }],
   });
-  const text = resp.content[0].text.trim();
+  const textBlock = resp.content.find(b => b.type === 'text');
+  if (!textBlock) throw new Error('LLM 返回无文本内容: ' + JSON.stringify(resp.content.map(b => b.type)));
+  const text = textBlock.text.trim();
   const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/) || [null, text];
   const raw = jsonMatch[1];
   if (!raw) throw new Error('LLM 返回内容无法提取 JSON: ' + text.slice(0, 200));
