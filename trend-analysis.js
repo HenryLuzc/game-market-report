@@ -160,7 +160,7 @@ async function generateTrendInsight(trends, reportType) {
       max_tokens: 600,
       messages: [{ role: 'user', content: `你是游戏广告投放市场分析师。以下是${typeName}市场的周环比变化数据，请生成一段简洁的趋势洞察（3-5句话），重点关注值得关注的变化和可能的原因。不要重复罗列数据，聚焦洞察。不要使用标题或markdown格式，直接输出纯文本段落。\n\n${promptText}` }],
     });
-    return resp.content?.[0]?.text?.trim() || '';
+    return resp.content?.find(b => b.type === 'text')?.text?.trim() || '';
   } catch {
     return '';
   }

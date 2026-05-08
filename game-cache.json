@@ -701,5 +701,11 @@
     "category": "app",
     "raw_type": "策略、卡牌、三国、中国风、休闲益智、解谜、冒险、剧情、角色扮演、MOBA、战争、非对称竞技",
     "officialName": "仙遇"
+  },
+  "不休的消消乐_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxdd37b79c880835fd",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "不休的消消乐"
   }
 }

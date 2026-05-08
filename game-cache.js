@@ -136,7 +136,7 @@ async function normalizeGameType(gameName, rawType) {
       max_tokens: 100,
       messages: [{ role: 'user', content: `${NORMALIZE_PROMPT}${fewShot}\n\n游戏名：${gameName}\n原始标签：${rawType}` }],
     });
-    const text = resp.content[0].text.trim();
+    const text = resp.content.find(b => b.type === 'text')?.text?.trim() || '';
     if (text && text !== '-' && text.length < 30) {
       dict.set(rawType, text);
       return text;
@@ -152,7 +152,7 @@ async function classifyGameType(gameName, pageText) {
       max_tokens: 200,
       messages: [{ role: 'user', content: `根据以下游戏页面信息，提取游戏"${gameName}"的类型标签，最多4个，用"、"分隔。只返回标签文字，不要解释。如果无法判断返回"-"。\n\n${pageText.slice(0, 2000)}` }],
     });
-    const text = resp.content[0].text.trim();
+    const text = resp.content.find(b => b.type === 'text')?.text?.trim() || '';
     if (text && text !== '-' && text.length < 50) return text;
   } catch {}
   return '-';
