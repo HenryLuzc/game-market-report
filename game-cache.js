@@ -132,7 +132,7 @@ async function normalizeGameType(gameName, rawType) {
   try {
     const fewShot = buildFewShotExamples(dict);
     const resp = await llmClient.messages.create({
-      model: 'claude-sonnet-4-6',
+      model: 'claude-opus-4-6',
       max_tokens: 100,
       messages: [{ role: 'user', content: `${NORMALIZE_PROMPT}${fewShot}\n\n游戏名：${gameName}\n原始标签：${rawType}` }],
     });
@@ -148,7 +148,7 @@ async function normalizeGameType(gameName, rawType) {
 async function classifyGameType(gameName, pageText) {
   try {
     const resp = await llmClient.messages.create({
-      model: 'claude-sonnet-4-6',
+      model: 'claude-opus-4-6',
       max_tokens: 200,
       messages: [{ role: 'user', content: `根据以下游戏页面信息，提取游戏"${gameName}"的类型标签，最多4个，用"、"分隔。只返回标签文字，不要解释。如果无法判断返回"-"。\n\n${pageText.slice(0, 2000)}` }],
     });

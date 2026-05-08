@@ -62,7 +62,7 @@ const BYTEDANCE_PROMPT = `你是一个数据提取助手。下面是飞书电子
 
 async function callClaude(prompt, rowsText) {
   const resp = await client.messages.create({
-    model: 'claude-sonnet-4-6',
+    model: 'claude-opus-4-6',
     max_tokens: 4096,
     messages: [{ role: 'user', content: `${prompt}\n\n--- 表格数据 ---\n${rowsText}` }],
   });
