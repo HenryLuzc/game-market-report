@@ -145,9 +145,9 @@
   },
   "途游休闲捕鱼_app": {
     "link": "https://apps.apple.com/cn/app/%E9%80%94%E6%B8%B8%E4%BC%91%E9%97%B2%E6%8D%95%E9%B1%BC-%E7%99%BE%E4%B8%87%E5%80%8D%E8%A1%97%E6%9C%BA%E7%8E%8B%E8%80%85%E5%A4%A7%E4%BD%9C%E6%88%98/id1570790378",
-    "type": "休闲、捕鱼",
+    "type": "捕鱼、休闲",
     "category": "app",
-    "raw_type": "休闲、捕鱼、街机、娱乐场"
+    "raw_type": "捕鱼、休闲、街机、娱乐场"
   },
   "鱼乐达人_app": {
     "link": "https://apps.apple.com/cn/app/%E9%B1%BC%E4%B9%90%E8%BE%BE%E4%BA%BA-%E7%8E%8B%E8%80%85%E6%8D%95%E9%B1%BC%E7%94%B5%E7%8E%A9%E8%A1%97%E6%9C%BA%E6%89%93%E9%B1%BC%E6%B8%B8%E6%88%8F/id1665337957",
@@ -707,5 +707,35 @@
     "type": "角色扮演、ARPG",
     "category": "minigame",
     "officialName": "不休的消消乐"
+  },
+  "女神国度_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx663ce06da5a51d54",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "女神国度"
+  },
+  "佳丽时空游戏软件V1._minigame": {
+    "link": "https://sj.qq.com/appdetail/wx7418a07cab502403",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "佳丽时空游戏软件V1.0"
+  },
+  "拿下三国_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxab701ab15d181555",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "拿下三国游戏软件V1.0"
+  },
+  "全民萌兽_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxc6a720a186f0bb08",
+    "type": "休闲益智、塔防",
+    "category": "minigame",
+    "officialName": "全民萌兽"
+  },
+  "佳丽时空游戏软件V1.0_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx7418a07cab502403",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "佳丽时空游戏软件V1.0"
   }
 }

@@ -459,13 +459,36 @@ function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
+function escAttr(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function escJs(s) {
+  return JSON.stringify(String(s == null ? '' : s));
+}
+
+function escJsAttr(s) {
+  return escJs(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 async function api(path, options = {}) {
+  const apiKey = localStorage.getItem('api_key') || new URLSearchParams(location.search).get('api_key') || '';
+  const headers = { 'Content-Type': 'application/json' };
+  if (apiKey) headers['X-API-Key'] = apiKey;
   const res = await fetch('/api' + path, {
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     ...options,
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
-  const data = await res.json();
+  if (res.status === 401) {
+    const key = prompt('请输入 API Key:');
+    if (key) { localStorage.setItem('api_key', key); return api(path, options); }
+    throw new Error('未授权');
+  }
+  if (res.status === 204 || res.headers.get('content-length') === '0') return {};
+  let data;
+  try { data = await res.json(); } catch { throw new Error(`HTTP ${res.status}`); }
   if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
   return data;
 }
@@ -624,9 +647,9 @@ async function triggerPipeline() {
           const fail = records.filter(r => r.status === 'failure').length;
           showToast(fail === 0 ? `${ok} 份报告发送成功` : `${ok} 成功, ${fail} 失败`, fail > 0 ? 'error' : 'success');
           btn.disabled = false; btn.textContent = '立即触发';
-          loadRecords(1);
+          loadRecords(currentPage);
         } else {
-          loadRecords(1);
+          loadRecords(currentPage);
         }
       } catch {
         pollErrors++;
@@ -634,7 +657,7 @@ async function triggerPipeline() {
           stopPoll();
           showToast('轮询状态失败，请手动刷新查看结果', 'error');
           btn.disabled = false; btn.textContent = '立即触发';
-          loadRecords(1);
+          loadRecords(currentPage);
         }
       }
     }, 3000);
@@ -673,8 +696,8 @@ async function loadTargets() {
       <td><span class="badge ${t.type === 'chat' ? 'badge-tencent' : 'badge-bytedance_app'}">${t.type === 'chat' ? '群聊' : '个人'}</span></td>
       <td class="mono">${esc(t.target)}</td>
       <td class="actions-cell">
-        <button class="btn btn-sm btn-outline" onclick="editTarget('${esc(t.id)}','${esc(t.type)}','${esc(t.target)}','${esc(t.name||'')}')">编辑</button>
-        <button class="btn btn-sm btn-danger" onclick="deleteTarget('${esc(t.id)}')">删除</button>
+        <button class="btn btn-sm btn-outline" onclick="editTarget(${escJsAttr(t.id)},${escJsAttr(t.type)},${escJsAttr(t.target)},${escJsAttr(t.name||'')})">编辑</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteTarget(${escJsAttr(t.id)})">删除</button>
       </td>
     </tr>
   `).join('');
@@ -697,14 +720,14 @@ function editTarget(id, type, target, name) {
   const row = document.getElementById('target-row-' + id);
   const s = 'height:34px;padding:0 10px;background:var(--bg-white);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:var(--font);width:100%';
   row.innerHTML = `
-    <td><input type="text" id="edit-name-${esc(id)}" value="${esc(name)}" style="${s}"></td>
+    <td><input type="text" id="edit-name-${esc(id)}" value="${escAttr(name)}" style="${s}"></td>
     <td><select id="edit-type-${esc(id)}" style="${s};cursor:pointer">
       <option value="chat" ${type==='chat'?'selected':''}>群聊</option>
       <option value="user" ${type==='user'?'selected':''}>个人</option>
     </select></td>
-    <td><input type="text" id="edit-target-${esc(id)}" value="${esc(target)}" style="${s};font-family:var(--mono)"></td>
+    <td><input type="text" id="edit-target-${esc(id)}" value="${escAttr(target)}" style="${s};font-family:var(--mono)"></td>
     <td class="actions-cell">
-      <button class="btn btn-sm btn-success" onclick="saveTarget('${esc(id)}')">保存</button>
+      <button class="btn btn-sm btn-success" onclick="saveTarget(${escJsAttr(id)})">保存</button>
       <button class="btn btn-sm btn-outline" onclick="loadTargets()">取消</button>
     </td>
   `;

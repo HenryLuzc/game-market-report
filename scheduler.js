@@ -1,16 +1,14 @@
 const cron = require('node-cron');
 const config = require('./config');
 const { runPipeline } = require('./report-pipeline');
-
-let running = false;
+const pipelineLock = require('./pipeline-lock');
 
 function startScheduler() {
   const job = cron.schedule(config.CRON_SCHEDULE, async () => {
-    if (running) {
+    if (!pipelineLock.acquire()) {
       console.log('[Scheduler] 上一次任务仍在执行，跳过本次');
       return;
     }
-    running = true;
     console.log(`[Scheduler] 定时任务触发 - ${new Date().toLocaleString('zh-CN')}`);
     try {
       const results = await runPipeline();
@@ -18,11 +16,10 @@ function startScheduler() {
     } catch (err) {
       console.error('[Scheduler] 定时任务异常:', err.message);
     } finally {
-      running = false;
+      pipelineLock.release();
     }
   }, {
     timezone: config.TIMEZONE,
-    scheduled: true,
   });
 
   console.log(`[Scheduler] 已启动定时任务: ${config.CRON_SCHEDULE} (${config.TIMEZONE})`);

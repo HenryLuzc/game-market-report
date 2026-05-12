@@ -21,7 +21,7 @@ async function loadTagDictionary() {
       }
       console.log(`[GameCache] 标签字典已加载: ${tagDict.size} 条映射`);
     } catch {
-      tagDict = new Map();
+      return new Map();
     }
     return tagDict;
   })().finally(() => { tagDictPromise = null; });
@@ -75,6 +75,7 @@ async function searchGameFromYYB(gameName) {
 
     const blockRe = /<a[^>]+href="(\/appdetail\/(wx[^"]+))"[^>]*>[\s\S]*?<\/a>/gi;
     const nameNorm = stripPunct(searchName);
+    if (!nameNorm) return null;
     let detailPath = null;
     let officialName = null;
     let match;
@@ -134,7 +135,7 @@ async function normalizeGameType(gameName, rawType) {
     const resp = await llmClient.messages.create({
       model: 'claude-opus-4-6',
       max_tokens: 100,
-      messages: [{ role: 'user', content: `${NORMALIZE_PROMPT}${fewShot}\n\n游戏名：${gameName}\n原始标签：${rawType}` }],
+      messages: [{ role: 'user', content: `${NORMALIZE_PROMPT}${fewShot}\n\n<data>\n游戏名：${gameName}\n原始标签：${rawType}\n</data>` }],
     });
     const text = resp.content.find(b => b.type === 'text')?.text?.trim() || '';
     if (text && text !== '-' && text.length < 30) {
@@ -150,7 +151,7 @@ async function classifyGameType(gameName, pageText) {
     const resp = await llmClient.messages.create({
       model: 'claude-opus-4-6',
       max_tokens: 200,
-      messages: [{ role: 'user', content: `根据以下游戏页面信息，提取游戏"${gameName}"的类型标签，最多4个，用"、"分隔。只返回标签文字，不要解释。如果无法判断返回"-"。\n\n${pageText.slice(0, 2000)}` }],
+      messages: [{ role: 'user', content: `根据以下游戏页面信息，提取游戏"${gameName}"的类型标签，最多4个，用"、"分隔。只返回标签文字，不要解释。如果无法判断返回"-"。\n\n<data>\n${pageText.slice(0, 2000)}\n</data>` }],
     });
     const text = resp.content.find(b => b.type === 'text')?.text?.trim() || '';
     if (text && text !== '-' && text.length < 50) return text;
@@ -194,7 +195,7 @@ async function searchAppFromYYB(gameName) {
         // Extract app name from title like "无尽冬日世界app-官方正版..." → "无尽冬日世界"
         const appNameMatch = rawTitle.match(/^(.+?)(?:app|APP|-|_|–|—|\s*官方)/);
         const appName = stripPunct(appNameMatch ? appNameMatch[1] : rawTitle);
-        // Require the app name to closely match — not just substring
+        if (!appName) return null;
         if (appName !== nameNorm && !appName.includes(nameNorm) && !nameNorm.includes(appName)) return null;
 
         type = await extractTagsFromHtml(detailHtml) || '-';

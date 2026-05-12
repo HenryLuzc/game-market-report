@@ -17,7 +17,9 @@ async function getDb() {
       const fileMtime = fs.statSync(config.DB_PATH).mtimeMs;
       if (fileMtime > lastSaveMtime && lastSaveMtime > 0) {
         const buffer = fs.readFileSync(config.DB_PATH);
+        const oldDb = db;
         db = new SQL.Database(buffer);
+        try { oldDb.close(); } catch {}
         lastSaveMtime = fileMtime;
       }
     } catch {}
@@ -29,8 +31,19 @@ async function getDb() {
     try {
       const buffer = fs.readFileSync(config.DB_PATH);
       db = new SQL.Database(buffer);
-    } catch {
-      db = new SQL.Database();
+    } catch (err) {
+      if (err.code === 'ENOENT') {
+        db = new SQL.Database();
+      } else if (err.code === 'EACCES' || err.code === 'EBUSY' || err.code === 'EPERM') {
+        throw new Error(`[DB] 数据库文件不可读 (${err.code}): ${err.message}，请检查文件权限或锁定状态`);
+      } else {
+        const backupPath = config.DB_PATH + '.corrupt.' + Date.now();
+        try { fs.copyFileSync(config.DB_PATH, backupPath); } catch (copyErr) {
+          throw new Error(`[DB] 数据库损坏且备份失败 (${copyErr.code || copyErr.message})，拒绝启动以保护数据`);
+        }
+        console.error(`[DB] 数据库文件损坏，已备份到 ${backupPath}:`, err.message);
+        db = new SQL.Database();
+      }
     }
     db.run(`
       CREATE TABLE IF NOT EXISTS send_records (

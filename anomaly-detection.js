@@ -36,12 +36,13 @@ function extractTotal(inputData, reportType) {
   return inputData.total_daily_cost || 0;
 }
 
-async function detectAnomalies(currentData, reportType) {
+async function detectAnomalies(currentData, reportType, dateRange) {
   const anomalies = [];
   const records = await db.getRecentRecords(reportType, THRESHOLDS.HISTORY_WEEKS);
-  if (!records.length) return anomalies;
+  const filteredRecords = dateRange ? records.filter(r => r.date_range !== dateRange) : records;
+  if (!filteredRecords.length) return anomalies;
 
-  const lastRecord = records[0];
+  const lastRecord = filteredRecords[0];
   let lastData;
   try { lastData = JSON.parse(lastRecord.input_json); } catch { return anomalies; }
 
@@ -84,7 +85,7 @@ async function detectAnomalies(currentData, reportType) {
   }
 
   const allHistoryNames = new Set();
-  for (const rec of records) {
+  for (const rec of filteredRecords) {
     try {
       const d = JSON.parse(rec.input_json);
       for (const g of extractGames(d, reportType)) allHistoryNames.add(g.name);
@@ -99,7 +100,7 @@ async function detectAnomalies(currentData, reportType) {
 
   const currentTotal = extractTotal(currentData, reportType);
   const historicTotals = [];
-  for (const rec of records) {
+  for (const rec of filteredRecords) {
     try {
       const d = JSON.parse(rec.input_json);
       historicTotals.push(extractTotal(d, reportType));
@@ -122,7 +123,7 @@ async function detectAnomalies(currentData, reportType) {
 
   anomalies.sort((a, b) => {
     const order = { high: 0, medium: 1, low: 2 };
-    return (order[a.severity] || 9) - (order[b.severity] || 9);
+    return (order[a.severity] ?? 9) - (order[b.severity] ?? 9);
   });
 
   return anomalies;

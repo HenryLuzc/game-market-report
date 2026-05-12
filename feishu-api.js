@@ -29,9 +29,10 @@ async function getTenantToken() {
     if (data.code !== 0) {
       throw new Error(`获取 tenant_access_token 失败: ${data.msg} (code: ${data.code})`);
     }
+    const expireSec = Number.isFinite(data.expire) ? data.expire : 7200;
     tokenCache = {
       token: data.tenant_access_token,
-      expiresAt: Date.now() + data.expire * 1000,
+      expiresAt: Date.now() + expireSec * 1000,
     };
     return tokenCache.token;
   })().finally(() => { tokenPromise = null; });
@@ -46,30 +47,46 @@ async function feishuRequest(method, path, { body, params, retries = 2 } = {}) {
     url += (url.includes('?') ? '&' : '?') + qs;
   }
 
+  let lastError;
   for (let attempt = 0; attempt <= retries; attempt++) {
-    const token = await getTenantToken();
-    const options = {
-      method,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      signal: AbortSignal.timeout(30000),
-    };
-    if (body) options.body = JSON.stringify(body);
+    if (attempt > 0) await new Promise(r => setTimeout(r, 1000 * attempt));
 
-    const resp = await fetch(url, options);
-    let data;
+    let resp, data;
+    try {
+      const token = await getTenantToken();
+      const options = {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        signal: AbortSignal.timeout(30000),
+      };
+      if (body) options.body = JSON.stringify(body);
+      resp = await fetch(url, options);
+    } catch (err) {
+      lastError = new Error(`飞书 API 网络错误 [${method} ${path}]: ${err.message}`);
+      if (attempt < retries) continue;
+      throw lastError;
+    }
+
+    if (resp.status === 429 || resp.status >= 500) {
+      lastError = new Error(`飞书 API HTTP ${resp.status} [${method} ${path}]`);
+      if (attempt < retries) continue;
+      throw lastError;
+    }
+
     try {
       data = await resp.json();
     } catch {
       throw new Error(`飞书 API 返回非 JSON [${method} ${path}]: HTTP ${resp.status}`);
     }
 
-    // Token expired — clear cache and retry
     if (data.code === 99991663 || data.code === 99991664) {
       tokenCache = { token: null, expiresAt: 0 };
+      lastError = new Error(`飞书 API token 过期 [${method} ${path}]`);
       if (attempt < retries) continue;
+      throw lastError;
     }
 
     if (data.code !== 0) {
@@ -77,7 +94,7 @@ async function feishuRequest(method, path, { body, params, retries = 2 } = {}) {
     }
     return data;
   }
-  throw new Error(`飞书 API 重试耗尽 [${method} ${path}]: token 持续过期`);
+  throw lastError || new Error(`飞书 API 重试耗尽 [${method} ${path}]`);
 }
 
 async function getWikiNode(wikiToken) {
@@ -122,6 +139,7 @@ async function sendMessage(content, { chatId, userId } = {}) {
       msg_type: 'interactive',
       content: typeof content === 'string' ? content : JSON.stringify(content),
     },
+    retries: 0,
   });
   return data?.data?.message_id || null;
 }

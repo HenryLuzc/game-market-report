@@ -34,14 +34,25 @@ function buildTypePie(games) {
     }
   }
   const totalTagCost = Object.values(tagCost).reduce((s, v) => s + v, 0);
+  if (totalTagCost === 0) return [];
   return Object.entries(tagCost)
     .sort((a, b) => b[1] - a[1])
     .map(([type, value]) => ({ type, value: +(value / totalTagCost * 100).toFixed(2) }));
 }
 
+function escapeMd(s) {
+  return String(s || '').replace(/[[\]()\\]/g, '\\$&');
+}
+
+function safeLink(url) {
+  return /^https?:\/\//i.test(url) ? url.replace(/\(/g, '%28').replace(/\)/g, '%29') : '';
+}
+
 function buildTableRows(games) {
   return games.map(g => {
-    const gameField = g.link ? `[${g.name}](${g.link})` : g.name;
+    const name = escapeMd(g.name);
+    const link = safeLink(g.link);
+    const gameField = link ? `[${name}](${link})` : (g.name || '');
     return {
       rank: g.rank,
       game: gameField,
@@ -52,7 +63,7 @@ function buildTableRows(games) {
 }
 
 function buildAnalysis(games) {
-  const totalCost = games.reduce((s, g) => s + g.daily_cost, 0);
+  const totalCost = games.reduce((s, g) => s + g.daily_cost, 0) || 1;
   const top10Cost = games.slice(0, 10).reduce((s, g) => s + g.daily_cost, 0);
   const top10Pct = +(top10Cost / totalCost * 100).toFixed(1);
 
@@ -93,29 +104,29 @@ function buildAnalysis(games) {
   const topClientGames = topClientName ? games.filter(g => g.client === topClientName).map(g => g.name) : [];
 
   // 头尾差距
-  const headTailRatio = games.length ? Math.floor(games[0].daily_cost / games[games.length - 1].daily_cost) : 1;
+  const headTailRatio = (games.length && games[games.length - 1].daily_cost > 0) ? Math.floor(games[0].daily_cost / games[games.length - 1].daily_cost) : 1;
 
   const lines = [];
-  lines.push(`**${topTagName}类主导市场**：占总消耗 ${topTagPct}%（日均 ${Math.round(topTagVal).toLocaleString()} 万），共 ${topTagCnt} 款游戏`);
+  lines.push(`**${escapeMd(topTagName)}类主导市场**：占总消耗 ${topTagPct}%（日均 ${Math.round(topTagVal).toLocaleString()} 万），共 ${topTagCnt} 款游戏`);
   lines.push(`**头部集中效应显著**：TOP10 日均消耗 ${Math.round(top10Cost).toLocaleString()} 万，占总量 ${top10Pct}%，头尾差距达 ${headTailRatio} 倍`);
 
   if (topClientGames.length >= 2) {
-    const cg = topClientGames.slice(0, 3).join(' + ');
-    lines.push(`**${topClientName}领跑榜单**：${cg}合计日耗 ${Math.round(topClientVal)} 万`);
+    const cg = topClientGames.slice(0, 3).map(n => escapeMd(n)).join(' + ');
+    lines.push(`**${escapeMd(topClientName)}领跑榜单**：${cg}合计日耗 ${Math.round(topClientVal)} 万`);
   }
 
   if (sortedTags.length >= 2) {
     const [t2Name, t2Val] = sortedTags[1];
     const t2Pct = +(t2Val / totalTagCost * 100).toFixed(1);
     const t2Cnt = tagCount[t2Name];
-    lines.push(`**${t2Name}品类投放强劲**：占比 ${t2Pct}%（日均 ${Math.round(t2Val)} 万），共 ${t2Cnt} 款`);
+    lines.push(`**${escapeMd(t2Name)}品类投放强劲**：占比 ${t2Pct}%（日均 ${Math.round(t2Val)} 万），共 ${t2Cnt} 款`);
   }
 
   if (sortedTags.length >= 3) {
     const [t3Name, t3Val] = sortedTags[2];
     const t3Pct = +(t3Val / totalTagCost * 100).toFixed(1);
     const t3Cnt = tagCount[t3Name];
-    lines.push(`**${t3Name}紧随其后**：占比 ${t3Pct}%（日均 ${Math.round(t3Val)} 万），共 ${t3Cnt} 款`);
+    lines.push(`**${escapeMd(t3Name)}紧随其后**：占比 ${t3Pct}%（日均 ${Math.round(t3Val)} 万），共 ${t3Cnt} 款`);
   }
 
   return lines.slice(0, 5).map(l => `- ${l}`).join('\n');

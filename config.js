@@ -5,6 +5,7 @@ module.exports = Object.freeze({
   WIKI_TOKEN: process.env.WIKI_TOKEN || '',
   SEND_TARGETS_PATH: path.join(__dirname, 'data', 'send-targets.json'),
   NOTIFY_USER_ID: process.env.NOTIFY_USER_ID || '',
+  API_KEY: process.env.API_KEY || '',
 
   FEISHU_APP_ID: process.env.FEISHU_APP_ID || '',
   FEISHU_APP_SECRET: process.env.FEISHU_APP_SECRET || '',

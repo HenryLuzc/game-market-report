@@ -42,14 +42,25 @@ function buildTypePie(games) {
     }
   }
   const totalTagCost = Object.values(tagCost).reduce((s, v) => s + v, 0);
+  if (totalTagCost === 0) return [];
   return Object.entries(tagCost)
     .sort((a, b) => b[1] - a[1])
     .map(([type, value]) => ({ type, value: +(value / totalTagCost * 100).toFixed(2) }));
 }
 
+function escapeMd(s) {
+  return String(s || '').replace(/[[\]()\\]/g, '\\$&');
+}
+
+function safeLink(url) {
+  return /^https?:\/\//i.test(url) ? url.replace(/\(/g, '%28').replace(/\)/g, '%29') : '';
+}
+
 function buildTableRows(games) {
   return games.map(g => {
-    const gameField = g.link ? `[${g.name}](${g.link})` : g.name;
+    const name = escapeMd(g.name);
+    const link = safeLink(g.link);
+    const gameField = link ? `[${name}](${link})` : (g.name || '');
     return {
       rank: g.rank,
       game: gameField,
@@ -62,8 +73,8 @@ function buildTableRows(games) {
 function buildAnalysis(wxGames, dyGames, summary) {
   const lines = [];
   const { wxCost, dyCost, totalCost } = summary;
-  const wxPct = +(wxCost / totalCost * 100).toFixed(1);
-  const dyPct = +(dyCost / totalCost * 100).toFixed(1);
+  const wxPct = totalCost > 0 ? +(wxCost / totalCost * 100).toFixed(1) : 0;
+  const dyPct = totalCost > 0 ? +(dyCost / totalCost * 100).toFixed(1) : 0;
 
   // 1. Overall
   lines.push(`**字节整体**：共 ${summary.total} 款小游戏上榜，日均总消耗 ${Math.round(totalCost).toLocaleString()} 万。其中微信系 ${Math.round(wxCost)} 万（${wxPct}%）、抖音 ${Math.round(dyCost)} 万（${dyPct}%）`);
@@ -71,27 +82,27 @@ function buildAnalysis(wxGames, dyGames, summary) {
   // 2. WX top games
   if (wxGames.length) {
     const top = wxGames.slice(0, 2);
-    const names = top.map(g => `${g.name}（${g.daily_cost}万）`).join('、');
+    const names = top.map(g => `${escapeMd(g.name)}（${g.daily_cost}万）`).join('、');
     lines.push(`**微信系头部**：${names} 领跑`);
   }
 
   // 3. DY top games
   if (dyGames.length) {
     const top = dyGames.slice(0, 2);
-    const names = top.map(g => `${g.name}（${g.daily_cost}万）`).join('、');
+    const names = top.map(g => `${escapeMd(g.name)}（${g.daily_cost}万）`).join('、');
     lines.push(`**抖音头部**：${names} 领跑`);
   }
 
   // 4. WX top type
   const wxTagInfo = getTopTag(wxGames);
   if (wxTagInfo) {
-    lines.push(`**微信系主力品类**：${wxTagInfo.name}占比 ${wxTagInfo.pct}%（日均 ${wxTagInfo.cost} 万），共 ${wxTagInfo.count} 款`);
+    lines.push(`**微信系主力品类**：${escapeMd(wxTagInfo.name)}占比 ${wxTagInfo.pct}%（日均 ${wxTagInfo.cost} 万），共 ${wxTagInfo.count} 款`);
   }
 
   // 5. DY top type
   const dyTagInfo = getTopTag(dyGames);
   if (dyTagInfo) {
-    lines.push(`**抖音主力品类**：${dyTagInfo.name}占比 ${dyTagInfo.pct}%（日均 ${dyTagInfo.cost} 万），共 ${dyTagInfo.count} 款`);
+    lines.push(`**抖音主力品类**：${escapeMd(dyTagInfo.name)}占比 ${dyTagInfo.pct}%（日均 ${dyTagInfo.cost} 万），共 ${dyTagInfo.count} 款`);
   }
 
   // 6. Cross-platform overlap
@@ -99,7 +110,7 @@ function buildAnalysis(wxGames, dyGames, summary) {
   const dyNames = new Set(dyGames.map(g => g.name));
   const overlap = [...wxNames].filter(n => dyNames.has(n));
   if (overlap.length) {
-    lines.push(`**跨平台重合**：${overlap.length} 款游戏同时出现在两个平台（${overlap.slice(0, 4).join('、')}${overlap.length > 4 ? '等' : ''}）`);
+    lines.push(`**跨平台重合**：${overlap.length} 款游戏同时出现在两个平台（${overlap.slice(0, 4).map(n => escapeMd(n)).join('、')}${overlap.length > 4 ? '等' : ''}）`);
   }
 
   return lines.slice(0, 6).map(l => `- ${l}`).join('\n');

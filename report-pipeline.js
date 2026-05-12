@@ -71,7 +71,7 @@ async function generateReport(type, rows, dateRange, cache) {
   try {
     [trends, anomalies] = await Promise.all([
       trendAnalysis.getTrendsForReport(inputData, type, dateRange),
-      anomalyDetection.detectAnomalies(inputData, type),
+      anomalyDetection.detectAnomalies(inputData, type, dateRange),
     ]);
     if (trends) {
       await db.insertInsight({
@@ -106,10 +106,11 @@ async function generateReport(type, rows, dateRange, cache) {
     console.error(`[Pipeline] ${type} 智能分析生成失败(使用模板fallback):`, err.message);
   }
 
-  // Long-term analysis (trigger when 4+ weeks of summaries exist)
+  // Long-term analysis (trigger when 4+ prior weeks of summaries exist, excluding current)
   try {
-    const summaryCount = (await db.getInsights(type, 'summary', 10)).length;
-    if (summaryCount >= 4) {
+    const allSummaries = await db.getInsights(type, 'summary', 10);
+    const priorSummaries = allSummaries.filter(s => s.date_range !== dateRange);
+    if (priorSummaries.length >= 4) {
       const longTerm = await trendAnalysis.generateLongTermInsight(type);
       if (longTerm) {
         await db.insertInsight({
@@ -136,13 +137,15 @@ async function generateReport(type, rows, dateRange, cache) {
   return { type, cardJson, inputData };
 }
 
-async function sendAndRecord(type, cardJson, inputData, dateRange, targets, preRecords) {
+async function sendAndRecord(type, cardJson, inputData, dateRange, targets, preRecords, abortController) {
+  if (abortController && abortController.aborted) return [];
   const cardJsonStr = JSON.stringify(cardJson);
   const inputJsonStr = JSON.stringify(inputData);
   const sendResults = await cardSender.sendCardToAll(cardJson, targets);
 
   const records = [];
   for (let i = 0; i < sendResults.length; i++) {
+    if (abortController && abortController.aborted) break;
     const sr = sendResults[i];
     const preId = preRecords && preRecords[i] ? preRecords[i].id : null;
     const status = sr.success ? 'success' : 'failure';
@@ -177,7 +180,7 @@ async function sendAndRecord(type, cardJson, inputData, dateRange, targets, preR
   return records;
 }
 
-async function runPipeline({ types = ['tencent', 'bytedance', 'tencent_app', 'bytedance_app'], userId, chatId, sheetName, recordMap } = {}) {
+async function runPipeline({ types = ['tencent', 'bytedance', 'tencent_app', 'bytedance_app'], userId, chatId, sheetName, recordMap, abortController } = {}) {
   console.log(`[Pipeline] 开始执行 (${types.join(', ')}) - ${new Date().toLocaleString('zh-CN')}`);
 
   let rows, dateRange;
@@ -294,7 +297,7 @@ async function runPipeline({ types = ['tencent', 'bytedance', 'tencent_app', 'by
     const gen = generated.get(type);
     if (!gen) continue;
     const preRecords = recordMap && recordMap[type];
-    const records = await sendAndRecord(type, gen.cardJson, gen.inputData, dateRange, targets, preRecords);
+    const records = await sendAndRecord(type, gen.cardJson, gen.inputData, dateRange, targets, preRecords, abortController);
     allResults.push(...records);
   }
 
