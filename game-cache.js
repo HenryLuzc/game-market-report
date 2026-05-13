@@ -326,8 +326,8 @@ async function enrichGames(games, cache, category = 'minigame') {
   for (const g of games) {
     const cached = cacheLookup(cache, g.name, category);
     if (cached?.link) {
-      if (cached.officialName && cached.officialName !== g.name) g.name = cached.officialName;
-      result.push({ ...g, link: cached.link, type: cached.type || '-' });
+      const name = (cached.officialName && cached.officialName !== g.name) ? cached.officialName : g.name;
+      result.push({ ...g, name, link: cached.link, type: cached.type || '-' });
     } else {
       result.push({ ...g, link: '', type: '-' });
       toSearch.push(g.name);
@@ -353,13 +353,13 @@ async function enrichGames(games, cache, category = 'minigame') {
     const origName = g.name;
     const f = found[origName];
     if (f) {
-      if (f.officialName && f.officialName !== origName) g.name = f.officialName;
+      const newName = (f.officialName && f.officialName !== origName) ? f.officialName : origName;
+      g.name = newName;
       g.link = f.link;
       g.type = f.type;
       const entry = { link: g.link, type: g.type, category };
       if (f.raw_type) entry.raw_type = f.raw_type;
       if (f.officialName) entry.officialName = f.officialName;
-      // Cache under original name so future lookups match
       cache[cacheKey(origName, category)] = entry;
     }
   }

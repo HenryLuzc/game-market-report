@@ -1,13 +1,18 @@
 let locked = false;
+let owner = null;
 
-function acquire() {
+function acquire(tag) {
   if (locked) return false;
   locked = true;
-  return true;
+  owner = tag || Date.now().toString();
+  return owner;
 }
 
-function release() {
+function release(tag) {
+  if (!locked) return;
+  if (tag && tag !== owner) return;
   locked = false;
+  owner = null;
 }
 
 function isLocked() {

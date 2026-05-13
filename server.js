@@ -112,7 +112,7 @@ app.post('/api/trigger', requireAuth, async (req, res) => {
   if (!Array.isArray(types)) return res.status(400).json({ error: 'types 必须为数组' });
   const valid = types.every(t => ['tencent', 'bytedance', 'tencent_app', 'bytedance_app'].includes(t));
   if (!valid) return res.status(400).json({ error: '无效的报告类型' });
-  if (!pipelineLock.acquire()) return res.status(409).json({ error: '已有 pipeline 正在执行' });
+  if (!pipelineLock.acquire('trigger')) return res.status(409).json({ error: '已有 pipeline 正在执行' });
 
   let targets;
   if (userId) {
@@ -122,7 +122,7 @@ app.post('/api/trigger', requireAuth, async (req, res) => {
   } else {
     targets = sendTargets.loadTargets();
     if (targets.length === 0) {
-      pipelineLock.release();
+      pipelineLock.release('trigger');
       return res.status(400).json({ error: '未配置发送目标' });
     }
   }
@@ -141,19 +141,20 @@ app.post('/api/trigger', requireAuth, async (req, res) => {
   } catch (err) {
     const insertedIds = recordIds.map(r => r.id);
     if (insertedIds.length) await db.markPendingAsFailed(insertedIds, '创建记录时部分失败: ' + err.message);
-    pipelineLock.release();
+    pipelineLock.release('trigger');
     return res.status(500).json({ error: '创建记录失败: ' + err.message });
   }
 
   const allRecordIds = recordIds.map(r => r.id);
   const abortController = { aborted: false };
+  const lockTag = 'trigger';
   const timer = setTimeout(async () => {
     console.error('[Trigger] Pipeline 超时，标记中止');
     abortController.aborted = true;
     try { await db.markPendingAsFailed(allRecordIds, 'Pipeline 执行超时'); } catch (e) {
       console.error('[Trigger] 超时标记失败:', e.message);
     }
-    pipelineLock.release();
+    pipelineLock.release(lockTag);
   }, PIPELINE_TIMEOUT_MS);
 
   res.json({ status: 'started', types, recordIds: recordIds.map(r => r.id) });
@@ -177,7 +178,7 @@ app.post('/api/trigger', requireAuth, async (req, res) => {
     })
     .finally(() => {
       clearTimeout(timer);
-      pipelineLock.release();
+      pipelineLock.release(lockTag);
     });
 });
 

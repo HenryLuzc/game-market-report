@@ -226,7 +226,7 @@ async function runPipeline({ types = ['tencent', 'bytedance', 'tencent_app', 'by
     return results;
   }
 
-  const cache = gameCache.loadCache();
+  const baseCache = gameCache.loadCache();
 
   if (recordMap) {
     for (const type of types) {
@@ -260,16 +260,22 @@ async function runPipeline({ types = ['tencent', 'bytedance', 'tencent_app', 'by
 
   console.log(`[Pipeline] 并行生成 ${types.length} 份报告...`);
   const genResults = await Promise.allSettled(
-    types.map(type => generateReport(type, rows, dateRange, cache))
+    types.map(type => {
+      const cacheCopy = { ...baseCache };
+      return generateReport(type, rows, dateRange, cacheCopy)
+        .then(result => ({ result, cacheCopy }));
+    })
   );
 
   const generated = new Map();
   const allResults = [];
+  const mergedCache = { ...baseCache };
   for (let i = 0; i < types.length; i++) {
     const type = types[i];
     const result = genResults[i];
     if (result.status === 'fulfilled') {
-      generated.set(type, result.value);
+      generated.set(type, result.value.result);
+      Object.assign(mergedCache, result.value.cacheCopy);
     } else {
       console.error(`[Pipeline] ${type} 生成失败:`, result.reason?.message);
       const preRecords = recordMap && recordMap[type];
@@ -290,6 +296,10 @@ async function runPipeline({ types = ['tencent', 'bytedance', 'tencent_app', 'by
         }
       }
     }
+  }
+
+  if (Object.keys(mergedCache).length > Object.keys(baseCache).length) {
+    gameCache.saveCache(mergedCache);
   }
 
   // Phase 2: send in fixed order

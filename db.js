@@ -10,19 +10,25 @@ let dbPromise = null;
 let saving = false;
 let lastSaveMtime = 0;
 let SQL = null;
+let reloading = false;
 
 async function getDb() {
   if (db) {
-    try {
-      const fileMtime = fs.statSync(config.DB_PATH).mtimeMs;
-      if (fileMtime > lastSaveMtime && lastSaveMtime > 0) {
-        const buffer = fs.readFileSync(config.DB_PATH);
-        const oldDb = db;
-        db = new SQL.Database(buffer);
-        try { oldDb.close(); } catch {}
-        lastSaveMtime = fileMtime;
+    if (!reloading) {
+      try {
+        reloading = true;
+        const fileMtime = fs.statSync(config.DB_PATH).mtimeMs;
+        if (fileMtime > lastSaveMtime && lastSaveMtime > 0) {
+          const buffer = fs.readFileSync(config.DB_PATH);
+          const oldDb = db;
+          db = new SQL.Database(buffer);
+          try { oldDb.close(); } catch {}
+          lastSaveMtime = fileMtime;
+        }
+      } catch {} finally {
+        reloading = false;
       }
-    } catch {}
+    }
     return db;
   }
   if (dbPromise) return dbPromise;

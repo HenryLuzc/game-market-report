@@ -95,7 +95,10 @@ function deduplicateAndRank(games) {
 async function parseTencentData(rows) {
   const text = rowsToText(rows);
   const raw = await callClaude(TENCENT_PROMPT, text);
-  const gamesList = raw.games || (Array.isArray(raw) ? raw : []);
+  if (Array.isArray(raw) && !raw.games) {
+    throw new Error('LLM 返回了数组而非对象，缺少 total_cost 字段，请检查 prompt 格式');
+  }
+  const gamesList = raw.games || [];
   if (!gamesList.length) throw new Error('LLM 未提取到腾讯游戏数据');
   const games = gamesList.map(g => ({
     name: g.name,
@@ -103,10 +106,11 @@ async function parseTencentData(rows) {
     daily_cost: parseFloat(g.daily_cost) || 0,
   })).filter(g => g.name && g.daily_cost > 0);
   if (!games.length) throw new Error('LLM 提取的腾讯游戏数据全部无效（名称为空或消耗为0）');
-  return {
-    games: deduplicateAndRank(games),
-    total_cost: parseFloat(raw.total_cost) || 0,
-  };
+  const total_cost = parseFloat(raw.total_cost) || 0;
+  if (!total_cost) {
+    console.warn('[LLM] 警告: 腾讯数据 total_cost 为 0，可能是 LLM 未正确提取');
+  }
+  return { games: deduplicateAndRank(games), total_cost };
 }
 
 async function parseByteDanceData(rows) {
@@ -197,7 +201,10 @@ games按daily_cost降序排列。只返回JSON，不要其他文字。`;
 async function parseTencentAppData(rows) {
   const text = rowsToText(rows);
   const raw = await callClaude(TENCENT_APP_PROMPT, text);
-  const gamesList = raw.games || (Array.isArray(raw) ? raw : []);
+  if (Array.isArray(raw) && !raw.games) {
+    throw new Error('LLM 返回了数组而非对象，缺少 total_cost 字段');
+  }
+  const gamesList = raw.games || [];
   if (!gamesList.length) throw new Error('LLM 未提取到腾讯APP游戏数据');
   const games = gamesList.map(g => ({
     name: g.name,
@@ -213,7 +220,10 @@ async function parseTencentAppData(rows) {
 async function parseByteDanceAppData(rows) {
   const text = rowsToText(rows);
   const raw = await callClaude(BYTEDANCE_APP_PROMPT, text);
-  const gamesList = raw.games || (Array.isArray(raw) ? raw : []);
+  if (Array.isArray(raw) && !raw.games) {
+    throw new Error('LLM 返回了数组而非对象，缺少 total_cost 字段');
+  }
+  const gamesList = raw.games || [];
   if (!gamesList.length) throw new Error('LLM 未提取到字节APP游戏数据');
   const games = gamesList.map(g => ({
     name: g.name,
