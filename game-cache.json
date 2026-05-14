@@ -1,4 +1,652 @@
 {
+  "一路狂飙_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxd90605bffc0676a5",
+    "type": "休闲益智、塔防",
+    "category": "minigame",
+    "officialName": "一路狂飙"
+  },
+  "三国大冒险_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx7dab28eab998fba7",
+    "type": "角色扮演、回合制",
+    "category": "minigame",
+    "officialName": "三国大冒险"
+  },
+  "三国：冰河时代_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx209b8a6bc1c08b85",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "三国：冰河时代"
+  },
+  "不服来通关_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxab6e09473d72adcd",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "不服来通关"
+  },
+  "传奇之业_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx6494c8d3ae6a8623",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "传奇之业"
+  },
+  "保卫向日葵_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx4557e6fdca0cc576",
+    "type": "休闲益智、塔防",
+    "category": "minigame",
+    "officialName": "保卫向日葵"
+  },
+  "冒险岛：枫之新篇_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxb0d15355c71068f5",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "冒险岛：枫之新篇"
+  },
+  "勇者联盟_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx21d4f8336c07f3cf",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "勇者联盟"
+  },
+  "口袋奇兵_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxe11c116fc919cca1",
+    "type": "动作冒险、战术竞技",
+    "category": "minigame",
+    "officialName": "口袋奇兵"
+  },
+  "向僵尸开炮_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx31a9c726536cdacc",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "向僵尸开炮"
+  },
+  "向往的生活_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx961a01b2c8096028",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "向往的生活"
+  },
+  "天境传说_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxe5f2b0852b14a12d",
+    "type": "角色扮演、卡牌",
+    "category": "minigame",
+    "officialName": "天境传说"
+  },
+  "天龙八部_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx9a3f39a5d5cb5142",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "天龙八部2：飞龙战天"
+  },
+  "奔奔王国_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxd5a7455f2d66f698",
+    "type": "动作冒险、战术竞技",
+    "category": "minigame",
+    "officialName": "奔奔王国"
+  },
+  "妖怪金手指_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx0c7eaf9ca61fa356",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "妖怪金手指"
+  },
+  "寻仙之旅_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx47b98b6baece7a31",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "寻仙之旅"
+  },
+  "寻道大千_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx09a75a3a7bb79b59",
+    "type": "角色扮演、卡牌",
+    "category": "minigame",
+    "officialName": "寻道大千"
+  },
+  "小兵打天下_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxbbe6e05dd7b6069e",
+    "type": "休闲益智、塔防",
+    "category": "minigame",
+    "officialName": "小兵打天下"
+  },
+  "幻灵修仙传_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx2d703851f6693925",
+    "type": "角色扮演、回合制",
+    "category": "minigame",
+    "officialName": "幻灵修仙传"
+  },
+  "开心消消乐_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx0647ea28e8169ef5",
+    "type": "休闲益智、消除",
+    "category": "minigame",
+    "officialName": "开心消消乐"
+  },
+  "我强到爆表_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx5c6c8bed13599f47",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "我强到爆表"
+  },
+  "我的花园世界_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx47e577dc5b3fde6f",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "我的花园世界"
+  },
+  "无尽冬日_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxada4175c8b2a9864",
+    "type": "动作冒险、战术竞技",
+    "category": "minigame",
+    "officialName": "无尽冬日"
+  },
+  "时尚百货城_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxd971cb7f6adaa753",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "时尚百货城"
+  },
+  "最强斗王_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx0130ba309dbb3ecc",
+    "type": "角色扮演、卡牌",
+    "category": "minigame",
+    "officialName": "最强斗王"
+  },
+  "机智逃脱_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxc9ca302d7fa972f2",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "机智逃脱"
+  },
+  "梦幻消除战_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxc721a6dc3366ec1f",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "梦幻消除战"
+  },
+  "次神光之觉醒_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx35ab0021daa3a9a0",
+    "type": "角色扮演、卡牌",
+    "category": "minigame",
+    "officialName": "次神：光之觉醒"
+  },
+  "次神：光之觉醒_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx35ab0021daa3a9a0",
+    "type": "角色扮演、卡牌",
+    "category": "minigame",
+    "officialName": "次神：光之觉醒"
+  },
+  "武侠大明星_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx9c4c2f5f1909e182",
+    "type": "休闲益智、塔防",
+    "category": "minigame",
+    "officialName": "武侠大明星"
+  },
+  "永远的蔚蓝星球_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxd704b6fcc8ba8e9e",
+    "type": "休闲益智、塔防",
+    "category": "minigame",
+    "officialName": "永远的蔚蓝星球"
+  },
+  "浪漫餐厅_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx087d98a0884bbe3b",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "浪漫餐厅"
+  },
+  "源星战域_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxe01f160b85c96918",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "源星战域"
+  },
+  "灵画师_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxcbc1fc07fb13d667",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "灵画师"
+  },
+  "烈火勇者_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx378ec8b11c19e665",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "烈火勇者"
+  },
+  "烈焰觉醒_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxa83b94cffd94a629",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "烈焰觉醒"
+  },
+  "率土之滨_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxef1f466a1375d46d",
+    "type": "动作冒险、战术竞技",
+    "category": "minigame",
+    "officialName": "率土之滨"
+  },
+  "生存33天_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx7d7c5d0c2c80b2ee",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "生存33天"
+  },
+  "疯狂乐消_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxdc64bae68a549798",
+    "type": "角色扮演、卡牌",
+    "category": "minigame",
+    "officialName": "疯狂乐消"
+  },
+  "疯狂水世界_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx2ea52a972ea18e5e",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "疯狂水世界"
+  },
+  "百炼英雄_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx28a4f4446d1676f7",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "百炼英雄"
+  },
+  "神器传说_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxf6f9346dd7545588",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "神器传说"
+  },
+  "空格之境_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx0e0531466ba56547",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "空格之境"
+  },
+  "织梦森林_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx71360bd49c6176aa",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "织梦森林"
+  },
+  "羊了个羊：星球_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx141bfb9b73c970a9",
+    "type": "休闲益智、消除",
+    "category": "minigame",
+    "officialName": "羊了个羊：星球"
+  },
+  "肥鹅美食街_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxd2901d992defc4a9",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "肥鹅美食街"
+  },
+  "腾讯欢乐斗地主_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxd0e404d795ea6f80",
+    "type": "棋牌、纸牌",
+    "category": "minigame",
+    "officialName": "腾讯欢乐斗地主"
+  },
+  "英雄没有闪_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx770a587e71f5f0aa",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "英雄没有闪"
+  },
+  "超能下蛋鸭_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxb32033243930b37f",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "超能下蛋鸭"
+  },
+  "跃动小子_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx6cce8ac2ea74103e",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "跃动小子"
+  },
+  "逆转回合_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx98c0a89ad39b7782",
+    "type": "角色扮演、卡牌",
+    "category": "minigame",
+    "officialName": "逆转回合"
+  },
+  "道友来挖宝_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxdad61ef7ec3b5363",
+    "type": "角色扮演、回合制",
+    "category": "minigame",
+    "officialName": "道友来挖宝"
+  },
+  "遗弃之地_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx6d5e82c174635a48",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "遗弃之地"
+  },
+  "青云诀之伏魔_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxcdcbec6bf40d053a",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "青云诀之伏魔"
+  },
+  "魔么咒_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxda7f9d928aea97aa",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "魔么咒"
+  },
+  "龙迹之城_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx78f8b0361411b4ea",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "龙迹之城"
+  },
+  "掌上谈兵_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx550fc2daf37d731b",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "掌上谈兵"
+  },
+  "六六英雄_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxc1319785e3676547",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "六六英雄"
+  },
+  "聊斋搜神记_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx73e100a1d27fe6d9",
+    "type": "角色扮演、回合制",
+    "category": "minigame",
+    "officialName": "聊斋搜神记"
+  },
+  "捞个菜_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx6081576e21a2baca",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "捞个菜"
+  },
+  "爪爪大乱斗_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxdbb88ff471c49192",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "爪爪大乱斗"
+  },
+  "四季合合_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx693b4a44e1d81197",
+    "type": "休闲益智、消除",
+    "category": "minigame",
+    "officialName": "四季合合"
+  },
+  "原始征途_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxfd8da8f8efcda4a7",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "原始征途"
+  },
+  "烟雨剑影_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx6a0215c14d31ad73",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "烟雨剑影"
+  },
+  "出征吧！勇士_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx7a29f6886060d703",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "出征吧！勇士"
+  },
+  "占城大师_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxe968d03da3c80a19",
+    "type": "-",
+    "category": "minigame",
+    "officialName": "占城大师正版"
+  },
+  "炽烈战歌_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx2de97f2fc09fe24f",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "炽烈战歌"
+  },
+  "城主别慌张_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx6d2454a8afcd9706",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "城主别慌张"
+  },
+  "打个螺丝_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx2e170762929d239d",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "打个螺丝"
+  },
+  "三国杀_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxbfbb530be067d92c",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "三国杀"
+  },
+  "微乐河南麻将_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx9cedf465bf5ce797",
+    "type": "棋牌、纸牌",
+    "category": "minigame",
+    "officialName": "微乐河南麻将"
+  },
+  "九梦仙域_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx4e68be65aa6fe025",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "九梦仙域"
+  },
+  "守了个桥_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx4076e455fe25f36c",
+    "type": "休闲益智、消除",
+    "category": "minigame",
+    "officialName": "守了个桥大作战"
+  },
+  "一箭又一箭_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx69949b45b793b612",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "一箭又一箭"
+  },
+  "星皇传奇_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx4951d93257744ad7",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "星皇传奇"
+  },
+  "仙宗之主_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx660af4c0f46186e4",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "仙宗之主"
+  },
+  "雄征之战_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx5810e6e5b4e0907b",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "雄征之战"
+  },
+  "绝世传刃_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx1bbbfe598e128d74",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "绝世传刃"
+  },
+  "龙魂战纪_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx6658e27d110d6ae3",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "龙魂战纪"
+  },
+  "武道仙宗_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx09ff02a336709267",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "武道仙宗"
+  },
+  "萌宠连连消_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxad158819247c8365",
+    "type": "休闲益智、消除",
+    "category": "minigame",
+    "officialName": "萌宠连连消消看"
+  },
+  "斗破苍穹_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxd9750e71e0d83253",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "斗破苍穹"
+  },
+  "师兄无敌_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxcf4732e27978c86f",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "师兄无敌"
+  },
+  "我的美食店_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx5dd4b29eb0b5740a",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "我的美食店"
+  },
+  "一步两步_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx124633d4e9338db6",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "一步两步"
+  },
+  "小小屠龙_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx55f23a1c6fa7dc34",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "小小屠龙"
+  },
+  "绘梦之灵_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx15ef03bc90b0d635",
+    "type": "角色扮演、回合制",
+    "category": "minigame",
+    "officialName": "绘梦之灵"
+  },
+  "仙剑奇侠传新的开始_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx0cd893c62f356b3e",
+    "type": "角色扮演、回合制",
+    "category": "minigame",
+    "officialName": "仙剑奇侠传：新的开始"
+  },
+  "梦幻西游网页版_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxfc545148641497dd",
+    "type": "角色扮演、回合制",
+    "category": "minigame",
+    "officialName": "梦幻西游网页版"
+  },
+  "新弹弹堂_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx9346526f7abf6f63",
+    "type": "角色扮演、回合制",
+    "category": "minigame",
+    "officialName": "新弹弹堂"
+  },
+  "我的防线_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx35f46551c29e980e",
+    "type": "休闲益智、塔防",
+    "category": "minigame",
+    "officialName": "我的防线"
+  },
+  "时光大爆炸_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx0e42fefbaa22e71b",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "时光大爆炸"
+  },
+  "不休的消消乐_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxdd37b79c880835fd",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "不休的消消乐"
+  },
+  "女神国度_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx663ce06da5a51d54",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "女神国度"
+  },
+  "拿下三国_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxab701ab15d181555",
+    "type": "休闲益智、消除",
+    "category": "minigame",
+    "officialName": "拿下三国游戏软件V1.0"
+  },
+  "全民萌兽_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxc6a720a186f0bb08",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "全民萌兽"
+  },
+  "佳丽时空游戏软件V1.0_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx7418a07cab502403",
+    "type": "休闲益智、消除",
+    "category": "minigame",
+    "officialName": "佳丽时空游戏软件V1.0"
+  },
+  "雷霆战机_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxae65611dd1391ed0",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "雷霆战机：集结"
+  },
+  "灵墟幻境_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxa99c712ac4e61375",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "灵墟幻境"
+  },
+  "一梦九霄_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx681b5e63facbe4f1",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "一梦九霄"
+  },
+  "灵途无界_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxdcea3c2f453820fe",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "灵途无界"
+  },
+  "王者之弈_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx6cf74bcee41f8e22",
+    "type": "角色扮演、卡牌",
+    "category": "minigame",
+    "officialName": "王者之弈"
+  },
+  "三国：谋定天下_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxaebf05a3e45331c2",
+    "type": "角色扮演、战争",
+    "category": "minigame",
+    "officialName": "三国：谋定天下"
+  },
+  "天天拼词王_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxae5218ad934fba17",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "天天拼词王"
+  },
+  "不止一箭_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx5693c5db918be3a5",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "不止一箭"
+  },
+  "重生：我觉醒无限异能_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxb9d4fde743ee3de9",
+    "type": "休闲益智、消除",
+    "category": "minigame",
+    "officialName": "重生：我觉醒无限异能"
+  },
+  "爆裂守卫_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxe7444ef138805658",
+    "type": "休闲益智、塔防",
+    "category": "minigame",
+    "officialName": "爆裂守卫"
+  },
+  "魔灵纪元_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx16a60dc5ee01b62a",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "魔灵纪元"
+  },
   "一路狂飙_app": {
     "link": "https://www.taptap.cn/app/799056",
     "type": "动作冒险、塔防",
