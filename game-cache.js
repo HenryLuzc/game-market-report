@@ -421,18 +421,16 @@ async function enrichGames(games, cache, category = 'minigame') {
     }
   }
 
-  const isAppStoreFallback = (link) => link && link.includes('apps.apple.com');
-
   const result = [];
   const toSearch = [];
 
   for (const g of games) {
     const cached = cacheLookup(cache, g.name, category);
-    if (cached?.link && !isAppStoreFallback(cached.link)) {
+    if (cached?.link) {
       const name = (cached.officialName && cached.officialName !== g.name) ? cached.officialName : g.name;
       result.push({ ...g, name, link: cached.link, type: cached.type || '-' });
     } else {
-      result.push({ ...g, link: cached?.link || '', type: cached?.type || '-' });
+      result.push({ ...g, link: '', type: '-' });
       toSearch.push(g.name);
     }
   }
