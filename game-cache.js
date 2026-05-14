@@ -317,7 +317,21 @@ async function searchAppFromTapTap(gameName) {
 
       const link = `https://www.taptap.cn/app/${app.id}`;
       const officialName = app.title || null;
-      const rawType = (app.tags || []).map(t => t.value || t.name || t).filter(Boolean).join('、') || '-';
+
+      // Fetch detail page for full tags (search API only returns 3)
+      let rawType = (app.tags || []).map(t => t.value || t.name || t).filter(Boolean).join('、') || '-';
+      try {
+        const detailPage = await browser.newPage();
+        await detailPage.goto(link, { waitUntil: 'domcontentloaded', timeout: 15000 });
+        const detailHtml = await detailPage.content();
+        await detailPage.close();
+        const tagRe = /,"([^"]+)","taptap:\/\/taptap\.com\/library\?tag=/g;
+        const fullTags = [];
+        let tm;
+        while ((tm = tagRe.exec(detailHtml)) !== null) fullTags.push(tm[1]);
+        if (fullTags.length > 0) rawType = fullTags.join('、');
+      } catch {}
+
       const type = await normalizeGameType(gameName, rawType);
       db.insertGameTag({ game_name: gameName, category: 'app', source: 'taptap', link, raw_type: rawType, norm_type: type }).catch(() => {});
       return { link, type, raw_type: rawType, officialName };
