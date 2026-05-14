@@ -731,5 +731,120 @@
     "type": "休闲益智、烧脑",
     "category": "minigame",
     "officialName": "佳丽时空游戏软件V1.0"
+  },
+  "雷霆战机_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxae65611dd1391ed0",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "雷霆战机：集结"
+  },
+  "灵墟幻境_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxa99c712ac4e61375",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "灵墟幻境"
+  },
+  "一梦九霄_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx681b5e63facbe4f1",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "一梦九霄"
+  },
+  "灵途无界_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxdcea3c2f453820fe",
+    "type": "休闲益智、消除",
+    "category": "minigame",
+    "officialName": "灵途无界"
+  },
+  "王者之弈_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx6cf74bcee41f8e22",
+    "type": "角色扮演、卡牌",
+    "category": "minigame",
+    "officialName": "王者之弈"
+  },
+  "三国：谋定天下_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxaebf05a3e45331c2",
+    "type": "角色扮演、战争",
+    "category": "minigame",
+    "officialName": "三国：谋定天下"
+  },
+  "天天拼词王_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxae5218ad934fba17",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "天天拼词王"
+  },
+  "不止一箭_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx5693c5db918be3a5",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "不止一箭"
+  },
+  "重生：我觉醒无限异能_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxb9d4fde743ee3de9",
+    "type": "休闲益智、消除",
+    "category": "minigame",
+    "officialName": "重生：我觉醒无限异能"
+  },
+  "爆裂守卫_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxe7444ef138805658",
+    "type": "休闲益智、塔防",
+    "category": "minigame",
+    "officialName": "爆裂守卫"
+  },
+  "魔灵纪元_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx16a60dc5ee01b62a",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "魔灵纪元"
+  },
+  "大话西游归来_app": {
+    "link": "https://apps.apple.com/cn/app/%E5%A4%A7%E8%AF%9D%E8%A5%BF%E6%B8%B8-%E5%BD%92%E6%9D%A5/id6444670359",
+    "type": "卡牌、策略",
+    "category": "app",
+    "raw_type": "卡牌、冒险、回合制、策略",
+    "officialName": "大话西游：归来"
+  },
+  "三角洲_app": {
+    "link": "https://sj.qq.com/appdetail/com.tencent.tmgp.dfm",
+    "type": "射击、竞技",
+    "category": "app",
+    "raw_type": "动作冒险、第一人称射击、枪战、战术竞技、动作冒险、第一人称射击、枪战、战术竞技、支持iOS、动作冒险、PvP、枪战、动作冒险、跑酷、冒险、熊出没、休闲益智、跑酷、街机、创梦天地、动作冒险、第一人称射击、枪战、5v5",
+    "officialName": "三角洲行动"
+  },
+  "龙腾天下_app": {
+    "link": "https://sj.qq.com/appdetail/com.tencent.tmgp.hydragonsky",
+    "type": "角色扮演、MMORPG",
+    "category": "app",
+    "raw_type": "角色扮演、ARPG、传奇、千人同屏、角色扮演、ARPG、传奇、千人同屏、角色扮演、ARPG、冒险、开放世界、角色扮演、ARPG、武侠、开放世界、角色扮演、MMORPG、西游、自由交易、休闲益智、消除、传奇、自由交易",
+    "officialName": "龙腾天下"
+  },
+  "三国天下归心_app": {
+    "link": "https://sj.qq.com/appdetail/com.tencent.tmgp.txgxxy2024",
+    "type": "策略、角色扮演",
+    "category": "app",
+    "raw_type": "回合制战略、回合制战略、角色扮演、三国、剧情、像素风、休闲益智、ARPG、仙侠、卡通、策略、即时战略、科幻、剧情",
+    "officialName": "三国：天下归心"
+  },
+  "三国谋定天下_app": {
+    "link": "https://sj.qq.com/appdetail/com.tencent.tmgp.bilibili.nslg",
+    "type": "SLG、策略",
+    "category": "app",
+    "raw_type": "策略、SLG、三国、中国风、策略、SLG、三国、中国风、策略、经营、生存、部落冲突、动作冒险、Roguelike、探险、端游移植、支持iOS、策略、SLG、二战、动作冒险、格斗、三国、横版过关",
+    "officialName": "三国：谋定天下"
+  },
+  "快来当领主_app": {
+    "link": "https://apps.apple.com/cn/app/%E5%BF%AB%E6%9D%A5%E5%BD%93%E9%A2%86%E4%B8%BB/id6587552949",
+    "type": "塔防、休闲",
+    "category": "app",
+    "raw_type": "休闲、策略、塔防、合成",
+    "officialName": "快来当领主"
+  },
+  "英雄没有闪_app": {
+    "link": "https://apps.apple.com/cn/app/%E8%8B%B1%E9%9B%84%E6%B2%A1%E6%9C%89%E9%97%AA/id6740508579",
+    "type": "角色扮演、动作冒险",
+    "category": "app",
+    "raw_type": "冒险、角色扮演、放置、刷宝",
+    "officialName": "英雄没有闪"
   }
 }

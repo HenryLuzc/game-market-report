@@ -54,6 +54,43 @@ function saveCache(cache) {
 
 const stripPunct = s => s.replace(/[：:\-—–·、,.\s]+/g, '');
 
+const TYPO_CORRECT_PROMPT = `你是一个游戏行业专家。请检查以下游戏名称列表，找出并修正其中的错别字（同音字、形近字等）。
+
+规则：
+1. 只修正你非常确定是错别字的情况，不确定的保持原样
+2. 常见错误类型：同音字（像→向、生→声）、形近字、多字少字等
+3. 返回JSON对象，key是原始名称，value是修正后的名称
+4. 如果名称没有错别字，不要包含在返回结果中
+5. 只返回JSON，不要其他文字
+
+示例输入：["像僵尸开炮", "燕云十六生", "道友来挖宝", "寻道大千"]
+示例输出：{"像僵尸开炮": "向僵尸开炮", "燕云十六生": "燕云十六声"}`;
+
+async function correctGameNames(names) {
+  if (!names.length) return new Map();
+  try {
+    const resp = await llmClient.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: `${TYPO_CORRECT_PROMPT}\n\n${JSON.stringify(names)}` }],
+    });
+    const text = (resp.content.find(b => b.type === 'text')?.text || '').trim();
+    const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/) || [null, text];
+    const corrections = JSON.parse((jsonMatch[1] || '{}').trim());
+    const map = new Map();
+    for (const [orig, fixed] of Object.entries(corrections)) {
+      if (typeof fixed === 'string' && fixed && fixed !== orig) {
+        map.set(orig, fixed);
+        console.log(`[GameCache] 错别字修正: ${orig} → ${fixed}`);
+      }
+    }
+    return map;
+  } catch (err) {
+    console.warn('[GameCache] 错别字检测失败(跳过):', err.message);
+    return new Map();
+  }
+}
+
 function cacheKey(name, category) {
   return category ? `${name}_${category}` : name;
 }
@@ -320,6 +357,26 @@ async function searchAppGameLink(gameName) {
 
 async function enrichGames(games, cache, category = 'minigame') {
   if (!cache) cache = loadCache();
+
+  // Batch typo correction: only check names not already in cache
+  const uncachedNames = games
+    .filter(g => !cacheLookup(cache, g.name, category)?.link)
+    .map(g => g.name);
+  const typoMap = uncachedNames.length ? await correctGameNames(uncachedNames) : new Map();
+
+  // Apply corrections: update game names and also check cache with corrected name
+  for (const g of games) {
+    const corrected = typoMap.get(g.name);
+    if (corrected) {
+      // Carry over cache entry if corrected name has one
+      const correctedCached = cacheLookup(cache, corrected, category);
+      if (correctedCached?.link) {
+        cache[cacheKey(g.name, category)] = correctedCached;
+      }
+      g.name = corrected;
+    }
+  }
+
   const result = [];
   const toSearch = [];
 
