@@ -3,6 +3,7 @@ const path = require('path');
 const config = require('./config');
 const db = require('./db');
 const Anthropic = require('@anthropic-ai/sdk').default;
+const puppeteer = require('puppeteer-core');
 
 const llmClient = new Anthropic();
 
@@ -252,55 +253,79 @@ async function searchAppFromYYB(gameName) {
   }
 }
 
+const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+let _browser = null;
+
+async function getBrowser() {
+  if (_browser && _browser.connected) return _browser;
+  _browser = await puppeteer.launch({
+    executablePath: CHROME_PATH,
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
+  });
+  return _browser;
+}
+
+async function closeBrowser() {
+  if (_browser) {
+    await _browser.close().catch(() => {});
+    _browser = null;
+  }
+}
+
 async function searchAppFromTapTap(gameName) {
+  let page;
   try {
-    // TapTap is CSR, use DuckDuckGo HTML search to find TapTap app pages
-    const ddgUrl = 'https://html.duckduckgo.com/html/?q=' + encodeURIComponent('taptap.cn ' + gameName);
-    const searchResp = await fetch(ddgUrl, {
-      signal: AbortSignal.timeout(10000),
-      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
+    const browser = await getBrowser();
+    page = await browser.newPage();
+
+    let apiData = null;
+    const apiPromise = new Promise((resolve) => {
+      page.on('response', async (resp) => {
+        if (apiData) return;
+        const url = resp.url();
+        if (url.includes('webapiv2/search') && url.includes('agg-search') && resp.status() === 200) {
+          try { apiData = await resp.json(); resolve(apiData); } catch {}
+        }
+      });
+      setTimeout(() => resolve(null), 20000);
     });
-    if (!searchResp.ok) return null;
-    const searchHtml = await searchResp.text();
 
-    // Extract taptap.cn/app/DIGITS links from search results
-    const tapRe = /taptap\.cn\/app\/(\d+)/g;
-    const ids = new Set();
-    let match;
-    while ((match = tapRe.exec(searchHtml)) !== null) ids.add(match[1]);
-    if (ids.size === 0) return null;
+    await page.goto(
+      `https://www.taptap.cn/search/${encodeURIComponent(gameName)}?type=app`,
+      { waitUntil: 'networkidle0', timeout: 20000 },
+    );
+    await apiPromise;
+    await page.close();
 
-    // Check each candidate page for name match
+    if (!apiData?.data?.list) return null;
+
     const nameNorm = stripPunct(gameName);
-    for (const id of ids) {
-      const link = `https://www.taptap.cn/app/${id}`;
-      try {
-        const detailResp = await fetch(link, {
-          signal: AbortSignal.timeout(10000),
-          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
-        });
-        if (!detailResp.ok) continue;
-        const detailHtml = await detailResp.text();
-        const titleMatch = detailHtml.match(/<title[^>]*>([^<]+)/i);
-        const pageTitle = (titleMatch ? titleMatch[1] : '');
-        if (!stripPunct(pageTitle).includes(nameNorm)) continue;
+    const apps = [];
+    for (const group of apiData.data.list) {
+      if (group.app) apps.push(group.app);
+      if (Array.isArray(group.list)) {
+        for (const item of group.list) {
+          if (item.app) apps.push(item.app);
+        }
+      }
+    }
 
-        // Extract official name from title (e.g. "时尚百货城 - TapTap" → "时尚百货城")
-        const officialName = pageTitle.replace(/\s*[-–—|].*$/, '').trim() || null;
+    for (const app of apps) {
+      const titleNorm = stripPunct(app.title || '');
+      if (!titleNorm.includes(nameNorm) && !nameNorm.includes(titleNorm)) continue;
 
-        // Extract tags from RSC payload: ,"tagName","taptap://taptap.com/library?tag=
-        const tagRe2 = /,"([^"]+)","taptap:\/\/taptap\.com\/library\?tag=/g;
-        const tags = [];
-        let tm;
-        while ((tm = tagRe2.exec(detailHtml)) !== null) tags.push(tm[1]);
-        const rawType = tags.length ? tags.join('、') : '-';
-        const type = await normalizeGameType(gameName, rawType);
-        db.insertGameTag({ game_name: gameName, category: 'app', source: 'taptap', link, raw_type: rawType, norm_type: type }).catch(() => {});
-        return { link, type, raw_type: rawType, officialName };
-      } catch {}
+      const link = `https://www.taptap.cn/app/${app.id}`;
+      const officialName = app.title || null;
+      const rawType = (app.tags || []).map(t => t.value || t.name || t).filter(Boolean).join('、') || '-';
+      const type = await normalizeGameType(gameName, rawType);
+      db.insertGameTag({ game_name: gameName, category: 'app', source: 'taptap', link, raw_type: rawType, norm_type: type }).catch(() => {});
+      return { link, type, raw_type: rawType, officialName };
     }
     return null;
-  } catch {
+  } catch (err) {
+    console.warn('[GameCache] TapTap Puppeteer 搜索失败:', err.message);
+    if (page && !page.isClosed()) await page.close().catch(() => {});
     return null;
   }
 }
@@ -424,6 +449,7 @@ async function enrichGames(games, cache, category = 'minigame') {
   const source = category === 'app' ? 'APP' : 'YYB';
   console.log(`[GameCache] ${source} 搜索完成: ${Object.keys(found).length}/${toSearch.length} 命中`);
 
+  await closeBrowser();
   return result;
 }
 
@@ -468,4 +494,4 @@ function initCacheFromExistingData() {
   return { total: Object.keys(cache).length, added };
 }
 
-module.exports = { loadCache, saveCache, enrichGames, updateCacheEntry, initCacheFromExistingData, searchGameFromYYB, searchAppGameLink };
+module.exports = { loadCache, saveCache, enrichGames, updateCacheEntry, initCacheFromExistingData, searchGameFromYYB, searchAppGameLink, closeBrowser };
