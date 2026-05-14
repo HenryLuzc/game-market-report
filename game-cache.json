@@ -75,7 +75,7 @@
     "link": "https://sj.qq.com/appdetail/wx9a3f39a5d5cb5142",
     "type": "角色扮演、MMORPG",
     "category": "minigame",
-    "officialName": "天龙八部2：飞龙战天"
+    "officialName": "天龙八部"
   },
   "奔奔王国_minigame": {
     "link": "https://sj.qq.com/appdetail/wxd5a7455f2d66f698",
@@ -391,7 +391,7 @@
   },
   "占城大师_minigame": {
     "link": "https://sj.qq.com/appdetail/wxe968d03da3c80a19",
-    "type": "-",
+    "type": "策略、塔防",
     "category": "minigame",
     "officialName": "占城大师正版"
   },
@@ -697,10 +697,10 @@
     "officialName": "我的花园世界"
   },
   "捕鱼大作战_app": {
-    "link": "https://www.taptap.cn/app/152974",
+    "link": "https://apps.apple.com/cn/app/%E6%8D%95%E9%B1%BC%E5%A4%A7%E4%BD%9C%E6%88%98-%E8%A1%97%E6%9C%BA%E6%89%93%E9%B1%BC%E6%B8%B8%E6%88%8F%E7%8E%8B%E8%80%85/id1525863146",
     "type": "捕鱼、休闲",
     "category": "app",
-    "raw_type": "休闲",
+    "raw_type": "捕鱼、休闲、模拟、棋盘",
     "officialName": "捕鱼大作战"
   },
   "捕鱼大咖_app": {
@@ -708,14 +708,14 @@
     "type": "捕鱼、休闲",
     "category": "app",
     "raw_type": "捕鱼、休闲、街机、3D",
-    "officialName": "捕鱼大咖-畅爽3D街机捕鱼游戏"
+    "officialName": "捕鱼大咖"
   },
   "捕鱼达人千炮版_app": {
-    "link": "https://www.taptap.cn/app/854104",
+    "link": "https://apps.apple.com/cn/app/%E6%8D%95%E9%B1%BC%E8%BE%BE%E4%BA%BA%E5%8D%83%E7%82%AE%E7%89%88-%E9%AB%98%E5%80%8D%E9%AB%98%E7%88%86%E6%B3%A2%E5%85%8B%E6%8D%95%E9%B1%BC/id6479343684",
     "type": "捕鱼、休闲",
     "category": "app",
-    "raw_type": "TapTap制造、街机",
-    "officialName": "捕鱼达人"
+    "raw_type": "捕鱼、休闲、棋盘",
+    "officialName": "捕鱼达人千炮版"
   },
   "无尽冬日_app": {
     "link": "https://www.taptap.cn/app/521534",
@@ -740,17 +740,17 @@
   },
   "梦幻西游_app": {
     "link": "https://www.taptap.cn/app/2315",
-    "type": "MMORPG、角色扮演",
+    "type": "角色扮演、MMORPG",
     "category": "app",
     "raw_type": "回合制、MMORPG、角色扮演、仙侠、放置、自由交易、Q版、西游",
     "officialName": "梦幻西游"
   },
   "永恒大陆_app": {
     "link": "https://apps.apple.com/cn/app/%E6%B0%B8%E6%81%92%E5%A4%A7%E9%99%86-%E5%8E%9F%E6%B1%81%E5%8E%9F%E5%91%B3%E6%9C%88%E5%8D%A1%E7%89%88%E5%A5%87%E8%BF%B9/id6756638855",
-    "type": "MMORPG、角色扮演",
+    "type": "角色扮演、MMORPG",
     "category": "app",
     "raw_type": "MMORPG、奇迹、复刻经典、养老服",
-    "officialName": "永恒大陆—原汁原味月卡版奇迹"
+    "officialName": "永恒大陆"
   },
   "永远的蔚蓝星球_app": {
     "link": "https://www.taptap.cn/app/713683",
@@ -768,9 +768,9 @@
   },
   "烈焰觉醒_app": {
     "link": "https://www.taptap.cn/app/764540",
-    "type": "-",
+    "type": "角色扮演、MMORPG",
     "category": "app",
-    "raw_type": "-",
+    "raw_type": "角色扮演、MMORPG",
     "officialName": "烈焰觉醒"
   },
   "燕云十六声_app": {
@@ -789,7 +789,7 @@
   },
   "神泣：纷争_app": {
     "link": "https://www.taptap.cn/app/839042",
-    "type": "MMORPG、角色扮演",
+    "type": "角色扮演、MMORPG",
     "category": "app",
     "raw_type": "魔幻、多人联机、MMORPG、角色扮演",
     "officialName": "神泣：纷争"
@@ -813,14 +813,14 @@
     "type": "捕鱼、休闲",
     "category": "app",
     "raw_type": "捕鱼、休闲、街机、娱乐场",
-    "officialName": "途游休闲捕鱼-百万倍街机王者大作战"
+    "officialName": "途游休闲捕鱼"
   },
   "鱼乐达人_app": {
     "link": "https://apps.apple.com/cn/app/%E9%B1%BC%E4%B9%90%E8%BE%BE%E4%BA%BA-%E7%8E%8B%E8%80%85%E6%8D%95%E9%B1%BC%E7%94%B5%E7%8E%A9%E8%A1%97%E6%9C%BA%E6%89%93%E9%B1%BC%E6%B8%B8%E6%88%8F/id1665337957",
     "type": "捕鱼、休闲",
     "category": "app",
     "raw_type": "捕鱼、街机、休闲、娱乐场",
-    "officialName": "鱼乐达人-王者捕鱼电玩街机打鱼游戏"
+    "officialName": "鱼乐达人"
   },
   "问道_app": {
     "link": "https://www.taptap.cn/app/5797",
@@ -831,9 +831,9 @@
   },
   "三国大冒险_app": {
     "link": "https://www.taptap.cn/app/771274",
-    "type": "-",
+    "type": "放置、卡牌",
     "category": "app",
-    "raw_type": "-",
+    "raw_type": "放置、卡牌",
     "officialName": "三国大冒险"
   },
   "疯狂水世界_app": {
@@ -866,7 +866,7 @@
   },
   "仙遇_app": {
     "link": "https://www.taptap.cn/app/384832",
-    "type": "MMORPG、角色扮演",
+    "type": "角色扮演、MMORPG",
     "category": "app",
     "raw_type": "MMORPG、3D、国风、多人联机、修仙、角色扮演",
     "officialName": "仙遇"
