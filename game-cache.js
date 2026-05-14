@@ -384,13 +384,13 @@ async function searchAppFromAppStore(gameName) {
 }
 
 async function searchAppGameLink(gameName) {
-  // 1. Try YYB (com.xxx pattern)
-  const yyb = await searchAppFromYYB(gameName);
-  if (yyb) return yyb;
-
-  // 2. Try TapTap
+  // 1. Try TapTap (preferred — richer tags, better game coverage)
   const taptap = await searchAppFromTapTap(gameName);
   if (taptap) return taptap;
+
+  // 2. Try YYB (com.xxx pattern)
+  const yyb = await searchAppFromYYB(gameName);
+  if (yyb) return yyb;
 
   // 3. Try AppStore
   const appstore = await searchAppFromAppStore(gameName);
