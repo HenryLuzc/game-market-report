@@ -150,8 +150,11 @@ async function searchGameFromYYB(gameName) {
 }
 
 async function extractTagsFromHtml(html) {
-  const tags = [...html.matchAll(/TagList_tagItem[^"]*"[^>]*>[\s\S]*?<a[^>]*>([^<]+)<\/a>/g)];
-  const extracted = tags.map(m => m[1].trim()).filter(Boolean);
+  // Only extract tags before the recommendation section to avoid mixing in other games' tags
+  const cutoff = html.search(/你可能还喜欢|相关推荐|厂商其[它他]应用|RelatedApp|RecommendList/i);
+  const scope = cutoff > 0 ? html.slice(0, cutoff) : html;
+  const tags = [...scope.matchAll(/TagList_tagItem[^"]*"[^>]*>[\s\S]*?<a[^>]*>([^<]+)<\/a>/g)];
+  const extracted = [...new Set(tags.map(m => m[1].trim()).filter(Boolean))];
   if (extracted.length) return extracted.join('、');
   return null;
 }
