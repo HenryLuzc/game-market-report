@@ -919,5 +919,10 @@
     "category": "app",
     "raw_type": "放置、策略、养成、刷宝",
     "officialName": "英雄没有闪"
+  },
+  "杖剑传说_app": {
+    "link": "https://sj.qq.com/appdetail/com.leiting.zjcs",
+    "type": "策略、二次元",
+    "category": "app"
   }
 }
