@@ -926,5 +926,42 @@
     "category": "app",
     "raw_type": "放置、角色扮演、冒险、竖屏、二次元、养成、可爱、策略",
     "officialName": "杖剑传说"
+  },
+  "西游降妖记_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx4b2badeec9c588cd",
+    "type": "动作冒险、跑酷",
+    "category": "minigame",
+    "officialName": "西游降妖记"
+  },
+  "枪神挑战_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxcc5b77002c520bcd",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "枪神挑战外星人"
+  },
+  "肥鹅健身房_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxc8713839351ccb45",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "肥鹅健身房"
+  },
+  "魔法甜境_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx7f52e36a0c3b1502",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "魔法甜境"
+  },
+  "八向箭头_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx0982ea33c037ae6b",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "八向箭头"
+  },
+  "无畏契约_app": {
+    "link": "https://sj.qq.com/appdetail/com.tencent.pcgame.valorant",
+    "type": "射击、竞技",
+    "category": "app",
+    "raw_type": "支持iOS、动作冒险、格斗、动漫改编、PvP、枪战、角色扮演、沙盒、探险、我的世界、第一人称射击、5v5",
+    "officialName": "无畏契约"
   }
 }

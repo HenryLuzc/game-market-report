@@ -12,7 +12,8 @@
   - **字节手游** — 字节 APP 游戏消耗排名
 - 自动搜索游戏链接和类型标签，三级来源优先级：
   - 小游戏：应用宝（wx 前缀）
-  - 手游：应用宝（com.xxx）→ TapTap → AppStore
+  - 手游：TapTap → 应用宝（com.xxx）→ AppStore
+- 游戏名称预处理：静态别名映射（代号→正式名）+ LLM 错别字修正
 - 手游类型标签通过 LLM 归一化为标准分类（角色扮演、策略、休闲等 16 类）
 - 原始标签记录到数据库（game_tags 表），供模型学习优化
 - 搜索时自动去标点匹配 + 用官方名称展示（如"次神光之觉醒"→"次神：光之觉醒"）
@@ -37,12 +38,13 @@
 ├── feishu-api.js       # 飞书 HTTP 客户端（tenant_access_token 自动管理）
 ├── feishu-reader.js    # 飞书表格读取（wiki 解析、标签页列表、读取数据）
 ├── llm-parser.js       # Claude LLM 解析表格数据（腾讯/字节 × 小游戏/手游）
-├── game-cache.js       # 游戏信息缓存 + 应用宝/TapTap/AppStore 搜索 + 标签归一化
+├── game-cache.js       # 游戏信息缓存 + 名称别名/错别字修正 + TapTap/应用宝/AppStore 搜索 + 标签归一化
 ├── card-generator.js   # 调用卡片生成脚本
 ├── card-sender.js      # 飞书卡片发送（支持多目标）
 ├── send-targets.js     # 发送目标管理
 ├── report-pipeline.js  # 完整 pipeline 编排
 ├── scheduler.js        # node-cron 定时任务
+├── pipeline-lock.js    # Pipeline 并发锁（防止重复执行）
 ├── server.js           # Express API + 静态页面
 ├── db.js               # SQLite 数据库（sql.js）— 发送记录 + 游戏标签 + 分析洞察
 ├── trend-analysis.js   # 趋势计算 + LLM 智能分析 + 长周期洞察
@@ -96,7 +98,7 @@ npm start
 # 全部报告（4 类）
 node cli.js --type all
 
-# 默认（全部 4 类报告）
+# 默认（腾讯+字节小游戏）
 npm run trigger
 
 # 单个报告类型
@@ -190,8 +192,9 @@ npm run init-cache
 ## 技术栈
 
 - Node.js + Express
-- Claude API (`claude-sonnet-4-6`) — 表格数据解析 + 游戏类型标签归一化 + 趋势洞察 + 智能分析
+- Claude API (`claude-sonnet-4-6` / `claude-opus-4-6`) — 表格数据解析 + 错别字修正 + 游戏类型标签归一化 + 趋势洞察 + 智能分析
 - 飞书 Open API — 读表格、发卡片
 - sql.js (WASM SQLite) — 发送记录 + 游戏标签 + 分析洞察持久化
 - node-cron — 定时调度
+- Puppeteer (puppeteer-core) — TapTap 搜索（Headless Chrome）
 - 应用宝 / TapTap / AppStore iTunes API — 游戏链接和类型搜索
