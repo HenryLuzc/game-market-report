@@ -1,4 +1,5 @@
 const config = require('./config');
+const crypto = require('crypto');
 
 const BASE_URL = config.FEISHU_BASE_URL;
 
@@ -138,8 +139,9 @@ async function sendMessage(content, { chatId, userId } = {}) {
       receive_id: receiveId,
       msg_type: 'interactive',
       content: typeof content === 'string' ? content : JSON.stringify(content),
+      uuid: crypto.randomUUID(),
     },
-    retries: 0,
+    retries: 3,
   });
   return data?.data?.message_id || null;
 }
