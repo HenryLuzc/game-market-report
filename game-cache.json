@@ -161,12 +161,6 @@
     "category": "minigame",
     "officialName": "梦幻消除战"
   },
-  "次神光之觉醒_minigame": {
-    "link": "https://sj.qq.com/appdetail/wx35ab0021daa3a9a0",
-    "type": "角色扮演、卡牌",
-    "category": "minigame",
-    "officialName": "次神：光之觉醒"
-  },
   "次神：光之觉醒_minigame": {
     "link": "https://sj.qq.com/appdetail/wx35ab0021daa3a9a0",
     "type": "角色扮演、卡牌",
@@ -871,13 +865,6 @@
     "raw_type": "MMORPG、3D、国风、多人联机、修仙、角色扮演",
     "officialName": "仙遇"
   },
-  "大话西游归来_app": {
-    "link": "https://www.taptap.cn/app/316990",
-    "type": "角色扮演、养成",
-    "category": "app",
-    "raw_type": "养成、Q版、西游、角色扮演、MMORPG、仙侠、放置、回合制、卡牌",
-    "officialName": "大话西游：归来"
-  },
   "三角洲_app": {
     "link": "https://www.taptap.cn/app/330259",
     "type": "射击、动作冒险",
@@ -891,20 +878,6 @@
     "category": "app",
     "raw_type": "付费下载、角色扮演",
     "officialName": "龙腾天下"
-  },
-  "三国天下归心_app": {
-    "link": "https://www.taptap.cn/app/759941",
-    "type": "SLG、策略",
-    "category": "app",
-    "raw_type": "策略、SLG、三国、战争、国战",
-    "officialName": "三国：天下归心"
-  },
-  "三国谋定天下_app": {
-    "link": "https://www.taptap.cn/app/231537",
-    "type": "SLG、策略",
-    "category": "app",
-    "raw_type": "SLG、策略、战争、三国",
-    "officialName": "三国：谋定天下"
   },
   "快来当领主_app": {
     "link": "https://www.taptap.cn/app/717145",
@@ -969,5 +942,153 @@
     "type": "休闲益智、烧脑",
     "category": "minigame",
     "officialName": "玩的有点菜"
+  },
+  "三国：天命再临_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx61721ee456e9d4f1",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "三国：天命再临"
+  },
+  "冒险勇者_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxecf549fa1cf6d838",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "冒险勇者"
+  },
+  "宗师之上_app": {
+    "link": "https://www.taptap.cn/app/774700",
+    "type": "角色扮演、养成",
+    "category": "app",
+    "raw_type": "放置、养成、竖屏、国风、角色扮演",
+    "officialName": "宗师之上"
+  },
+  "地下城与勇士：起源_app": {
+    "link": "https://www.taptap.cn/app/151294",
+    "type": "动作冒险、角色扮演",
+    "category": "app",
+    "raw_type": "2D、横版、角色扮演、格斗、动作、冒险、热血、多人联机",
+    "officialName": "地下城与勇士：起源"
+  },
+  "微乐江苏麻将_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxb2e8afbf64b8f3df",
+    "type": "棋牌、纸牌",
+    "category": "minigame",
+    "officialName": "微乐江苏麻将"
+  },
+  "比比脑瓜子_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxe3b1f7dba6526836",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "比比脑瓜子"
+  },
+  "时空猎人·觉醒_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxd40860b5d7ee1053",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "时空猎人·觉醒"
+  },
+  "这城有良田_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx667d10ad873053e5",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "这城有良田"
+  },
+  "御剑九霄_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx3f7f394a755d717c",
+    "type": "休闲益智、消除",
+    "category": "minigame",
+    "officialName": "御剑九霄"
+  },
+  "逍遥游侠_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxccc24b1772950c3d",
+    "type": "动作冒险、休闲益智",
+    "category": "minigame",
+    "officialName": "逍遥游侠"
+  },
+  "屠龙传说_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx0451de9a04e40e66",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "屠龙传说"
+  },
+  "无限轮回_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxd01b13ee948d45a4",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "无限轮回"
+  },
+  "疯狂积木城_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx49938ce6d8a0b56a",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "疯狂积木城"
+  },
+  "破日开天_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx0cc50f661ceb5935",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "破日开天"
+  },
+  "天命传奇_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx521112663df9fa22",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "天命传奇"
+  },
+  "欢乐战三国_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxfea7e3014cf95068",
+    "type": "角色扮演、卡牌",
+    "category": "minigame",
+    "officialName": "欢乐战三国"
+  },
+  "天龙八部荣耀版_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx7c6587fcbdf80d21",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "天龙八部荣耀版"
+  },
+  "指尖幻影_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx53e1046cc6ea9846",
+    "type": "休闲益智、塔防",
+    "category": "minigame",
+    "officialName": "指尖幻影"
+  },
+  "三国：谋定天下_app": {
+    "link": "https://www.taptap.cn/app/231537",
+    "type": "SLG、策略",
+    "category": "app",
+    "raw_type": "SLG、策略、战争、三国",
+    "officialName": "三国：谋定天下"
+  },
+  "车道管理_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx78e912b9e33712cd",
+    "type": "休闲益智、消除",
+    "category": "minigame",
+    "officialName": "车道管理"
+  },
+  "小镇派对_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx814d3ff12db1b7c0",
+    "type": "休闲益智、消除",
+    "category": "minigame",
+    "officialName": "小镇派对"
+  },
+  "鱼乐达人_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx9a7cf634ea79a9ac",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "鱼乐达人千炮"
+  },
+  "梦幻西游_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxfc545148641497dd",
+    "type": "角色扮演、回合制",
+    "category": "minigame",
+    "officialName": "梦幻西游网页版"
+  },
+  "夜幕之下_app": {
+    "link": "https://www.taptap.cn/app/746164",
+    "type": "角色扮演、二次元",
+    "category": "app",
+    "raw_type": "角色扮演、女性向、二次元",
+    "officialName": "夜幕之下"
   }
 }

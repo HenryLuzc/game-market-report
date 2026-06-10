@@ -53,7 +53,7 @@ function saveCache(cache) {
   fs.renameSync(tmpPath, config.GAME_CACHE_PATH);
 }
 
-const stripPunct = s => s.replace(/[：:\-—–·、,.\s]+/g, '');
+const stripPunct = s => s.replace(/[：:\-—–·・･、,.\s]+/g, '');
 
 const GAME_NAME_ALIASES = {
   '代号：超自然': '超自然行动组',
@@ -411,6 +411,9 @@ async function enrichGames(games, cache, category = 'minigame') {
 
   // Apply static name aliases (codenames → official names)
   for (const g of games) {
+    // Normalize variant middle-dot characters (katakana ・ U+30FB, halfwidth ･ U+FF65)
+    // to the standard interpunct · (U+00B7) so cache keys match regardless of input source
+    g.name = g.name.replace(/[・･]/g, '·');
     if (GAME_NAME_ALIASES[g.name]) {
       g.name = GAME_NAME_ALIASES[g.name];
     }
