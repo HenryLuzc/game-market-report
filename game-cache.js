@@ -62,45 +62,6 @@ const GAME_NAME_ALIASES = {
   '消得有点菜': '玩的有点菜',
 };
 
-const TYPO_CORRECT_PROMPT = `你是一个游戏行业专家。请检查以下游戏名称列表，找出并修正其中的错别字（同音字、形近字等）。
-
-规则：
-1. 只修正你100%确定是错别字的情况，有任何不确定就保持原样
-2. 游戏名称经常使用谐音字、生僻字、自造词作为特色，这些不是错别字。例如"杖剑传说"的"杖"不是错别字，"仗剑"和"杖剑"都是合理的游戏名
-3. 只纠正那些明显不通顺、一看就是输入错误的情况（如"像僵尸开炮"的"像"应为"向"，"燕云十六生"的"生"应为"声"）
-4. 如果一个字在游戏语境下有合理解释，就不要修改
-5. 返回JSON对象，key是原始名称，value是修正后的名称
-6. 如果名称没有错别字，不要包含在返回结果中
-7. 只返回JSON，不要其他文字
-
-示例输入：["像僵尸开炮", "燕云十六生", "杖剑传说", "道友来挖宝"]
-示例输出：{"像僵尸开炮": "向僵尸开炮", "燕云十六生": "燕云十六声"}`;
-
-async function correctGameNames(names) {
-  if (!names.length) return new Map();
-  try {
-    const resp = await llmClient.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 1024,
-      messages: [{ role: 'user', content: `${TYPO_CORRECT_PROMPT}\n\n${JSON.stringify(names)}` }],
-    });
-    const text = (resp.content.find(b => b.type === 'text')?.text || '').trim();
-    const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/) || [null, text];
-    const corrections = JSON.parse((jsonMatch[1] || '{}').trim());
-    const map = new Map();
-    for (const [orig, fixed] of Object.entries(corrections)) {
-      if (typeof fixed === 'string' && fixed && fixed !== orig) {
-        map.set(orig, fixed);
-        console.log(`[GameCache] 错别字修正: ${orig} → ${fixed}`);
-      }
-    }
-    return map;
-  } catch (err) {
-    console.warn('[GameCache] 错别字检测失败(跳过):', err.message);
-    return new Map();
-  }
-}
-
 function cacheKey(name, category) {
   return category ? `${name}_${category}` : name;
 }
@@ -416,25 +377,6 @@ async function enrichGames(games, cache, category = 'minigame') {
     g.name = g.name.replace(/[・･]/g, '·');
     if (GAME_NAME_ALIASES[g.name]) {
       g.name = GAME_NAME_ALIASES[g.name];
-    }
-  }
-
-  // Batch typo correction: only check names not already in cache
-  const uncachedNames = games
-    .filter(g => !cacheLookup(cache, g.name, category)?.link)
-    .map(g => g.name);
-  const typoMap = uncachedNames.length ? await correctGameNames(uncachedNames) : new Map();
-
-  // Apply corrections: update game names and also check cache with corrected name
-  for (const g of games) {
-    const corrected = typoMap.get(g.name);
-    if (corrected) {
-      // Carry over cache entry if corrected name has one
-      const correctedCached = cacheLookup(cache, corrected, category);
-      if (correctedCached?.link) {
-        cache[cacheKey(g.name, category)] = correctedCached;
-      }
-      g.name = corrected;
     }
   }
 
