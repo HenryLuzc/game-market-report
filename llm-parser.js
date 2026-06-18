@@ -15,7 +15,7 @@ function cleanGameName(name) {
 function rowsToText(rows, maxRows = 200) {
   const slice = rows.slice(0, maxRows);
   return slice.map((row, i) => {
-    const cells = (row || []).map((c, j) => `[${j}]${c == null ? '' : c}`);
+    const cells = (row || []).map((c, j) => `[${j}]${c == null ? '' : String(c)}`);
     return `Row${i}: ${cells.join(' | ')}`;
   }).join('\n');
 }
@@ -186,7 +186,7 @@ const BYTEDANCE_APP_PROMPT = `你是一个数据提取助手。下面是飞书�
 1. 找到包含"字节"的行作为区域起点
 2. 下一行是表头，第一列通常是"互娱二级赛道"
 3. 日均总消耗：在数据行中找到"互娱二级赛道"列对应的日均消耗数字，这是字节手游的日均总消耗(total_cost)，单位万
-4. APP游戏列表：找到表头中"全局appname"列及其对应的"日均消耗"列，逐行提取游戏名称和日均消耗
+4. APP游戏列表：找到表头中"全局appname"列，以及与它对应的"日均消耗"列（注意：appname 列右侧通常紧邻一个"总消耗"列，再往右才是"日均消耗"列）。必须提取"日均消耗"列，绝对不要提取"总消耗"列。两列现在都是数字，靠表头文字区分，单位均为万
 5. 过滤非游戏项目（如工具类、应用商店类如TapTap、电商类、社交类、短剧类等明显不是游戏的项目）
 6. 跳过名称为空的条目，日均消耗转为数字
 7. 按游戏名称去重，保留消耗较高的记录

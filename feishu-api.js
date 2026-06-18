@@ -120,7 +120,7 @@ async function getSheetList(spreadsheetToken) {
 
 async function readSheet(spreadsheetToken, range) {
   const data = await feishuRequest('GET', `/open-apis/sheets/v2/spreadsheets/${spreadsheetToken}/values/${range}`, {
-    params: { valueRenderOption: 'ToString' },
+    params: { valueRenderOption: 'UnformattedValue' },
   });
   const rows = data?.data?.valueRange?.values;
   if (!Array.isArray(rows)) {

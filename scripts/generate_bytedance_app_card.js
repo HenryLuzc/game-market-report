@@ -52,7 +52,7 @@ function buildTableRows(games) {
       rank: g.rank,
       game: gameField,
       type: g.type || '-',
-      cost: g.daily_cost
+      cost: +(+g.daily_cost).toFixed(2)
     };
   });
 }
