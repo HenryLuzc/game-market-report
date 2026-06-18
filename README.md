@@ -10,10 +10,10 @@
   - **字节小游戏** — 字节微信系 + 抖音小游戏消耗排名
   - **腾讯手游** — 腾讯 APP 游戏消耗排名
   - **字节手游** — 字节 APP 游戏消耗排名
-- 自动搜索游戏链接和类型标签，三级来源优先级：
-  - 小游戏：应用宝（wx 前缀）
-  - 手游：TapTap → 应用宝（com.xxx）→ AppStore
-- 游戏名称预处理：静态别名映射（代号→正式名）+ LLM 错别字修正
+- 自动搜索游戏链接和类型标签，按报告类别使用不同来源：
+  - 小游戏：仅应用宝（wx 前缀小程序）
+  - 手游：TapTap → 应用宝（com.xxx）→ AppStore，按此优先级依次回退
+- 游戏名称预处理：静态别名映射（代号→正式名）+ 中点字符变体归一化
 - 手游类型标签通过 LLM 归一化为标准分类（角色扮演、策略、休闲等 16 类）
 - 原始标签记录到数据库（game_tags 表），供模型学习优化
 - 搜索时自动去标点匹配 + 用官方名称展示（如"次神光之觉醒"→"次神：光之觉醒"）
@@ -54,6 +54,12 @@
 │   ├── generate_bytedance_card.js    # 字节小游戏卡片生成
 │   ├── generate_tencent_app_card.js  # 腾讯手游卡片生成
 │   └── generate_bytedance_app_card.js # 字节手游卡片生成
+├── public/
+│   └── index.html      # Web Dashboard 单页应用
+├── data/               # 运行时自动创建（不提交）
+│   ├── reports.db      # SQLite 数据库（发送记录/游戏标签/分析洞察）
+│   └── send-targets.json # 发送目标配置
+├── tmp/                # 卡片生成临时文件（不提交）
 ├── .env                # 飞书应用凭证（不提交）
 └── game-cache.json     # 游戏链接/类型缓存（按 _minigame/_app 分类）
 ```
@@ -63,8 +69,19 @@
 创建 `.env` 文件：
 
 ```env
+# 飞书应用凭证（必填）
 FEISHU_APP_ID=your_app_id
 FEISHU_APP_SECRET=your_app_secret
+
+# 数据源：要读取的飞书电子表格 Wiki token（必填）
+WIKI_TOKEN=your_wiki_token
+
+# 可选
+FEISHU_BASE_URL=https://open.feishu.cn   # 飞书 API 基地址（私有化/代理时改）
+PORT=3456                                # Web 服务端口
+CRON_SCHEDULE=0 10 * * 5                 # 定时任务（默认上海时区每周五 10:00）
+API_KEY=your_api_key                     # 设置后所有 /api 接口需带 x-api-key 头；不设则不鉴权
+NOTIFY_USER_ID=ou_xxx                    # 失败通知接收人 open_id
 ```
 
 飞书应用需要以下权限：
@@ -124,6 +141,8 @@ npm run init-cache
 ```
 
 ## API
+
+设置了 `API_KEY` 环境变量后，所有 `/api/*` 接口需在请求头携带 `x-api-key: <API_KEY>`，否则返回 401；未设置时不鉴权。
 
 | 方法 | 路径 | 说明 |
 |------|------|------|
@@ -192,7 +211,7 @@ npm run init-cache
 ## 技术栈
 
 - Node.js + Express
-- Claude API (`claude-sonnet-4-6` / `claude-opus-4-6`) — 表格数据解析 + 错别字修正 + 游戏类型标签归一化 + 趋势洞察 + 智能分析
+- Claude API (`claude-sonnet-4-6` / `claude-opus-4-6`) — 表格数据解析 + 游戏类型标签归一化 + 趋势洞察 + 智能分析
 - 飞书 Open API — 读表格、发卡片
 - sql.js (WASM SQLite) — 发送记录 + 游戏标签 + 分析洞察持久化
 - node-cron — 定时调度
