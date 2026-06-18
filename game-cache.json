@@ -931,11 +931,11 @@
     "officialName": "八向箭头"
   },
   "无畏契约_app": {
-    "link": "https://sj.qq.com/appdetail/com.tencent.pcgame.valorant",
+    "link": "https://www.taptap.cn/app/722210",
     "type": "射击、竞技",
+    "raw_type": "竞技、射击、动作",
     "category": "app",
-    "raw_type": "支持iOS、动作冒险、格斗、动漫改编、PvP、枪战、角色扮演、沙盒、探险、我的世界、第一人称射击、5v5",
-    "officialName": "无畏契约"
+    "officialName": "无畏契约：源能行动"
   },
   "玩的有点菜_minigame": {
     "link": "https://sj.qq.com/appdetail/wxb3fc6eb79648b7ce",
@@ -1090,5 +1090,267 @@
     "category": "app",
     "raw_type": "角色扮演、女性向、二次元",
     "officialName": "夜幕之下"
+  },
+  "仙葫_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxf1b8870da606c3a6",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "仙葫软件"
+  },
+  "王者征途_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxbfc89b084ad52a75",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "王者征途"
+  },
+  "风暴奇兵_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx5f76f1cf97358bb2",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "风暴奇兵"
+  },
+  "灵妖劫_app": {
+    "link": "https://www.taptap.cn/app/788702",
+    "type": "MMORPG、角色扮演",
+    "category": "app",
+    "raw_type": "仙侠、MMORPG、养成、角色扮演",
+    "officialName": "灵妖劫"
+  },
+  "次神光之觉醒_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx35ab0021daa3a9a0",
+    "type": "角色扮演、卡牌",
+    "category": "minigame",
+    "officialName": "次神：光之觉醒"
+  },
+  "斗战沙场_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxda24c19502541379",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "斗战沙场"
+  },
+  "QQ经典农场_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx5306c5978fdb76e4",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "QQ经典农场"
+  },
+  "超能战争_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx214b41d265aea2f8",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "超能战争"
+  },
+  "晴空幻想_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxa15ac2b01a3c1c75",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "晴空幻想"
+  },
+  "小兵有前途_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx95b8d1c9f729b0af",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "小兵有前途"
+  },
+  "玩起来贼溜_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx50bb9c01148bdcdd",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "玩起来贼溜"
+  },
+  "荒无之下_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxf986edb249b4f74c",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "荒无之下"
+  },
+  "终极闯关_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxe303c386b223a68d",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "终极闯关游戏软件V1.0"
+  },
+  "赘婿_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx8e628094e7204329",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "赘婿"
+  },
+  "天龙八部2：飞龙战天_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx9a3f39a5d5cb5142",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "天龙八部2：飞龙战天"
+  },
+  "造化仙府_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxc5c6c4e6b4b0075f",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "造化仙府"
+  },
+  "烈焰征程_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx0e1e0234ed89478c",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "烈焰征程"
+  },
+  "荣耀战神_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxf7b7ccc66eea9c1a",
+    "type": "棋牌、纸牌",
+    "category": "minigame",
+    "officialName": "荣耀战神"
+  },
+  "纯白轨迹_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx3c2bf43c495d09a8",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "纯白轨迹"
+  },
+  "快乐方块消_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxaed8b9fb8bfefa4a",
+    "type": "休闲益智、消除",
+    "raw_type": "休闲益智、方块消除",
+    "category": "minigame",
+    "officialName": "快乐方块消"
+  },
+  "苍蓝前线_app": {
+    "link": "https://www.taptap.cn/app/621548",
+    "type": "射击、策略",
+    "category": "app",
+    "raw_type": "战舰、射击、战争、策略",
+    "officialName": "苍蓝前线"
+  },
+  "上古王冠_app": {
+    "link": "https://www.taptap.cn/app/204923",
+    "type": "卡牌、养成",
+    "category": "app",
+    "raw_type": "卡牌、策略、养成、竖屏、国风、放置、回合制、3D、收集",
+    "officialName": "上古王冠"
+  },
+  "梦幻西游互通版_app": {
+    "link": "https://www.taptap.cn/app/17935",
+    "type": "MMORPG、角色扮演",
+    "category": "app",
+    "raw_type": "回合制、MMORPG、角色扮演、仙侠、放置、自由交易、多人联机、Q版、西游",
+    "officialName": "梦幻西游互通版"
+  },
+  "跃动小子_app": {
+    "link": "https://www.taptap.cn/app/244608",
+    "type": "角色扮演",
+    "category": "app",
+    "raw_type": "角色扮演",
+    "officialName": "跃动小子"
+  },
+  "斗罗大陆：魂师对决_app": {
+    "link": "https://www.taptap.cn/app/211270",
+    "type": "卡牌、角色扮演",
+    "category": "app",
+    "raw_type": "卡牌、回合制、多人联机、养成、角色扮演、3D",
+    "officialName": "斗罗大陆：魂师对决"
+  },
+  "幻斗英雄_app": {
+    "link": "https://apps.apple.com/cn/app/%E5%B9%BB%E6%96%97%E8%8B%B1%E9%9B%84-%E5%A4%8D%E5%8F%A4%E6%94%BB%E9%80%9F%E4%B8%89%E8%81%8C%E4%B8%9A/id6758758924",
+    "type": "角色扮演、MMORPG",
+    "raw_type": "角色扮演、MMORPG",
+    "category": "app",
+    "officialName": "幻斗英雄"
+  },
+  "灵画师_app": {
+    "link": "https://www.taptap.cn/app/827480",
+    "type": "角色扮演",
+    "category": "app",
+    "raw_type": "角色扮演",
+    "officialName": "灵画师"
+  },
+  "盛世天下：女王的游戏_app": {
+    "link": "https://www.taptap.cn/app/30089",
+    "type": "养成、其他",
+    "category": "app",
+    "raw_type": "文字",
+    "officialName": "盛世天下"
+  },
+  "最佳球会_app": {
+    "link": "https://www.taptap.cn/app/225233",
+    "type": "模拟经营、竞技",
+    "category": "app",
+    "raw_type": "足球、策略、模拟、动作、3D、竞技、体育",
+    "officialName": "最佳球会"
+  },
+  "星辰变：归来_app": {
+    "link": "https://www.taptap.cn/app/836636",
+    "type": "角色扮演",
+    "category": "app",
+    "raw_type": "角色扮演",
+    "officialName": "星辰变：归来"
+  },
+  "传奇世界无双_app": {
+    "link": "https://www.taptap.cn/app/35790",
+    "type": "角色扮演、动作冒险",
+    "category": "app",
+    "raw_type": "角色扮演、动作、黑暗",
+    "officialName": "传奇世界"
+  },
+  "潮汐守望者_app": {
+    "link": "https://www.taptap.cn/app/550307",
+    "type": "卡牌、塔防",
+    "category": "app",
+    "raw_type": "卡牌、策略、塔防、3D、即时战术、养成",
+    "officialName": "潮汐守望者"
+  },
+  "热血江湖：归来_app": {
+    "link": "https://www.taptap.cn/app/753091",
+    "type": "角色扮演、养成",
+    "category": "app",
+    "raw_type": "放置、武侠、角色扮演",
+    "officialName": "热血江湖：归来"
+  },
+  "盖世强者_app": {
+    "link": "https://apps.apple.com/cn/app/%E7%9B%96%E4%B8%96%E5%BC%BA%E8%80%85-%E5%B0%81%E7%A5%9E%E6%96%B0%E7%89%88%E6%9C%AC/id6773217134",
+    "type": "动作冒险、角色扮演",
+    "category": "app",
+    "raw_type": "单职业、角色扮演、动作、沙城争霸",
+    "officialName": "盖世强者-封神新版本"
+  },
+  "战斗吧恶龙_app": {
+    "link": "https://www.taptap.cn/app/396834",
+    "type": "动作冒险",
+    "category": "app",
+    "raw_type": "动作",
+    "officialName": "战斗吧"
+  },
+  "封神幻想世界_app": {
+    "link": "https://www.taptap.cn/app/582594",
+    "type": "MMORPG、养成",
+    "category": "app",
+    "raw_type": "MMORPG、宠物、社交、封神、神话、多人联机、国风、养成、策略、回合制",
+    "officialName": "封神幻想世界"
+  },
+  "大话西游_app": {
+    "link": "https://www.taptap.cn/app/2316",
+    "type": "MMORPG、角色扮演",
+    "category": "app",
+    "raw_type": "角色扮演、回合制、仙侠、动作、养成、策略、Q版、西游、MMORPG",
+    "officialName": "大话西游"
+  },
+  "烈火封神_app": {
+    "link": "https://www.taptap.cn/app/160754",
+    "type": "角色扮演",
+    "category": "app",
+    "raw_type": "角色扮演",
+    "officialName": "烈火封神"
+  },
+  "神迹之上古传奇_app": {
+    "link": "https://sj.qq.com/appdetail/wxf0382eb399afc91c",
+    "type": "角色扮演、MMORPG",
+    "raw_type": "角色扮演、MMORPG",
+    "category": "app",
+    "officialName": "神迹之上古传奇"
+  },
+  "996传奇盒子_app": {
+    "link": "https://sj.qq.com/appdetail/com.xqhy.legendbox",
+    "type": "其他",
+    "category": "app",
+    "raw_type": "游戏社区",
+    "officialName": "996传奇盒子"
   }
 }
