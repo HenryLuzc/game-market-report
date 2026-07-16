@@ -119,6 +119,12 @@
     "category": "minigame",
     "officialName": "开心消消乐"
   },
+  "开心消消消_minigame": {
+    "link": "https://sj.qq.com/appdetail/com.tencent.tmgp.mozhujewelry",
+    "type": "休闲益智、消除",
+    "category": "minigame",
+    "officialName": "开心消消消"
+  },
   "我强到爆表_minigame": {
     "link": "https://sj.qq.com/appdetail/wx5c6c8bed13599f47",
     "type": "休闲益智、创新品类",
@@ -1352,5 +1358,260 @@
     "category": "app",
     "raw_type": "游戏社区",
     "officialName": "996传奇盒子"
+  },
+  "时光杂货店_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx5e931d82c78f2eb3",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "时光杂货店"
+  },
+  "赵云与阿斗_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxbef54be7c625286e",
+    "type": "休闲益智、消除",
+    "category": "minigame",
+    "officialName": "赵云与阿斗"
+  },
+  "心跳陷落_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx1733b9721b7bac9d",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "心跳陷落"
+  },
+  "冲突小队_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxc761b90fabc11225",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "冲突小队"
+  },
+  "时光胡同_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx81a1b78125da5d73",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "时光胡同"
+  },
+  "兽化三国_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx6860db24c7f06eb2",
+    "type": "角色扮演、卡牌",
+    "category": "minigame",
+    "officialName": "兽化三国"
+  },
+  "全战觉醒_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx08af98630e353011",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "全战觉醒"
+  },
+  "大王请留步_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx55ebc7d3aa416858",
+    "type": "棋牌、纸牌",
+    "category": "minigame",
+    "officialName": "大王请留步"
+  },
+  "铸兵之王_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx2e78e13ce647fb1c",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "铸兵之王"
+  },
+  "梦仙灵_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx2f0aef944376f457",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "梦仙灵"
+  },
+  "三国:谋定天下_app": {
+    "link": "https://www.taptap.cn/app/231537",
+    "type": "SLG、策略",
+    "category": "app",
+    "raw_type": "SLG、策略、战争、三国",
+    "officialName": "三国：谋定天下"
+  },
+  "搬砖没我快_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx506815b8ffcb15a6",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "搬砖没我快"
+  },
+  "通关没难度_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx336e2243eb84b582",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "通关没难度"
+  },
+  "明月小镇_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxe6d85ad5a97bc1b3",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "明月小镇"
+  },
+  "超能飞行队_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx28e7fa890641fc64",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "超能飞行队"
+  },
+  "灵剑诀意_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxee58904c5078f8f3",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "灵剑诀意"
+  },
+  "仙逆：战天道_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx44f3417107864db4",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "仙逆战天道情报站点"
+  },
+  "斗破：莫欺少年穷_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxf448c3a6ee45e8f0",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "斗破：莫欺少年穷"
+  },
+  "佣兵小镇_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx59d849f9c3f1f710",
+    "type": "角色扮演、卡牌",
+    "category": "minigame",
+    "officialName": "佣兵小镇"
+  },
+  "王者荣耀_app": {
+    "link": "https://www.taptap.cn/app/2301",
+    "type": "竞技、策略",
+    "category": "app",
+    "raw_type": "MOBA、5v5、多人联机、自走棋",
+    "officialName": "王者荣耀"
+  },
+  "逆水寒_app": {
+    "link": "https://www.taptap.cn/app/191385",
+    "type": "MMORPG、角色扮演",
+    "category": "app",
+    "raw_type": "开放世界、武侠、高画质、养成、多人联机、MMORPG、捏脸、3D、角色扮演",
+    "officialName": "逆水寒"
+  },
+  "我要当老祖_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxc797281c7bd0aba3",
+    "type": "角色扮演、策略",
+    "category": "minigame",
+    "officialName": "我要当老祖"
+  },
+  "微乐浙江麻将_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx31a807a1033923c6",
+    "type": "棋牌、纸牌",
+    "category": "minigame",
+    "officialName": "微乐浙江麻将"
+  },
+  "斗罗大陆：传承_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxcc28c71542bc50be",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "斗罗大陆：传承"
+  },
+  "小小花园_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxe9e50d95f59f1561",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "小小花园"
+  },
+  "斗罗大陆：传承_app": {
+    "link": "https://www.taptap.cn/app/826044",
+    "type": "角色扮演、养成",
+    "category": "app",
+    "raw_type": "放置、养成、国漫、角色扮演",
+    "officialName": "斗罗大陆：传承"
+  },
+  "时空猎人·觉醒_app": {
+    "link": "https://www.taptap.cn/app/739697",
+    "type": "动作冒险、角色扮演",
+    "category": "app",
+    "raw_type": "横版、角色扮演、格斗、冒险、多人联机、街机、动作",
+    "officialName": "时空猎人·觉醒"
+  },
+  "忍者必须死_app": {
+    "link": "https://www.taptap.cn/app/79068",
+    "type": "动作冒险、竞技",
+    "category": "app",
+    "raw_type": "动作、跑酷、忍者、横版、火柴人、多人联机、打击感、2D、手速、反应",
+    "officialName": "忍者必须死3"
+  },
+  "我要当老祖_app": {
+    "link": "https://www.taptap.cn/app/751029",
+    "type": "角色扮演、策略",
+    "category": "app",
+    "raw_type": "修仙、轻度Roguelike、策略、角色扮演",
+    "officialName": "我要当老祖"
+  },
+  "一念逍遥_app": {
+    "link": "https://www.taptap.cn/app/159465",
+    "type": "角色扮演、养成",
+    "category": "app",
+    "raw_type": "国风、养成、修仙、文字、竖屏、角色扮演、放置、多人联机",
+    "officialName": "一念逍遥"
+  },
+  "解忧梦幻岛_app": {
+    "link": "https://www.taptap.cn/app/874429",
+    "type": "模拟经营、休闲",
+    "category": "app",
+    "raw_type": "模拟经营、休闲",
+    "officialName": "解忧梦幻岛"
+  },
+  "指尖四川麻将_app": {
+    "link": "https://sj.qq.com/appdetail/com.tencent.tmgp.zjscmj",
+    "type": "竞技、休闲",
+    "category": "app",
+    "raw_type": "棋牌",
+    "officialName": "指尖四川麻将"
+  },
+  "三国志·战略版_app": {
+    "link": "https://www.taptap.cn/app/139546",
+    "type": "SLG、策略",
+    "category": "app",
+    "raw_type": "SLG、策略、三国、模拟经营、多人联机、战争、经营",
+    "officialName": "三国志·战略版"
+  },
+  "心跳陷落_app": {
+    "link": "https://www.taptap.cn/app/786394",
+    "type": "养成、角色扮演",
+    "category": "app",
+    "raw_type": "换装、恋爱、女性向、剧情、角色扮演",
+    "officialName": "心跳陷落"
+  },
+  "龙之谷：启程_app": {
+    "link": "https://www.taptap.cn/app/858841",
+    "type": "MMORPG、角色扮演",
+    "category": "app",
+    "raw_type": "MMORPG、多人联机、冒险、角色扮演",
+    "officialName": "龙之谷：启程"
+  },
+  "凡人修仙传：人界篇_app": {
+    "link": "https://www.taptap.cn/app/308550",
+    "type": "MMORPG、角色扮演",
+    "category": "app",
+    "raw_type": "MMORPG、剧情、3D、国风、修仙、角色扮演",
+    "officialName": "凡人修仙传：人界篇"
+  },
+  "去有梦的小岛_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxe31c206182b2b811",
+    "type": "休闲益智、经营",
+    "category": "minigame",
+    "officialName": "去有梦的小岛"
+  },
+  "修仙大宗门_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx89938491d374b27c",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "修仙大宗门"
+  },
+  "镇邪人_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxd53170210eef737f",
+    "type": "角色扮演、MMORPG",
+    "category": "minigame",
+    "officialName": "镇邪人"
+  },
+  "忍者必须死3_app": {
+    "link": "https://www.taptap.cn/app/79068",
+    "type": "动作冒险、竞技",
+    "category": "app",
+    "raw_type": "动作、跑酷、忍者、横版、火柴人、多人联机、打击感、2D、手速、反应",
+    "officialName": "忍者必须死3"
   }
 }
