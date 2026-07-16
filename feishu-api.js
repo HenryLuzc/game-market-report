@@ -49,8 +49,9 @@ async function feishuRequest(method, path, { body, params, retries = 2 } = {}) {
   }
 
   let lastError;
+  let backoffMs = 0;
   for (let attempt = 0; attempt <= retries; attempt++) {
-    if (attempt > 0) await new Promise(r => setTimeout(r, 1000 * attempt));
+    if (attempt > 0) await new Promise(r => setTimeout(r, backoffMs || 1000 * attempt));
 
     let resp, data;
     try {
@@ -87,6 +88,16 @@ async function feishuRequest(method, path, { body, params, retries = 2 } = {}) {
       tokenCache = { token: null, expiresAt: 0 };
       lastError = new Error(`飞书 API token 过期 [${method} ${path}]`);
       if (attempt < retries) continue;
+      throw lastError;
+    }
+
+    // 频控/限流：9499 too many request、1061045 频率限制。指数退避后重试
+    if (data.code === 9499 || data.code === 1061045) {
+      lastError = new Error(`飞书 API 频控 [${method} ${path}]: ${data.msg} (code: ${data.code})`);
+      if (attempt < retries) {
+        backoffMs = 2000 * Math.pow(2, attempt); // 2s, 4s, 8s...
+        continue;
+      }
       throw lastError;
     }
 

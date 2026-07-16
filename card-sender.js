@@ -11,10 +11,13 @@ async function sendCard(cardJson, { chatId, userId } = {}) {
 
 async function sendCardToAll(cardJson, targets) {
   const results = [];
-  for (const t of targets) {
+  for (let i = 0; i < targets.length; i++) {
+    const t = targets[i];
     const opts = t.type === 'user' ? { userId: t.target } : { chatId: t.target };
     const result = await sendCard(cardJson, opts);
     results.push({ ...result, target: t });
+    // 主动节流，避免触发飞书发消息接口限流(9499)。最后一个不用等
+    if (i < targets.length - 1) await new Promise(r => setTimeout(r, 300));
   }
   return results;
 }
