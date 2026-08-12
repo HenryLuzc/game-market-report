@@ -267,6 +267,11 @@ async function runPipeline({ types = ['tencent', 'bytedance', 'tencent_app', 'by
     })
   );
 
+  // All generation lanes have settled — tear down the shared headless browser.
+  // Individual lanes must NOT close it themselves (a fast minigame lane would
+  // kill an app lane's in-flight TapTap navigation).
+  await gameCache.closeBrowser();
+
   const generated = new Map();
   const allResults = [];
   const mergedCache = { ...baseCache };

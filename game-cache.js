@@ -228,28 +228,59 @@ async function searchAppFromYYB(gameName) {
 
 const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 let _browser = null;
+let _browserPromise = null;
+// Refcount of active holders. The browser is shared across concurrent report
+// lanes (report-pipeline runs 4 of them via Promise.allSettled), so it must only
+// close once the LAST holder is done — otherwise an in-flight navigation dies
+// with "Navigating frame was detached" / "Requesting main frame too early!".
+let _browserRefs = 0;
 
-async function getBrowser() {
-  if (_browser && _browser.connected) return _browser;
-  _browser = await puppeteer.launch({
-    executablePath: CHROME_PATH,
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
-  });
-  return _browser;
+// Acquire the shared browser. Every acquireBrowser() must be paired with a
+// releaseBrowser() in a finally block.
+async function acquireBrowser() {
+  _browserRefs++;
+  try {
+    if (_browser && _browser.connected) return _browser;
+    // Dedupe concurrent launches: without this, parallel first-callers each spawn
+    // their own Chrome and clobber _browser, leaking orphaned processes.
+    if (!_browserPromise) {
+      _browserPromise = puppeteer.launch({
+        executablePath: CHROME_PATH,
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
+      }).finally(() => { _browserPromise = null; });
+    }
+    _browser = await _browserPromise;
+    return _browser;
+  } catch (err) {
+    _browserRefs--;
+    throw err;
+  }
 }
 
+async function releaseBrowser() {
+  if (_browserRefs === 0) return; // stray release, nothing to do
+  _browserRefs--;
+  if (_browserRefs > 0) return;
+  const browser = _browser;
+  _browser = null;
+  if (browser) await browser.close().catch(() => {});
+}
+
+// Force-close for process shutdown, regardless of outstanding holders.
 async function closeBrowser() {
-  if (_browser) {
-    await _browser.close().catch(() => {});
-    _browser = null;
-  }
+  _browserRefs = 0;
+  const browser = _browser;
+  _browser = null;
+  if (browser) await browser.close().catch(() => {});
 }
 
 async function searchAppFromTapTap(gameName) {
   let page;
+  let acquired = false;
   try {
-    const browser = await getBrowser();
+    const browser = await acquireBrowser();
+    acquired = true;
     page = await browser.newPage();
 
     let apiData = null;
@@ -314,6 +345,8 @@ async function searchAppFromTapTap(gameName) {
     console.warn('[GameCache] TapTap Puppeteer 搜索失败:', err.message);
     if (page && !page.isClosed()) await page.close().catch(() => {});
     return null;
+  } finally {
+    if (acquired) await releaseBrowser();
   }
 }
 
@@ -427,7 +460,9 @@ async function enrichGames(games, cache, category = 'minigame') {
   const source = category === 'app' ? 'APP' : 'YYB';
   console.log(`[GameCache] ${source} 搜索完成: ${Object.keys(found).length}/${toSearch.length} 命中`);
 
-  await closeBrowser();
+  // NOTE: do not close the browser here. It is shared across concurrent report
+  // lanes; searchAppFromTapTap acquires/releases it and the last release closes
+  // it. The pipeline calls closeBrowser() once when all lanes have settled.
   return result;
 }
 
@@ -472,4 +507,4 @@ function initCacheFromExistingData() {
   return { total: Object.keys(cache).length, added };
 }
 
-module.exports = { loadCache, saveCache, enrichGames, updateCacheEntry, initCacheFromExistingData, searchGameFromYYB, searchAppGameLink, closeBrowser };
+module.exports = { loadCache, saveCache, enrichGames, updateCacheEntry, initCacheFromExistingData, searchGameFromYYB, searchAppGameLink, acquireBrowser, releaseBrowser, closeBrowser };
