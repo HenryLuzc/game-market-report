@@ -400,7 +400,16 @@ async function searchAppGameLink(gameName) {
   return null;
 }
 
-async function enrichGames(games, cache, category = 'minigame') {
+// A cache entry is only fully usable when it carries BOTH a link and a real
+// type. Tag extraction fails occasionally (~3% of searches historically) while
+// the link still resolves, which used to persist `{ link, type: '-' }` and be
+// treated as a permanent hit — the card then showed 类型 "-" forever.
+function hasUsableType(entry) {
+  return !!(entry && entry.type && entry.type !== '-');
+}
+
+// `opts.searchFn` is a test seam; production always uses the real search layer.
+async function enrichGames(games, cache, category = 'minigame', opts = {}) {
   if (!cache) cache = loadCache();
 
   // Apply static name aliases (codenames → official names)
@@ -418,18 +427,26 @@ async function enrichGames(games, cache, category = 'minigame') {
 
   for (const g of games) {
     const cached = cacheLookup(cache, g.name, category);
-    if (cached?.link) {
-      const name = (cached.officialName && cached.officialName !== g.name) ? cached.officialName : g.name;
-      result.push({ ...g, name, link: cached.link, type: cached.type || '-' });
+    const name = (cached?.officialName && cached.officialName !== g.name) ? cached.officialName : g.name;
+    if (cached?.link && hasUsableType(cached)) {
+      result.push({ ...g, name, link: cached.link, type: cached.type });
+    } else if (cached?.link) {
+      // Partial hit: keep the known-good link as a fallback and re-search to
+      // fill in the missing type. If the retry fails the link still stands, so
+      // the game name stays clickable instead of regressing to no link at all.
+      // _searchKey preserves the pre-rename name: the cache key and the found[]
+      // lookup below are both keyed on it, not on the displayed officialName.
+      result.push({ ...g, name, link: cached.link, type: '-', _searchKey: g.name });
+      toSearch.push(g.name);
     } else {
-      result.push({ ...g, link: '', type: '-' });
+      result.push({ ...g, link: '', type: '-', _searchKey: g.name });
       toSearch.push(g.name);
     }
   }
 
   if (toSearch.length === 0) return result;
 
-  const searchFn = category === 'app' ? searchAppGameLink : searchGameFromYYB;
+  const searchFn = opts.searchFn || (category === 'app' ? searchAppGameLink : searchGameFromYYB);
   const CONCURRENCY = 3;
   const found = {};
   for (let i = 0; i < toSearch.length; i += CONCURRENCY) {
@@ -440,20 +457,26 @@ async function enrichGames(games, cache, category = 'minigame') {
     });
   }
 
-  if (Object.keys(found).length === 0) return result;
+  // _searchKey is internal bookkeeping and must never reach the card payload,
+  // so strip it on every exit path — including this early return.
+  if (Object.keys(found).length === 0) {
+    for (const g of result) delete g._searchKey;
+    return result;
+  }
 
   for (const g of result) {
-    const origName = g.name;
-    const f = found[origName];
+    const searchKey = g._searchKey;
+    delete g._searchKey;
+    if (!searchKey) continue; // complete cache hit, never searched
+    const f = found[searchKey];
     if (f) {
-      const newName = (f.officialName && f.officialName !== origName) ? f.officialName : origName;
-      g.name = newName;
+      g.name = (f.officialName && f.officialName !== searchKey) ? f.officialName : searchKey;
       g.link = f.link;
       g.type = f.type;
       const entry = { link: g.link, type: g.type, category };
       if (f.raw_type) entry.raw_type = f.raw_type;
       if (f.officialName) entry.officialName = f.officialName;
-      cache[cacheKey(origName, category)] = entry;
+      cache[cacheKey(searchKey, category)] = entry;
     }
   }
   saveCache(cache);
