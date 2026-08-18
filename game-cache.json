@@ -1235,7 +1235,7 @@
   },
   "梦幻西游互通版_app": {
     "link": "https://www.taptap.cn/app/17935",
-    "type": "MMORPG、角色扮演",
+    "type": "角色扮演、MMORPG",
     "category": "app",
     "raw_type": "回合制、MMORPG、角色扮演、仙侠、放置、自由交易、多人联机、Q版、西游",
     "officialName": "梦幻西游互通版"
@@ -1502,7 +1502,7 @@
   },
   "斗罗大陆：传承_minigame": {
     "link": "https://sj.qq.com/appdetail/wxcc28c71542bc50be",
-    "type": "休闲益智、创新品类",
+    "type": "角色扮演、养成",
     "category": "minigame",
     "officialName": "斗罗大陆：传承"
   },
@@ -1840,5 +1840,19 @@
     "category": "app",
     "raw_type": "多人联机、射击、FPS、PVP、竞技、TPS、3D、第三人称视角、团队合作、合作",
     "officialName": "和平精英"
+  },
+  "原始征途_app": {
+    "link": "https://www.taptap.cn/app/236626",
+    "type": "角色扮演",
+    "category": "app",
+    "raw_type": "角色扮演",
+    "officialName": "原始征途"
+  },
+  "梦幻西游：再续前缘_app": {
+    "link": "https://www.taptap.cn/app/902083",
+    "type": "角色扮演、MMORPG",
+    "category": "app",
+    "raw_type": "角色扮演、MMORPG",
+    "officialName": "梦幻西游：再续前缘"
   }
 }
