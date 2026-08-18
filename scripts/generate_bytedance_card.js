@@ -5,6 +5,7 @@
  * Usage: node generate_card.js <input.json> [output.json]
  */
 const fs = require('fs');
+const { buildFooterNote } = require('./card-footer');
 
 function loadData(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
@@ -157,8 +158,6 @@ function buildCard(data) {
   const analysis = buildAnalysis(wxGames, dyGames, summary);
 
   const title = data.title || `${data.date_range || ''} 字节小游戏消耗排名分析`;
-  const analysisDate = data.analysis_date || '';
-  const dataSource = data.data_source || '';
 
   const fmtCost = (v) => v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -229,10 +228,7 @@ function buildCard(data) {
       { tag: 'hr' },
       { tag: 'markdown', content: `**五、总结分析**\n\n${analysis}` },
       { tag: 'hr' },
-      {
-        tag: 'note',
-        elements: [{ tag: 'plain_text', content: `数据来源：${dataSource} | 链接来源：腾讯应用宝 | 分析时间：${analysisDate}` }]
-      }
+      ...buildFooterNote(data, '腾讯应用宝')
     ]
   };
 }

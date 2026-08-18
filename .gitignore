@@ -3,3 +3,7 @@ node_modules/
 data/
 tmp/
 *.db
+
+# 本地分析/草稿产物
+.understand-anything/
+flowChart.mmd

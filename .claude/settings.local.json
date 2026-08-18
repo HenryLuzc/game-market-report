@@ -58,7 +58,15 @@
       "Bash(curl -s \"https://sj.qq.com/search?q=$\\(node -e \"process.stdout.write\\(encodeURIComponent\\('快乐方块消'\\)\\)\"\\)\" --max-time 15 -o /tmp/qms_search.html)",
       "Bash(curl -s \"https://sj.qq.com/appdetail/wxaed8b9fb8bfefa4a\" --max-time 15 -o /tmp/qms_detail.html)",
       "Bash(curl -s \"https://www.taptap.cn/app/722210\" --max-time 20 -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36\")",
-      "Bash(curl -s \"https://itunes.apple.com/lookup?id=6758758924&country=cn\" --max-time 15)"
+      "Bash(curl -s \"https://itunes.apple.com/lookup?id=6758758924&country=cn\" --max-time 15)",
+      "Bash(echo \"current entries: $\\(node -e \"console.log\\(Object.keys\\(require\\('./game-cache.json'\\)\\).length\\)\"\\)\")",
+      "Bash(echo \"backup entries: $\\(node -e \"console.log\\(Object.keys\\(require\\('./tmp/game-cache.json.bak'\\)\\).length\\)\"\\)\")",
+      "Bash(tasklist //FI \"IMAGENAME eq chrome.exe\")",
+      "Bash(powershell -NoProfile -Command \"Get-CimInstance Win32_Process -Filter \\\\\"Name='chrome.exe'\\\\\" | Where-Object { \\\\$_.CommandLine -like '*headless*' } | Select-Object ProcessId | Format-Table -AutoSize; Write-Output 'headless count:'; \\(Get-CimInstance Win32_Process -Filter \\\\\"Name='chrome.exe'\\\\\" | Where-Object { \\\\$_.CommandLine -like '*headless*' }\\).Count\")",
+      "Bash(rm -f tmp/t1.json tmp/t2.json tmp/out.json)",
+      "Bash(npm test *)",
+      "WebSearch",
+      "Bash(git diff *)"
     ]
   }
 }

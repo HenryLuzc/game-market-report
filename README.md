@@ -78,6 +78,10 @@ WIKI_TOKEN=your_wiki_token
 
 # 可选
 FEISHU_BASE_URL=https://open.feishu.cn   # 飞书 API 基地址（私有化/代理时改）
+DATA_SOURCE_NAME=2026媒体广告消耗         # 卡片底部数据源文档名（会渲染成可点击链接）
+DATA_SOURCE_URL=https://xxx.feishu.cn/wiki/xxx  # 数据源文档链接，建议从浏览器地址栏复制；
+                                         # 不填则用 FEISHU_DOC_DOMAIN + WIKI_TOKEN 拼接兜底
+FEISHU_DOC_DOMAIN=https://www.feishu.cn  # 租户文档域名，仅在不填 DATA_SOURCE_URL 时用于拼接
 PORT=3456                                # Web 服务端口
 CRON_SCHEDULE=0 10 * * 5                 # 定时任务（默认上海时区每周五 10:00）
 API_KEY=your_api_key                     # 设置后所有 /api 接口需带 x-api-key 头；不设则不鉴权

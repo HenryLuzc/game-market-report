@@ -25,6 +25,8 @@ async function generateReport(type, rows, dateRange, cache) {
       date_range: dateRange,
       analysis_date: today(),
       data_source: config.DATA_SOURCE,
+      data_source_name: config.DATA_SOURCE_NAME,
+      data_source_url: config.DATA_SOURCE_URL,
       games: enriched,
       total_daily_cost: total_cost,
     };
@@ -37,6 +39,8 @@ async function generateReport(type, rows, dateRange, cache) {
       date_range: dateRange,
       analysis_date: today(),
       data_source: config.DATA_SOURCE,
+      data_source_name: config.DATA_SOURCE_NAME,
+      data_source_url: config.DATA_SOURCE_URL,
       wx_games: wxEnriched,
       dy_games: dyEnriched,
       wx_total_daily_cost: wx_total_cost,
@@ -50,6 +54,8 @@ async function generateReport(type, rows, dateRange, cache) {
       date_range: dateRange,
       analysis_date: today(),
       data_source: config.DATA_SOURCE,
+      data_source_name: config.DATA_SOURCE_NAME,
+      data_source_url: config.DATA_SOURCE_URL,
       games: enriched,
       total_daily_cost: total_cost,
     };
@@ -61,6 +67,8 @@ async function generateReport(type, rows, dateRange, cache) {
       date_range: dateRange,
       analysis_date: today(),
       data_source: config.DATA_SOURCE,
+      data_source_name: config.DATA_SOURCE_NAME,
+      data_source_url: config.DATA_SOURCE_URL,
       games: enriched,
       total_daily_cost: total_cost,
     };

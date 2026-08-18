@@ -5,6 +5,7 @@
  */
 const fs = require('fs');
 const path = require('path');
+const { buildFooterNote } = require('./card-footer');
 
 function loadData(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
@@ -140,8 +141,6 @@ function buildCard(data) {
   const analysis = buildAnalysis(games);
 
   const title = data.title || `${data.date_range || ''} 消耗排名分析`;
-  const analysisDate = data.analysis_date || '';
-  const dataSource = data.data_source || '';
 
   return {
     config: { wide_screen_mode: true },
@@ -194,10 +193,7 @@ function buildCard(data) {
       { tag: 'hr' },
       { tag: 'markdown', content: `**三、总结分析**\n\n${analysis}` },
       { tag: 'hr' },
-      {
-        tag: 'note',
-        elements: [{ tag: 'plain_text', content: `数据来源：${dataSource} | 链接来源：腾讯应用宝 | 分析时间：${analysisDate}` }]
-      }
+      ...buildFooterNote(data, '腾讯应用宝')
     ]
   };
 }
