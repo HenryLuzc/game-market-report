@@ -7,3 +7,7 @@ tmp/
 # 本地分析/草稿产物
 .understand-anything/
 flowChart.mmd
+
+# 本地配置与含真实业务数据的测试 fixture（公开仓库不提交，用 scripts/make-sheet-fixture.js 本地生成）
+.claude/settings.local.json
+test/fixtures/
