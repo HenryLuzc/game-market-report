@@ -8,7 +8,8 @@
     "trigger": "node cli.js",
     "trigger:tencent": "node cli.js --type tencent",
     "trigger:bytedance": "node cli.js --type bytedance",
-    "init-cache": "node cli.js --init-cache"
+    "init-cache": "node cli.js --init-cache",
+    "test:regions": "node test/tencent-region-anchor.test.js && node test/bytedance-region-anchor.test.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.89.0",
