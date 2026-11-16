@@ -60,6 +60,27 @@ const GAME_NAME_ALIASES = {
   '代号:超自然': '超自然行动组',
   '消的有点菜': '玩的有点菜',
   '消得有点菜': '玩的有点菜',
+  '代号超自然': '超自然行动组',
+  // Typos seen in past source sheets
+  '率士之滨': '率土之滨',
+  '燕云十六生': '燕云十六声',
+  '像僵尸开炮': '向僵尸开炮',
+  // Noise suffixes seen in past source sheets (wx / trailing digit without space,
+  // which cleanGameName's \s+\d\s*$ does not strip). Listed explicitly because a
+  // generic rule would break real names like 忍者必须死3 / 开车我贼6.
+  '向僵尸开炮wx': '向僵尸开炮',
+  '烈焰觉醒wx': '烈焰觉醒',
+  '永远的蔚蓝星球wx': '永远的蔚蓝星球',
+  '向末日开炮wx': '向末日开炮',
+  '我的花园世界wx': '我的花园世界',
+  '小镇派对wx': '小镇派对',
+  '镇邪人wx': '镇邪人',
+  '武侠大明星wx': '武侠大明星',
+  '英雄没有闪wx': '英雄没有闪',
+  '保卫向日葵1': '保卫向日葵',
+  '向往的生活1': '向往的生活',
+  '疯狂水世界1': '疯狂水世界',
+  '口袋奇兵1': '口袋奇兵',
 };
 
 function cacheKey(name, category) {

@@ -939,7 +939,7 @@
   "无畏契约_app": {
     "link": "https://www.taptap.cn/app/722210",
     "type": "射击、竞技",
-    "raw_type": "竞技、射击、动作",
+    "raw_type": "多人联机、FPS、竞技",
     "category": "app",
     "officialName": "无畏契约：源能行动"
   },
@@ -1290,11 +1290,10 @@
     "officialName": "星辰变：归来"
   },
   "传奇世界无双_app": {
-    "link": "https://www.taptap.cn/app/35790",
+    "link": "https://www.taptap.cn/app/864598",
     "type": "角色扮演、动作冒险",
     "category": "app",
-    "raw_type": "角色扮演、动作、黑暗",
-    "officialName": "传奇世界"
+    "officialName": "传奇世界无双"
   },
   "潮汐守望者_app": {
     "link": "https://www.taptap.cn/app/550307",
@@ -1458,9 +1457,9 @@
   },
   "仙逆：战天道_minigame": {
     "link": "https://sj.qq.com/appdetail/wx44f3417107864db4",
-    "type": "休闲益智、烧脑",
+    "type": "策略、塔防",
     "category": "minigame",
-    "officialName": "仙逆战天道情报站点"
+    "officialName": "仙逆：战天道"
   },
   "斗破：莫欺少年穷_minigame": {
     "link": "https://sj.qq.com/appdetail/wxf448c3a6ee45e8f0",
@@ -1851,8 +1850,8 @@
   "梦幻西游：再续前缘_app": {
     "link": "https://www.taptap.cn/app/902083",
     "type": "角色扮演、MMORPG",
+    "raw_type": "MMORPG、角色扮演",
     "category": "app",
-    "raw_type": "角色扮演、MMORPG",
     "officialName": "梦幻西游：再续前缘"
   },
   "电玩捕鱼_app": {
@@ -1900,11 +1899,11 @@
     "officialName": "诡秘之主"
   },
   "梦幻西游再续前缘_app": {
-    "link": "https://www.taptap.cn/app/2315",
+    "link": "https://www.taptap.cn/app/902083",
     "type": "角色扮演、MMORPG",
+    "raw_type": "MMORPG、角色扮演",
     "category": "app",
-    "raw_type": "回合制、角色扮演、仙侠",
-    "officialName": "梦幻西游"
+    "officialName": "梦幻西游：再续前缘"
   },
   "金铲铲_app": {
     "link": "https://www.taptap.cn/app/176937",
@@ -1983,11 +1982,11 @@
     "officialName": "开心消消乐"
   },
   "无畏契约：源能行动_app": {
-    "link": "https://www.taptap.cn/app/337799",
+    "link": "https://www.taptap.cn/app/722210",
     "type": "射击、竞技",
+    "raw_type": "多人联机、FPS、竞技",
     "category": "app",
-    "raw_type": "射击、多人联机、竞技",
-    "officialName": "无畏契约"
+    "officialName": "无畏契约：源能行动"
   },
   "乐乐捕鱼_app": {
     "link": "https://apps.apple.com/cn/app/%E4%B9%90%E4%B9%90%E6%8D%95%E9%B1%BC-%E7%BB%8F%E5%85%B8%E9%AB%98%E7%88%86%E7%9C%9F%E4%BA%BA%E6%89%93%E9%B1%BC%E6%B8%B8%E6%88%8F/id1489278985",
@@ -2223,13 +2222,13 @@
   },
   "刀鸣之巅_minigame": {
     "link": "https://sj.qq.com/appdetail/wxafc1c3d626912aa9",
-    "type": "-",
+    "type": "休闲益智、消除",
     "category": "minigame",
     "officialName": "刀鸣之巅"
   },
   "宗师之上_minigame": {
     "link": "https://sj.qq.com/appdetail/wx56ff139c4d89f776",
-    "type": "-",
+    "type": "休闲益智、消除",
     "category": "minigame",
     "officialName": "宗师之上"
   },
@@ -2270,5 +2269,175 @@
     "category": "app",
     "raw_type": "刷宝、Roguelike、地牢",
     "officialName": "地城狩猎"
+  },
+  "不停找找找_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxd1a3a871ddc9ebd2",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "不停找找找"
+  },
+  "夜市消消消_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx147f3762e92039ca",
+    "type": "休闲益智、消除",
+    "category": "minigame",
+    "officialName": "夜市消消消"
+  },
+  "指尖快消_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx3350a11f1daffd2f",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "指尖快消除"
+  },
+  "地宫大爆破_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx901321fc75d4a557",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "地宫大爆破"
+  },
+  "三国：箭雨千军_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx27e2932dede6afcc",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "三国：箭雨千军"
+  },
+  "冲啊，逗英雄_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx7ed6ffabf9a4e1b9",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "冲啊，逗英雄"
+  },
+  "篮球少女：飞跃巅峰_app": {
+    "link": "https://apps.apple.com/cn/app/%E7%AF%AE%E7%90%83%E5%B0%91%E5%A5%B3-%E9%A3%9E%E8%B7%83%E5%B7%85%E5%B3%B0/id6800167533",
+    "type": "养成、卡牌",
+    "category": "app",
+    "raw_type": "卡牌、体育、养成、策略",
+    "officialName": "篮球少女：飞跃巅峰"
+  },
+  "星途天城_app": {
+    "link": "https://apps.apple.com/cn/app/%E6%98%9F%E9%80%94%E5%A4%A9%E5%9F%8E/id6503579813",
+    "type": "卡牌、策略",
+    "category": "app",
+    "raw_type": "策略、卡牌、回合制、角色扮演",
+    "officialName": "星途天城"
+  },
+  "拳皇·命运_app": {
+    "link": "https://www.taptap.cn/app/868037",
+    "type": "动作冒险、竞技",
+    "category": "app",
+    "raw_type": "动作、格斗、竞技",
+    "officialName": "拳皇·命运"
+  },
+  "益智闯一关_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx954f18dfba43ffed",
+    "type": "休闲益智、益智问答",
+    "category": "minigame",
+    "officialName": "益智闯一关"
+  },
+  "无尽火线_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx3f6e8ef3de16eb24",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "无尽火线"
+  },
+  "战神英雄_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx3c9652a7845838c3",
+    "type": "休闲益智、消除",
+    "category": "minigame",
+    "officialName": "战神英雄"
+  },
+  "小小英雄大冒险_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx8e72617d66d7c5cc",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "小小英雄大冒险"
+  },
+  "桃园：将帅录_app": {
+    "link": "https://www.taptap.cn/app/942822",
+    "type": "角色扮演",
+    "category": "app",
+    "raw_type": "角色扮演",
+    "officialName": "桃园：将帅录"
+  },
+  "整理师竞争_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxf286f92ac16ca6aa",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "整理师竞争"
+  },
+  "西游灵兽纪_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx3dc9d41b5c76df73",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "西游灵兽纪"
+  },
+  "王城荣耀_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxe0459b9214e985d0",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "王城荣耀"
+  },
+  "疯狂收杂物_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx1644b5d3f47969f0",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "疯狂收杂物"
+  },
+  "三界天骄_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxac48e0876c1c1de4",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "三界天骄"
+  },
+  "明日方舟_app": {
+    "link": "https://www.taptap.cn/app/70253",
+    "type": "塔防、二次元",
+    "raw_type": "塔防、二次元、美少女",
+    "category": "app",
+    "officialName": "明日方舟"
+  },
+  "白银之城_app": {
+    "link": "https://apps.apple.com/cn/app/%E7%99%BD%E9%93%B6%E4%B9%8B%E5%9F%8E/id6758292180",
+    "type": "动作冒险、角色扮演",
+    "category": "app",
+    "raw_type": "角色扮演、开放世界、动作冒险、侦探推理",
+    "officialName": "白银之城"
+  },
+  "明日方舟：终末地_app": {
+    "link": "https://www.taptap.cn/app/232326",
+    "type": "二次元、角色扮演",
+    "raw_type": "二次元、角色扮演、模拟经营",
+    "category": "app",
+    "officialName": "明日方舟：终末地"
+  },
+  "冒险迷岛_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxa6bcc1bb757fe55d",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "冒险迷岛"
+  },
+  "剑域仙踪_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxbd6f194789a1ce59",
+    "type": "休闲益智、创新品类",
+    "category": "minigame",
+    "officialName": "剑域仙踪"
+  },
+  "疯狂消除-无限版_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx5c40dc54857eaf87",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "疯狂消除-无限版"
+  },
+  "佳丽时空游戏软件V1._minigame": {
+    "link": "https://sj.qq.com/appdetail/wx7418a07cab502403",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "佳丽时空游戏软件V1.0"
+  },
+  "八荒旅途_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxc3a111a57caa288a",
+    "type": "角色扮演、养成",
+    "raw_type": "放置、修仙、角色扮演",
+    "category": "minigame",
+    "officialName": "八荒旅途"
   }
 }
