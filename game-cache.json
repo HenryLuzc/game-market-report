@@ -2439,5 +2439,48 @@
     "raw_type": "放置、修仙、角色扮演",
     "category": "minigame",
     "officialName": "八荒旅途"
+  },
+  "仙临九界_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxb81d1ca54ee06660",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "仙临九界"
+  },
+  "对决王城_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx81a4454cef007e06",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "对决王城"
+  },
+  "星空神曲_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx5e5ac0977f9103bb",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "星空神曲"
+  },
+  "剑宗奇缘_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx8a10293ddb2f6174",
+    "type": "角色扮演、ARPG",
+    "category": "minigame",
+    "officialName": "剑宗奇缘"
+  },
+  "飘渺仙灵_minigame": {
+    "link": "https://sj.qq.com/appdetail/wxa369bd4d225b4443",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "飘渺仙灵"
+  },
+  "手机反恐特别行动_minigame": {
+    "link": "https://sj.qq.com/appdetail/wx342358fac9c85021",
+    "type": "休闲益智、烧脑",
+    "category": "minigame",
+    "officialName": "手机反恐特别行动"
+  },
+  "新仙魔九界_app": {
+    "link": "https://sj.qq.com/appdetail/com.tencent.tmgp.jjxm",
+    "type": "MMORPG、策略",
+    "category": "app",
+    "raw_type": "策略、MMORPG、仙侠、卡通",
+    "officialName": "新仙魔九界"
   }
 }
